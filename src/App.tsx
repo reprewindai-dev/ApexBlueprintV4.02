@@ -324,15 +324,17 @@ export default function App() {
   const [targetPlatform, setTargetPlatform] = useState("Multi-platform Mobile & Web");
   const [userEmail, setUserEmail] = useState("pluggedfinds41@gmail.com");
 
-  // Model selection configurations
+  // Model selection configurations — pre-configured for Veklom local Ollama
   const [config, setConfig] = useState<ModelConfig>({
-    provider: "gemini",
+    provider: "llama",
     apiKey: "",
-    modelName: "gemini-3.5-flash",
+    modelName: "llama3",
     temperature: 0.2,
-    authMode: "bearer",
-    customHeaderName: "X-API-Key"
+    customUrl: "http://localhost:11434/v1",
+    authMode: "none",
+    customHeaderName: ""
   });
+
 
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [testConnectionResult, setTestConnectionResult] = useState<{
