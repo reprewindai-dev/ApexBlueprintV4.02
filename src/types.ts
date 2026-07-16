@@ -275,7 +275,7 @@ export interface BlueprintResult {
 }
 
 export interface ModelConfig {
-  provider: "gemini" | "openai" | "anthropic" | "deepseek" | "llama" | "custom";
+  provider: "openai" | "anthropic" | "deepseek" | "llama" | "custom" | "veklom";
   apiKey: string;
   modelName: string;
   customUrl?: string;

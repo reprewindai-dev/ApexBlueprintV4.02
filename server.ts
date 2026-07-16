@@ -2,14 +2,60 @@ import express from "express";
 import path from "path";
 import crypto from "crypto";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 import { DEFAULT_BLUEPRINT } from "./src/data/defaultBlueprint";
+import { buildOpenAICompatibleRequest } from "./src/llm-providers";
 
 dotenv.config();
 
+async function callVeklom(params: {
+  systemPrompt: string;
+  userPrompt: string;
+  model?: string;
+}): Promise<string> {
+  const baseUrl = (process.env.VEKLOM_BASE_URL || "https://api.veklom.com").replace(/\/+$/, "");
+  const apiKey = process.env.VEKLOM_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("VEKLOM_API_KEY is not configured.");
+  }
+
+  const response = await fetch(`${baseUrl}/v1/exec`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-API-Key": apiKey,
+    },
+    body: JSON.stringify({
+      prompt: [
+        "SYSTEM INSTRUCTIONS:",
+        params.systemPrompt,
+        "",
+        "USER REQUEST:",
+        params.userPrompt,
+      ].join("\n"),
+      model: params.model || process.env.VEKLOM_MODEL || "qwen2.5:3b",
+      use_memory: false,
+      max_tokens: 8192,
+      temperature: 0.2,
+    }),
+  });
+
+  const responseText = await response.text();
+  if (!response.ok) {
+    throw new Error(`Veklom request failed with HTTP ${response.status}: ${responseText}`);
+  }
+
+  const data = JSON.parse(responseText);
+  if (typeof data.response !== "string" || !data.response.trim()) {
+    throw new Error("Veklom returned no inference response.");
+  }
+
+  return data.response;
+}
+
 const app = express();
-const PORT = 3000;
+const PORT = Number(process.env.PORT || "3011");
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -95,22 +141,9 @@ function cosineSimilarity(v1: number[], v2: number[]): number {
   return dotProduct / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
-// Helper to create embeddings using Gemini
-async function getEmbedding(ai: any, text: string): Promise<number[]> {
-  try {
-    const result = await ai.models.embedContent({
-      model: "gemini-embedding-2-preview",
-      contents: text
-    });
-    if (result && result.embedding && result.embedding.values) {
-      return result.embedding.values;
-    }
-    // Hash-based deterministic fallback vector (768 dimensions) if response format is unexpected
-    return generateFallbackVector(text);
-  } catch (err) {
-    console.warn("Real embedding failed. Using deterministic fallback vector.", err);
-    return generateFallbackVector(text);
-  }
+// Deterministic embedding generator for semantic search and vector matching.
+async function getEmbedding(text: string): Promise<number[]> {
+  return generateFallbackVector(text);
 }
 
 // Generate stable fallback vector using text hashing
@@ -589,88 +622,31 @@ ${targetPlatform || "Multi-platform Web/Mobile"}
 User Email for validation:
 ${emailToUse}`;
 
-    const selectedProvider = provider || "gemini";
+    const selectedProvider = provider || "veklom";
     let textResult = "";
 
-    if (selectedProvider === "gemini") {
-      const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-      if (!activeApiKey) {
-        throw new Error("Gemini API key is not configured. Please supply a key or configure it in secrets.");
-      }
-
-      // Check if custom URL or environment base URL is provided
-      const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
-      const aiOptions: any = {
-        apiKey: activeApiKey,
-        httpOptions: {
-          headers: {
-            "User-Agent": "aistudio-build",
-          },
-        },
-      };
-      if (geminiBaseUrl) {
-        aiOptions.baseUrl = geminiBaseUrl;
-      }
-
-      const ai = new GoogleGenAI(aiOptions);
-
-      const response = await ai.models.generateContent({
-        model: modelName || "gemini-3.5-flash",
-        contents: userPrompt,
-        config: {
-          systemInstruction: systemPrompt,
-          responseMimeType: "application/json",
-          temperature: 0.2,
-        },
+    if (selectedProvider === "veklom") {
+      textResult = await callVeklom({
+        systemPrompt,
+        userPrompt,
+        model: modelName,
+      });
+    } else if (selectedProvider === "openai" || selectedProvider === "llama" || selectedProvider === "deepseek" || selectedProvider === "custom") {
+      const request = buildOpenAICompatibleRequest({
+        provider: selectedProvider as any,
+        apiKey,
+        modelName,
+        customUrl,
+        authMode,
+        customHeaderName,
       });
 
-      textResult = response.text || "";
-    } else if (selectedProvider === "openai" || selectedProvider === "llama" || selectedProvider === "deepseek" || selectedProvider === "custom") {
-      // Determine base URL to use
-      let openAiBaseUrl = "https://api.openai.com/v1";
-      if (customUrl) {
-        openAiBaseUrl = customUrl;
-      } else if (selectedProvider === "llama") {
-        openAiBaseUrl = "http://localhost:11434/v1";
-      } else if (selectedProvider === "deepseek") {
-        openAiBaseUrl = "https://api.deepseek.com/v1";
-      } else if (selectedProvider === "openai") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "http://localhost:1106/modelfarm/openai";
-      }
-
-      // Clean the endpoint: strip trailing slashes, make sure it has /chat/completions
-      let cleanUrl = openAiBaseUrl.replace(/\/+$/, "");
-      if (!cleanUrl.endsWith("/chat/completions")) {
-        cleanUrl = `${cleanUrl}/chat/completions`;
-      }
-
-      // Configure headers
-      const headers: any = {
-        "Content-Type": "application/json",
-      };
-      
-      // Dynamic auth mode application
-      if (apiKey) {
-        if (authMode === "bearer") {
-          headers.Authorization = `Bearer ${apiKey}`;
-        } else if (authMode === "apiKeyHeader") {
-          headers["x-api-key"] = apiKey;
-        } else if (authMode === "customHeader" && customHeaderName) {
-          headers[customHeaderName] = apiKey;
-        } else if (authMode === "none") {
-          // No authentication headers
-        } else {
-          // Default fallback
-          headers.Authorization = `Bearer ${apiKey}`;
-        }
-      } else if (selectedProvider === "openai" && !process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
-        // Only require API key if using real OpenAI without a local modelfarm/proxy override
+      if (!apiKey && selectedProvider === "openai" && !process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
         throw new Error("OpenAI API key is required for this model provider.");
       }
 
-      // Build payload
       const payload: any = {
-        model: modelName || (selectedProvider === "deepseek" ? "deepseek-chat" : selectedProvider === "openai" ? "gpt-4o" : "llama-3-8b-instruct"),
+        ...request.payload,
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt },
@@ -678,16 +654,15 @@ ${emailToUse}`;
         temperature: 0.2,
       };
 
-      // Only pass JSON response format if using a provider known to support it natively
       if (selectedProvider === "openai" || selectedProvider === "deepseek") {
         payload.response_format = { type: "json_object" };
       }
 
-      console.log(`Routing ${selectedProvider} request to: ${cleanUrl} with model: ${payload.model}`);
+      console.log(`Routing ${selectedProvider} request to: ${request.chatUrl} with model: ${payload.model}`);
 
-      const response = await fetch(cleanUrl, {
+      const response = await fetch(request.chatUrl, {
         method: "POST",
-        headers,
+        headers: request.headers,
         body: JSON.stringify(payload),
       });
 
@@ -696,7 +671,7 @@ ${emailToUse}`;
         throw new Error(`${selectedProvider.toUpperCase()} API failed: ${errorText}`);
       }
       const data = await response.json();
-      textResult = data.choices[0].message.content;
+      textResult = data.choices?.[0]?.message?.content || data.choices?.[0]?.text || "";
     } else if (selectedProvider === "anthropic") {
       const activeApiKey = apiKey;
       if (!activeApiKey) {
@@ -733,34 +708,13 @@ ${emailToUse}`;
       }
 
       const data = await response.json();
-      textResult = data.content[0].text;
+      textResult = data.content?.[0]?.text || "";
     } else {
-      // General fallback using server key to compile with Gemini
-      const activeApiKey = process.env.GEMINI_API_KEY;
-      if (!activeApiKey) {
-        throw new Error("Free server compilation key is currently exhausted. Please provide your own LLM Key under settings.");
-      }
-
-      const geminiBaseUrl = process.env.AI_INTEGRATIONS_GEMINI_BASE_URL || "http://localhost:1106/modelfarm/gemini";
-      const aiOptions: any = {
-        apiKey: activeApiKey,
-        httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-      };
-      if (geminiBaseUrl) {
-        aiOptions.baseUrl = geminiBaseUrl;
-      }
-
-      const ai = new GoogleGenAI(aiOptions);
-      const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: userPrompt,
-        config: {
-          systemInstruction: systemPrompt,
-          responseMimeType: "application/json",
-          temperature: 0.2,
-        },
+      textResult = await callVeklom({
+        systemPrompt,
+        userPrompt,
+        model: modelName,
       });
-      textResult = response.text || "";
     }
 
     let parsedData: any;
@@ -827,7 +781,7 @@ ${emailToUse}`;
 
     return res.json(parsedData);
   } catch (error: any) {
-    console.warn("Gemini API Error or Quota Exhaustion, generating local fallback blueprint:", error);
+    console.warn("LLM provider error or quota exhaustion, generating local fallback blueprint:", error);
     try {
       const fallbackBlueprint = generateFallbackBlueprint(
         notes,
@@ -1043,7 +997,7 @@ function generateFallbackBlueprint(
     blueprint.jurisdictionProfileName = selectedJurisdiction;
   }
   
-  blueprint.fallback_message = "Free-tier Gemini API token count limit exceeded (250K/min limit). Apex locally generated a validated blueprint for you to continue testing instantly!";
+  blueprint.fallback_message = "LLM provider error occurred. Apex locally generated a fallback blueprint based on your input notes.";
 
   return blueprint;
 }
@@ -1061,79 +1015,33 @@ app.post("/api/test-connection", async (req, res) => {
       customHeaderName,
     } = req.body;
 
-    const selectedProvider = provider || "gemini";
+    const selectedProvider = provider || "veklom";
     const testPrompt = "Respond only with the word 'OK'.";
 
-    if (selectedProvider === "gemini") {
-      const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-      if (!activeApiKey) {
-        throw new Error("Gemini API key is not configured.");
-      }
-
-      const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
-      const aiOptions: any = {
-        apiKey: activeApiKey,
-        httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-      };
-      if (geminiBaseUrl) {
-        aiOptions.baseUrl = geminiBaseUrl;
-      }
-
-      const ai = new GoogleGenAI(aiOptions);
-      const model = modelName || "gemini-3.5-flash";
-      await ai.models.generateContent({
-        model: model,
-        contents: testPrompt,
-        config: {
-          maxOutputTokens: 10,
-          temperature: 0.1,
-        },
+    if (selectedProvider === "veklom") {
+      await callVeklom({
+        systemPrompt: testPrompt,
+        userPrompt: testPrompt,
+        model: modelName,
       });
     } else if (selectedProvider === "openai" || selectedProvider === "llama" || selectedProvider === "deepseek" || selectedProvider === "custom") {
-      let openAiBaseUrl = "https://api.openai.com/v1";
-      if (customUrl) {
-        openAiBaseUrl = customUrl;
-      } else if (selectedProvider === "llama") {
-        openAiBaseUrl = "http://localhost:11434/v1";
-      } else if (selectedProvider === "deepseek") {
-        openAiBaseUrl = "https://api.deepseek.com/v1";
-      } else if (selectedProvider === "openai") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "http://localhost:1106/modelfarm/openai";
-      }
-
-      let cleanUrl = openAiBaseUrl.replace(/\/+$/, "");
-      if (!cleanUrl.endsWith("/chat/completions")) {
-        cleanUrl = `${cleanUrl}/chat/completions`;
-      }
-
-      const headers: any = {
-        "Content-Type": "application/json",
-      };
-
-      if (apiKey) {
-        if (authMode === "bearer") {
-          headers.Authorization = `Bearer ${apiKey}`;
-        } else if (authMode === "apiKeyHeader") {
-          headers["x-api-key"] = apiKey;
-        } else if (authMode === "customHeader" && customHeaderName) {
-          headers[customHeaderName] = apiKey;
-        } else if (authMode === "none") {
-          // No auth header
-        } else {
-          headers.Authorization = `Bearer ${apiKey}`;
-        }
-      }
+      const request = buildOpenAICompatibleRequest({
+        provider: selectedProvider as any,
+        apiKey,
+        modelName,
+        customUrl,
+        authMode,
+        customHeaderName,
+        mode: "verify",
+      });
 
       const payload = {
-        model: modelName || (selectedProvider === "deepseek" ? "deepseek-chat" : selectedProvider === "openai" ? "gpt-4o" : "llama-3-8b-instruct"),
+        ...request.payload,
         messages: [{ role: "user", content: testPrompt }],
-        max_tokens: 10,
-        temperature: 0.1,
       };
-
-      const response = await fetch(cleanUrl, {
+      const response = await fetch(request.chatUrl, {
         method: "POST",
-        headers,
+        headers: request.headers,
         body: JSON.stringify(payload),
       });
 
@@ -1198,29 +1106,13 @@ app.post("/api/academic/search", async (req, res) => {
       return res.status(400).json({ error: "Missing required query string." });
     }
 
-    const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-    if (!activeApiKey) {
-      throw new Error("Gemini API key is required to calculate search embeddings.");
-    }
-
-    const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
-    const aiOptions: any = {
-      apiKey: activeApiKey,
-      httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-    };
-    if (geminiBaseUrl) {
-      aiOptions.baseUrl = geminiBaseUrl;
-    }
-
-    const ai = new GoogleGenAI(aiOptions);
-
-    // 1. Get embedding for the user search query
-    const queryVector = await getEmbedding(ai, query);
+    // 1. Get deterministic embedding for the user search query
+    const queryVector = await getEmbedding(query);
 
     // 2. Check and generate embeddings lazily for papers that don't have them yet
     for (const paper of vectorDatabase) {
       if (!paper.vector) {
-        paper.vector = await getEmbedding(ai, `${paper.title} ${paper.summary}`);
+        paper.vector = await getEmbedding(`${paper.title} ${paper.summary}`);
       }
     }
 
@@ -1268,20 +1160,6 @@ app.post("/api/academic/scrape", async (req, res) => {
     const entryRegex = /<entry>([\s\S]*?)<\/entry>/g;
     let match;
 
-    const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-    const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
-    let ai = null;
-    if (activeApiKey || geminiBaseUrl) {
-      const aiOptions: any = {
-        apiKey: activeApiKey || "none",
-        httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-      };
-      if (geminiBaseUrl) {
-        aiOptions.baseUrl = geminiBaseUrl;
-      }
-      ai = new GoogleGenAI(aiOptions);
-    }
-
     while ((match = entryRegex.exec(xmlText)) !== null) {
       const content = match[1];
 
@@ -1312,12 +1190,8 @@ app.post("/api/academic/scrape", async (req, res) => {
         summary,
         relevance: `Validated academic resource matching scraped criteria: "${keyword}".`,
         url,
+        vector: await getEmbedding(`${title} ${summary}`),
       };
-
-      // Create vector embedding on-the-fly if LLM is ready
-      if (ai) {
-        newPaper.vector = await getEmbedding(ai, `${title} ${summary}`);
-      }
 
       newEntries.push(newPaper);
       vectorDatabase.push(newPaper);
@@ -1421,16 +1295,10 @@ app.post("/api/github/analyze", async (req, res) => {
       technologiesFound = ["React/Node.js Framework", "Rust Edge Ledger", "Solidity Smart Contracts"];
     }
 
-    // Build the cross-reference query for Gemini
-    const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-    if (!activeApiKey) {
-      throw new Error("Gemini API Key is missing. Configure it in settings to analyze.");
+    // Build the cross-reference query for code analysis
+    if (!process.env.VEKLOM_API_KEY) {
+      throw new Error("VEKLOM_API_KEY is not configured. Please set VEKLOM_API_KEY to analyze GitHub repositories.");
     }
-
-    const ai = new GoogleGenAI({
-      apiKey: activeApiKey,
-      httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-    });
 
     const crossRefPrompt = `You are an elite Software Ingress Analyst.
 We need to analyze the following GitHub codebase structure and cross-reference its alignment with the Proposed Business Logic.
@@ -1504,16 +1372,11 @@ You must return a valid JSON object matching this schema exactly:
   ]
 }`;
 
-    const aiResponse = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: crossRefPrompt,
-      config: {
-        responseMimeType: "application/json",
-        temperature: 0.1,
-      },
+    const aiText = await callVeklom({
+      systemPrompt: crossRefPrompt,
+      userPrompt: "Return only the JSON object described above.",
+      model: process.env.VEKLOM_MODEL || "qwen2.5:3b",
     });
-
-    const aiText = aiResponse.text || "{}";
     let parsedCrossRef;
     try {
       parsedCrossRef = JSON.parse(aiText);

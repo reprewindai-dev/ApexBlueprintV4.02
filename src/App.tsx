@@ -44,6 +44,7 @@ import JSZip from "jszip";
 import { TEMPLATES } from "./data/templates";
 import { DEFAULT_BLUEPRINT } from "./data/defaultBlueprint";
 import { BlueprintResult, ModelConfig, VirtualFile, Capability, GapReport, ProductOffering } from "./types";
+import { buildOpenAICompatibleRequest } from "./llm-providers";
 import CapabilityGraphComponent from "./components/CapabilityGraph";
 import BundleConstructor from "./components/BundleConstructor";
 import InterfacesInventory from "./components/InterfacesInventory";
@@ -326,12 +327,12 @@ export default function App() {
 
   // Model selection configurations — pre-configured for Veklom local Ollama
   const [config, setConfig] = useState<ModelConfig>({
-    provider: "llama",
+    provider: "veklom",
     apiKey: "",
-    modelName: "llama3",
+    modelName: "qwen2.5-coder:1.5b",
     temperature: 0.2,
-    customUrl: "http://localhost:11434/v1",
-    authMode: "none",
+    customUrl: "",
+    authMode: "bearer",
     customHeaderName: ""
   });
 
@@ -1443,7 +1444,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                   <span className="text-amber-500 animate-pulse text-lg">⚠️</span>
                   <div>
                     <span className="font-black text-amber-500">API QUOTA EXHAUSTED:</span>
-                    <span className="ml-1 text-gray-300">The Gemini API Free Tier rate-limit was reached (250K tokens/min). To keep your testing seamless, our local high-fidelity compiler compiled a fully validated blueprint tailored to your input!</span>
+                    <span className="ml-1 text-gray-300">The selected model provider quota was reached. The app has fallen back to a cached blueprint generation path for continuity.</span>
                   </div>
                 </div>
                 <div className="text-[10px] bg-amber-500/20 text-amber-300 px-2.5 py-1 border border-amber-500/30 whitespace-nowrap font-bold">
@@ -3135,34 +3136,34 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     value={config.provider}
                     onChange={(e: any) => {
                       const prov = e.target.value;
-                      let dModel = "gemini-3.5-flash";
+                      let dModel = "qwen2.5-coder:1.5b";
                       let dUrl = "";
                       if (prov === "openai") {
                         dModel = "gpt-4o";
-                        dUrl = "";
                       } else if (prov === "anthropic") {
                         dModel = "claude-3-5-sonnet-20241022";
-                        dUrl = "";
                       } else if (prov === "deepseek") {
                         dModel = "deepseek-chat";
-                        dUrl = "";
                       } else if (prov === "llama") {
                         dModel = "llama-3-8b-instruct";
                         dUrl = "http://localhost:11434/v1";
                       } else if (prov === "custom") {
                         dModel = "custom-model";
                         dUrl = "http://localhost:1234/v1";
+                      } else if (prov === "veklom") {
+                        dModel = "qwen2.5-coder:1.5b";
+                        dUrl = "https://api.veklom.com/v1";
                       }
                       setConfig({ ...config, provider: prov, modelName: dModel, customUrl: dUrl });
                     }}
                     className="w-full bg-[#0A0A0A] border border-[#222] p-2.5 text-xs text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none font-mono"
                   >
-                    <option value="gemini">Google Gemini AI</option>
                     <option value="openai">OpenAI (GPT Models)</option>
                     <option value="anthropic">Anthropic (Claude Models)</option>
                     <option value="deepseek">DeepSeek AI</option>
                     <option value="llama">Ollama / Local Llama API</option>
                     <option value="custom">Custom OpenAI-Compatible</option>
+                    <option value="veklom">Veklom OpenAI-Compatible</option>
                   </select>
                 </div>
 
@@ -3175,7 +3176,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     type="text"
                     value={config.modelName}
                     onChange={(e) => setConfig({ ...config, modelName: e.target.value })}
-                    placeholder="e.g. gemini-3.5-flash, gpt-4o, llama3"
+                    placeholder="e.g. qwen2.5-coder:1.5b, gpt-4o, llama3"
                     className="w-full bg-[#0A0A0A] border border-[#222] p-2.5 text-xs text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none font-mono"
                   />
                   <span className="text-[9px] font-mono text-[#444] uppercase tracking-wider mt-1 block">Specify the target reasoning endpoint identifier.</span>
@@ -3194,17 +3195,17 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     value={config.customUrl || ""}
                     onChange={(e) => setConfig({ ...config, customUrl: e.target.value })}
                     placeholder={
-                      config.provider === "gemini"
-                        ? "e.g. http://localhost:1106/modelfarm/gemini (or leave blank)"
-                        : config.provider === "openai"
-                        ? "e.g. http://localhost:1106/modelfarm/openai (or leave blank)"
+                      config.provider === "openai"
+                        ? "Optional OpenAI-compatible endpoint URL"
                         : config.provider === "llama"
                         ? "e.g. http://localhost:11434/v1"
                         : config.provider === "deepseek"
-                        ? "e.g. https://api.deepseek.com/v1 (or leave blank)"
+                        ? "e.g. https://api.deepseek.com/v1"
                         : config.provider === "custom"
                         ? "e.g. http://localhost:1234/v1"
-                        : "Enter connection URL (e.g. http://localhost:11434/v1)"
+                        : config.provider === "veklom"
+                        ? "Optional Veklom API URL"
+                        : "Enter connection URL"
                     }
                     className="w-full bg-[#0A0A0A] border border-[#222] p-2.5 text-xs text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none font-mono"
                   />
@@ -3219,8 +3220,8 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     <span>Provider API Key:</span>
                     {(config.provider === "llama" || config.provider === "custom" || config.customUrl) ? (
                       <span className="text-[9px] text-emerald-400 lowercase font-mono">Optional for local/Ollama style</span>
-                    ) : config.provider === "gemini" ? (
-                      <span className="text-[9px] text-emerald-400 lowercase font-mono">Uses automatic server key if empty</span>
+                    ) : config.provider === "veklom" ? (
+                      <span className="text-[9px] text-emerald-400 lowercase font-mono">Uses backend VEKLOM_API_KEY; browser key is optional for testing only.</span>
                     ) : null}
                   </label>
                   <input
@@ -3228,10 +3229,10 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     value={config.apiKey}
                     onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
                     placeholder={
-                      (config.provider === "llama" || config.provider === "custom")
+                      config.provider === "veklom"
+                        ? "Optional; VEKLOM_API_KEY is used on the server"
+                        : (config.provider === "llama" || config.provider === "custom")
                         ? "Not required for local connections (Ollama)"
-                        : config.provider === "gemini"
-                        ? "•••••••• (Or leave blank to use free server key)"
                         : "Enter third-party provider API key"
                     }
                     className="w-full bg-[#0A0A0A] border border-[#222] p-2.5 text-xs text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none font-mono"
@@ -3289,30 +3290,54 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     </button>
                   </div>
 
-                  {testConnectionResult && (
-                    <div className="mt-3 p-3 bg-[#090D1A] border border-slate-800 text-xs font-mono animate-fadeIn">
-                      {testConnectionResult.success ? (
-                        <div className="space-y-1 text-emerald-400 uppercase text-[10px]">
-                          <div className="font-black flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block animate-pulse"></span>
-                            <span>Connection Verified (Success)</span>
-                          </div>
-                          <div className="text-gray-500 font-mono text-[9px]">
-                            Latency: <span className="text-emerald-300 font-black">{testConnectionResult.latencyMs}ms</span>
-                            {testConnectionResult.model && (
-                              <span> | MODEL: <span className="text-slate-400 font-bold">{testConnectionResult.model}</span></span>
-                            )}
-                          </div>
+                  {(testConnectionResult || isTestingConnection) && (
+                    <div className="mt-3 p-3 rounded-lg bg-white/5 border border-white/10 backdrop-blur-sm text-xs font-mono animate-fadeIn">
+                      <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`w-2.5 h-2.5 rounded-full ${
+                              isTestingConnection
+                                ? "bg-sky-400 animate-pulse"
+                                : testConnectionResult?.success
+                                ? testConnectionResult.latencyMs !== undefined && testConnectionResult.latencyMs > 1000
+                                  ? "bg-amber-400"
+                                  : "bg-emerald-400"
+                                : "bg-red-400"
+                            }`}
+                          ></span>
+                          <span className="font-black uppercase tracking-[0.22em] text-[9px] text-slate-300">
+                            {isTestingConnection
+                              ? "Checking..."
+                              : testConnectionResult?.success
+                              ? testConnectionResult.latencyMs !== undefined && testConnectionResult.latencyMs > 1000
+                                ? "DEGRADED"
+                                : "ONLINE"
+                              : "OFFLINE"}
+                          </span>
                         </div>
-                      ) : (
-                        <div className="space-y-1 text-red-400 uppercase text-[10px]">
-                          <div className="font-black flex items-center gap-1">
-                            <span className="w-1.5 h-1.5 bg-red-400 rounded-full inline-block"></span>
-                            <span>Connection Failed</span>
-                          </div>
-                          <p className="text-gray-500 font-mono text-[9px] lowercase normal-case leading-normal mt-0.5 max-h-[80px] overflow-y-auto">
-                            {testConnectionResult.error}
-                          </p>
+
+                        <div className="text-[9px] text-slate-400 uppercase tracking-wide">
+                          {isTestingConnection
+                            ? "Probe in progress"
+                            : testConnectionResult?.success
+                            ? testConnectionResult.latencyMs !== undefined
+                              ? `Latency: ${testConnectionResult.latencyMs}ms${testConnectionResult.model ? ` • Model: ${testConnectionResult.model}` : ""}`
+                              : "Connection is reachable"
+                            : `Error: ${testConnectionResult?.error || "Unknown failure"}`}
+                        </div>
+                      </div>
+
+                      {!isTestingConnection && testConnectionResult && (
+                        <div className="rounded-md p-3 border border-white/10 bg-black/20">
+                          {testConnectionResult.success ? (
+                            <p className="text-[9px] text-slate-300 leading-relaxed">
+                              Your selected provider endpoint is reachable and returning valid responses. If latency is above 1000ms, expect a degraded experience.
+                            </p>
+                          ) : (
+                            <p className="text-[9px] text-rose-300 leading-relaxed lowercase">
+                              {testConnectionResult.error || "Unable to verify provider connection. Check URL, auth settings, or local Ollama service."}
+                            </p>
+                          )}
                         </div>
                       )}
                     </div>

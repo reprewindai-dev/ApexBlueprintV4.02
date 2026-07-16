@@ -14,8 +14,9 @@ COPY . .
 # Build the application (compiles Vite frontend and server.ts)
 RUN npm run build
 
-# Expose the server port
-EXPOSE 3000
+# Use the runtime port configured via PORT and expose the actual server port
+ENV PORT=3011
+EXPOSE 3011
 
 # Start the built server using Node
 CMD ["npm", "run", "start"]
