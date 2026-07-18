@@ -7,7 +7,7 @@ interface InterfacesInventoryProps {
 }
 
 export default function InterfacesInventory({ capabilities }: InterfacesInventoryProps) {
-  const [selectedCapId, setSelectedCapId] = useState<string>("govern-agent-session");
+  const [selectedCapId, setSelectedCapId] = useState<string>(capabilities[0]?.id || "govern-agent-session");
   const [interfaceFilter, setInterfaceFilter] = useState<string>("all");
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -23,39 +23,77 @@ export default function InterfacesInventory({ capabilities }: InterfacesInventor
     { value: "webhook", label: "Webhooks & Events" }
   ];
 
-  // Helper code blocks for realistic displays in JetBrains Mono!
-  const getInterfaceCodeSnippet = (capId: string, filter: string) => {
-    switch (capId) {
-      case "govern-agent-session":
-        if (filter === "mcp") {
-          return `{\n  "name": "govern_agent_session",\n  "description": "Lease boundary claims and allocate compute cycles for an autonomous agent session.",\n  "inputSchema": {\n    "type": "object",\n    "properties": {\n      "agent_id": { "type": "string" },\n      "lease_duration_sec": { "type": "integer", "default": 3600 },\n      "max_escrow_micropay": { "type": "number", "default": 10.0 }\n    },\n    "required": ["agent_id"]\n  }\n}`;
-        } else if (filter === "rest") {
-          return `POST /api/v1/sessions/govern\\nContent-Type: application/json\\nAuthorization: Bearer <X402_TOKEN>\\n\\n{\\n  "agentId": "agent-scooter-901",\\n  "slaClass": "Sovereign",\\n  "fundingLimitUSD": 5.00\\n}\\n\\n--> Response 201 Created\\n{\\n  "leaseId": "lease_7a8d81bc8",\\n  "expiresAt": "2026-07-15T15:12:10Z",\\n  "escrowLocked": true\\n}`;
-        } else {
-          return `import { VeklomCore } from "@veklom/sdk";\n\nconst core = new VeklomCore({ apiKey: process.env.VEKLOM_KEY });\nconst session = await core.sessions.govern({\n  agentId: "agent-scooter-901",\n  slaClass: "Sovereign"\n});\nconsole.log(\`Session lease minted: \${session.leaseId}\`);`;
-        }
-      case "score-api-eligibility":
-        if (filter === "rest") {
-          return `GET /api/v1/router/score-eligibility?nodeId=node-tokyo-03\\n--> Response 200 OK\\n{\\n  "nodeId": "node-tokyo-03",\\n  "uptimeScore": 0.9998,\\n  "slaSuccessRate": 0.9995,\\n  "jitterVarianceMs": 1.25,\\n  "einsteinPriorityIndex": 97.45,\\n  "routeEligible": true\\n}`;
-        } else if (filter === "cli") {
-          return `$ veklom router score-eligibility --node node-tokyo-03\\n\\n[+] NODE REPUTATION AUDIT:\\n    Uptime Score:  99.98%\\n    SLA Success:   99.95%\\n    Jitter Var:    1.25ms\\n    ---------------------\\n    EINSTEIN WEIGHT INDEX: 97.45 (HIGH ELIGIBILITY)`;
-        } else {
-          return `// Einstein Jitter scoring formula in TypeScript\\nfunction getEinsteinIndex(uptime: number, sla: number, jitterVar: number): number {\\n  return (uptime * 40) + (sla * 40) - (jitterVar * 20);\\n}`;
-        }
-      case "verify-provider-ownership":
-        if (filter === "webhook") {
-          return `// Webhook payload: DNS validation challenge matched\\n{\\n  "event": "provider.dns_challenge_succeeded",\\n  "timestamp": "2026-07-15T13:45:12Z",\\n  "providerId": "prov_edge_seattle_09",\\n  "dnsRecordMatched": "veklom-challenge=e50c9782ea38d8d3fcd0...\\n}`;
-        } else {
-          return `POST /api/v1/provider/verify-dns\\n{\\n  "providerId": "prov_edge_seattle_09",\\n  "dnsTarget": "edge-09.seattle.nodes.io"\\n}\\n--> Response 200 OK\\n{\\n  "challengePassed": true,\\n  "dnsVerifiedBadge": "badge_9a12c8b81"\\n}`;
-        }
-      case "mint-settlement-evidence":
-        if (filter === "mcp") {
-          return `{\n  "name": "mint_settlement_evidence",\n  "description": "Mint cryptographic execution hash evidence directly onto the Gnomledger registry.",\n  "inputSchema": {\n    "type": "object",\n    "properties": {\n      "task_execution_hash": { "type": "string" },\n      "claimed_fee_usd": { "type": "number" }\n    },\n    "required": ["task_execution_hash"]\n  }\n}`;
-        } else {
-          return `POST /api/v1/evidence/mint\\n{\\n  "executionHash": "sha256_d8b3c9a105...",\\n  "claimSLA": "Sovereign"\\n}\\n--> Response 201 Minted\\n{\\n  "evidenceId": "evid_e2b109c4d",\\n  "gnomledgerBlock": 1822831,\\n  "merkleRoot": "mr_901c82b81093da"\\n}`;
-        }
-      default:
-        return `// Interface details for ${capId}`;
+  // Helper code blocks for realistic displays in JetBrains Mono dynamically generated!
+  const getInterfaceCodeSnippet = (cap: Capability | null, filter: string) => {
+    if (!cap) return "// No active capability selected";
+
+    const inputsObj = (cap.inputs || []).reduce((acc, curr) => {
+      const key = curr.toLowerCase().replace(/\s+/g, "");
+      acc[key] = "string";
+      return acc;
+    }, {} as Record<string, string>);
+
+    const inputsJson = JSON.stringify(inputsObj, null, 2);
+
+    const restEndpoint = cap.exposedInterfaces?.rest?.[0] || `POST /api/v1/${cap.id}/execute`;
+    const mcpToolName = cap.exposedInterfaces?.mcp?.[0] || `${cap.id.replace(/-/g, "_")}_tool`;
+    const sdkMethod = cap.exposedInterfaces?.sdk?.[0] || `veklom.${cap.id.replace(/-/g, ".")}()`;
+    const cliCommand = cap.exposedInterfaces?.cli?.[0] || `veklom ${cap.id.replace(/-/g, " ")}`;
+    const webhookEvent = cap.exposedInterfaces?.webhooks?.[0] || `${cap.id}.triggered`;
+
+    if (filter === "rest") {
+      return `${restEndpoint}
+Content-Type: application/json
+Authorization: Bearer <X402_TOKEN>
+
+${inputsJson}
+
+--> Response 201 Created
+{
+  "status": "SUCCESS",
+  "outputs": ${JSON.stringify(cap.outputs || [], null, 2)}
+}`;
+    } else if (filter === "mcp") {
+      const inputsList = cap.inputs || [];
+      return `{
+  "name": "${mcpToolName.split("(")[0]}",
+  "description": "${cap.purpose}",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+${inputsList.map(inp => `      "${inp.toLowerCase().replace(/\s+/g, "_")}": { "type": "string" }`).join(",\n")}
+    },
+    "required": [${inputsList[0] ? `"${inputsList[0].toLowerCase().replace(/\s+/g, "_")}"` : ""}]
+  }
+}`;
+    } else if (filter === "sdk") {
+      const sdkCall = sdkMethod.includes("(") ? sdkMethod : `${sdkMethod}(${inputsJson})`;
+      return `import { VeklomCore } from "@veklom/sdk";
+
+const core = new VeklomCore({ apiKey: process.env.VEKLOM_KEY });
+
+// Executing capability: ${cap.name}
+const result = await core.${sdkCall};
+
+console.log("Execution Result:", result);`;
+    } else if (filter === "cli") {
+      const args = (cap.inputs || []).map(inp => `--${inp.toLowerCase().replace(/\s+/g, "-")}="value"`).join(" ");
+      return `$ ${cliCommand.split(" ")[0]} ${cliCommand.split(" ").slice(1).join(" ")} ${args}
+
+[+] STATE: ACTIVE EXECUTION STATUS`;
+    } else if (filter === "webhook" || filter === "all") {
+      return `// Webhook Notification Event Structure:
+{
+  "event": "${webhookEvent}",
+  "timestamp": "${new Date().toISOString()}",
+  "payload": {
+    "capabilityId": "${cap.id}",
+    "owner": "${cap.owner || "platform"}",
+    "machineOutcome": "${cap.machineOutcome}"
+  }
+}`;
+    } else {
+      return `// Interface details for ${cap.id}`;
     }
   };
 
@@ -84,7 +122,7 @@ export default function InterfacesInventory({ capabilities }: InterfacesInventor
               key={cap.id}
               onClick={() => setSelectedCapId(cap.id)}
               className={`w-full text-left p-3.5 border transition-all rounded-none uppercase font-mono text-xs ${
-                selectedCapId === cap.id
+                (matchedCap?.id === cap.id)
                   ? "bg-[#0A0A0A] border-[#00F0FF] text-white"
                   : "bg-transparent border-[#222] text-[#888] hover:border-gray-500 hover:text-white"
               }`}
@@ -123,7 +161,7 @@ export default function InterfacesInventory({ capabilities }: InterfacesInventor
                   <p className="text-[10px] text-[#888] font-mono leading-relaxed uppercase mt-1">{matchedCap.purpose}</p>
                 </div>
                 <button
-                  onClick={() => handleCopyCode(getInterfaceCodeSnippet(matchedCap.id, interfaceFilter), matchedCap.id)}
+                  onClick={() => handleCopyCode(getInterfaceCodeSnippet(matchedCap, interfaceFilter), matchedCap.id)}
                   className="flex items-center gap-1 px-2.5 py-1.5 border border-[#333] hover:border-[#00F0FF] bg-[#111] hover:bg-[#0A0A0A] text-[#888] hover:text-[#00F0FF] font-mono text-[9px] font-black uppercase tracking-widest transition-colors rounded-none"
                 >
                   {copiedId === matchedCap.id ? (
@@ -142,7 +180,7 @@ export default function InterfacesInventory({ capabilities }: InterfacesInventor
 
               {/* Snippet Block */}
               <div className="bg-[#0A0A0A] border border-[#222] p-4 font-mono text-[11px] leading-relaxed text-gray-300 overflow-x-auto whitespace-pre-wrap max-h-[220px]">
-                {getInterfaceCodeSnippet(matchedCap.id, interfaceFilter)}
+                {getInterfaceCodeSnippet(matchedCap, interfaceFilter)}
               </div>
 
               <div className="flex justify-between items-center text-[9px] font-mono text-[#444] uppercase tracking-widest">

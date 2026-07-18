@@ -63,9 +63,9 @@ async function runDiagnostics() {
     
     // Create a mock payload matching the App.tsx configuration structure
     const payload = {
-      provider: "veklom",
+      provider: "gemini",
       apiKey: "MOCK_KEY_FOR_DIAGNOSTICS_123",
-      modelName: "qwen2.5-coder:1.5b",
+      modelName: "gemini-3.5-flash",
       authMode: "bearer"
     };
 

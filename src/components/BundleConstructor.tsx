@@ -9,9 +9,18 @@ interface BundleConstructorProps {
 
 export default function BundleConstructor({ productOfferings, capabilities }: BundleConstructorProps) {
   // Bundle checklist states
-  const [selectedCaps, setSelectedCaps] = useState<Record<string, boolean>>({
-    "govern-agent-session": true,
-    "score-api-eligibility": true
+  const [selectedCaps, setSelectedCaps] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    if (capabilities && capabilities.length > 0) {
+      initial[capabilities[0].id] = true;
+      if (capabilities.length > 1) {
+        initial[capabilities[1].id] = true;
+      }
+    } else {
+      initial["govern-agent-session"] = true;
+      initial["score-api-eligibility"] = true;
+    }
+    return initial;
   });
   const [slaIndex, setSlaIndex] = useState<number>(1.0); // 1.0 = Platinum, 0.8 = Gold, 1.4 = Sovereign
   const [monthlyVolumeK, setMonthlyVolumeK] = useState<number>(250); // in thousands

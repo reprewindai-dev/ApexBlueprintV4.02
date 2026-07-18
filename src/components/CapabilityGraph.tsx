@@ -11,50 +11,177 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities }:
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [activeSubTab, setActiveSubTab] = useState<"def" | "surf" | "owners" | "jurisdiction" | "verification">("def");
 
-  // Hardcode coordinate mapping for a gorgeous static network topology layout
+  // Dynamic coordinate generation for nodes based on compiled blueprint
+  const viewBoxWidth = 500;
+
+  // 1. Domains (Y: 50)
+  const domainNodes = (companyGraph?.domains || []).map((dom, idx, arr) => {
+    const count = arr.length;
+    const x = count > 1
+      ? 60 + (idx * (viewBoxWidth - 120)) / (count - 1)
+      : viewBoxWidth / 2;
+    const id = `dom-${dom.name.toLowerCase().replace(/\s+/g, "-")}`;
+    return {
+      id,
+      rawId: dom.name,
+      label: dom.name,
+      type: "domain",
+      x,
+      y: 50,
+      color: "#BF5AF2",
+      desc: dom.description,
+    };
+  });
+
+  // 2. Products (Y: 120)
+  const productNodes = (companyGraph?.products || []).map((prod, idx, arr) => {
+    const count = arr.length;
+    const x = count > 1
+      ? 100 + (idx * (viewBoxWidth - 200)) / (count - 1)
+      : viewBoxWidth / 2;
+    const id = `prod-${prod.name.toLowerCase().replace(/\s+/g, "-")}`;
+    return {
+      id,
+      rawId: prod.name,
+      label: prod.name,
+      type: "product",
+      x,
+      y: 120,
+      color: "#FFD60A",
+      desc: prod.businessValue || `Product offering: ${prod.name}`,
+    };
+  });
+
+  // 3. Capabilities (Y: 220)
+  const capabilityNodes = (capabilities || []).map((cap, idx, arr) => {
+    const count = arr.length;
+    const x = count > 1
+      ? 50 + (idx * (viewBoxWidth - 100)) / (count - 1)
+      : viewBoxWidth / 2;
+    return {
+      id: cap.id,
+      rawId: cap.id,
+      label: cap.name,
+      type: "capability",
+      x,
+      y: 220,
+      color: "#00F0FF",
+      details: cap.purpose,
+    };
+  });
+
+  // 4. Systems (Y: 310)
+  const systemNodes = (companyGraph?.canonicalSystems || []).map((sys, idx, arr) => {
+    const count = arr.length;
+    const x = count > 1
+      ? 120 + (idx * (viewBoxWidth - 240)) / (count - 1)
+      : viewBoxWidth / 2;
+    const id = `sys-${sys.name.toLowerCase().replace(/\s+/g, "-")}`;
+    return {
+      id,
+      rawId: sys.name,
+      label: sys.name,
+      type: "system",
+      x,
+      y: 310,
+      color: "#FF375F",
+      desc: sys.purpose,
+    };
+  });
+
   const nodes = [
-    // Domains (Y: 50)
-    { id: "dom-orch", label: "Autonomous Orchestration", type: "domain", x: 100, y: 50, color: "#BF5AF2", desc: "Edge routing and agent session governance." },
-    { id: "dom-settle", label: "DeFi Ledger Settlements", type: "domain", x: 250, y: 50, color: "#FFD60A", desc: "x402 financial micro-payments." },
-    { id: "dom-evid", label: "Sovereign Evidence Registry", type: "domain", x: 400, y: 50, color: "#30D158", desc: "Decentralized cryptographic proof anchoring." },
-
-    // Products (Y: 120)
-    { id: "prod-os", label: "Veklom Core OS", type: "product", x: 150, y: 120, color: "#0A84FF", desc: "Exposes capability products directly rentable by machines." },
-    { id: "prod-escrow", label: "X402 Smart Escrow", type: "product", x: 350, y: 120, color: "#FF453A", desc: "Automates machine billing, escrow release and settlement." },
-
-    // Capabilities (Y: 220)
-    { id: "govern-agent-session", label: "Govern Agent Session", type: "capability", x: 80, y: 220, color: "#00F0FF", details: "Lease hardware-locked Boundary Claims and limit run lifetime." },
-    { id: "score-api-eligibility", label: "Score API Eligibility", type: "capability", x: 200, y: 220, color: "#00F0FF", details: "Calculate real-time Einstein Priority Jitter rating index." },
-    { id: "verify-provider-ownership", label: "Verify DNS Ownership", type: "capability", x: 300, y: 220, color: "#00F0FF", details: "DNS-over-HTTPS challenge validation for edge routers." },
-    { id: "mint-settlement-evidence", label: "Mint Settlement Evidence", type: "capability", x: 420, y: 220, color: "#00F0FF", details: "Anchors task completions securely to Gnomledger." },
-
-    // Canonical Systems (Y: 310)
-    { id: "sys-router", label: "Einstein Priority Router", type: "system", x: 150, y: 310, color: "#FF375F", desc: "Rust + gRPC asynchronous priority-trend scheduler." },
-    { id: "sys-ledger", label: "Gnomledger Proof Ledger", type: "system", x: 350, y: 310, color: "#FF375F", desc: "Solidity / WASM Smart Contract transaction book." }
+    ...domainNodes,
+    ...productNodes,
+    ...capabilityNodes,
+    ...systemNodes,
   ];
 
-  // Draw links with gorgeous bezier curves representing structural alignment dependencies
-  const links = [
-    // Domains to Products
-    { source: "dom-orch", target: "prod-os" },
-    { source: "dom-settle", target: "prod-escrow" },
-    { source: "dom-evid", target: "prod-escrow" },
+  // Dynamic link generation linking domain to product, product to capability, and capability to system
+  const links: { source: string; target: string; dashed?: boolean }[] = [];
 
-    // Products to Capabilities
-    { source: "prod-os", target: "govern-agent-session" },
-    { source: "prod-os", target: "score-api-eligibility" },
-    { source: "prod-escrow", target: "verify-provider-ownership" },
-    { source: "prod-escrow", target: "mint-settlement-evidence" },
+  // A. Link Domain -> Product
+  (companyGraph?.products || []).forEach(prod => {
+    const pNode = productNodes.find(pn => pn.rawId === prod.name);
+    if (pNode) {
+      const dNode = domainNodes.find(dn => dn.rawId === prod.domain);
+      if (dNode) {
+        links.push({ source: dNode.id, target: pNode.id });
+      }
+    }
+  });
 
-    // Capabilities to Systems
-    { source: "govern-agent-session", target: "sys-router" },
-    { source: "score-api-eligibility", target: "sys-router" },
-    { source: "verify-provider-ownership", target: "sys-ledger" },
-    { source: "mint-settlement-evidence", target: "sys-ledger" },
+  if (links.length === 0) {
+    (companyGraph?.domains || []).forEach(dom => {
+      const dNode = domainNodes.find(dn => dn.rawId === dom.name);
+      if (dNode && dom.products) {
+        dom.products.forEach(pName => {
+          const pNode = productNodes.find(pn => pn.rawId === pName);
+          if (pNode) {
+            links.push({ source: dNode.id, target: pNode.id });
+          }
+        });
+      }
+    });
+  }
 
-    // Inter-capability dependencies
-    { source: "score-api-eligibility", target: "govern-agent-session", dashed: true }
-  ];
+  // B. Link Product -> Capability (Heuristic mapping based on domain context or sequential distribution)
+  (capabilities || []).forEach((cap, idx) => {
+    const capNode = capabilityNodes.find(cn => cn.id === cap.id);
+    if (capNode) {
+      let matchedProd = productNodes.find(pn => {
+        const prodLower = pn.rawId.toLowerCase();
+        const capLower = cap.id.toLowerCase();
+        return prodLower.includes("os") && (capLower.includes("session") || capLower.includes("route") || capLower.includes("eligibility") || capLower.includes("govern"));
+      });
+      if (!matchedProd) {
+        matchedProd = productNodes.find(pn => {
+          const prodLower = pn.rawId.toLowerCase();
+          const capLower = cap.id.toLowerCase();
+          return prodLower.includes("escrow") && (capLower.includes("settle") || capLower.includes("evidence") || capLower.includes("dns") || capLower.includes("verify") || capLower.includes("mint"));
+        });
+      }
+      if (!matchedProd && productNodes.length > 0) {
+        matchedProd = productNodes[idx % productNodes.length];
+      }
+      if (matchedProd) {
+        links.push({ source: matchedProd.id, target: capNode.id });
+      }
+    }
+  });
+
+  // C. Link Capability -> Canonical System
+  (capabilities || []).forEach(cap => {
+    const capNode = capabilityNodes.find(cn => cn.id === cap.id);
+    if (capNode) {
+      const targetSysName = cap.canonicalServiceSystem || cap.canonicalSystem;
+      if (targetSysName) {
+        const sysNode = systemNodes.find(sn => sn.rawId.toLowerCase().includes(targetSysName.toLowerCase()) || targetSysName.toLowerCase().includes(sn.rawId.toLowerCase()));
+        if (sysNode) {
+          links.push({ source: capNode.id, target: sysNode.id });
+        } else if (systemNodes.length > 0) {
+          const fallbackSys = systemNodes.find(sn => cap.id.includes("session") || cap.id.includes("eligibility") ? sn.rawId.includes("Router") : sn.rawId.includes("Ledger"));
+          if (fallbackSys) {
+            links.push({ source: capNode.id, target: fallbackSys.id });
+          } else {
+            links.push({ source: capNode.id, target: systemNodes[0].id });
+          }
+        }
+      }
+    }
+  });
+
+  // D. Link Inter-Capability dependencies
+  (capabilities || []).forEach(cap => {
+    const capNode = capabilityNodes.find(cn => cn.id === cap.id);
+    if (capNode && cap.dependencies) {
+      cap.dependencies.forEach(depId => {
+        const depNode = capabilityNodes.find(cn => cn.id === depId);
+        if (depNode) {
+          links.push({ source: depNode.id, target: capNode.id, dashed: true });
+        }
+      });
+    }
+  });
 
   return (
     <div className="space-y-6">
