@@ -462,10 +462,14 @@ export default function App() {
   const [constitutionVersion, setConstitutionVersion] = useState("v4.02.1");
 
   // Veklom Plural Backends Status & Test Harness States
-  const [byosUrl, setByosUrl] = useState("http://localhost:8081");
-  const [cappoUrl, setCappoUrl] = useState("http://localhost:8082");
-  const [gnomeledgerUrl, setGnomeledgerUrl] = useState("http://localhost:8083");
-  const [vnpUrl, setVnpUrl] = useState("http://localhost:8084");
+  // CANONICAL — replaced from http://localhost:8081
+  const [byosUrl, setByosUrl] = useState(() => (typeof process !== "undefined" ? process.env.VEKLOM_API_URL : undefined) || "https://api.veklom.com");
+  // CANONICAL — replaced from http://localhost:8082
+  const [cappoUrl, setCappoUrl] = useState(() => (typeof process !== "undefined" ? process.env.CAPPO_URL : undefined) || "https://cappo.veklom.com");
+  // CANONICAL — replaced from http://localhost:8083
+  const [gnomeledgerUrl, setGnomeledgerUrl] = useState(() => (typeof process !== "undefined" ? process.env.GNOMELEDGER_URL : undefined) || "https://pgl.veklom.com");
+  // CANONICAL — replaced from http://localhost:8084
+  const [vnpUrl, setVnpUrl] = useState(() => (typeof process !== "undefined" ? process.env.VNP_URL : undefined) || "https://vnp.veklom.com");
   const [backendStatuses, setBackendStatuses] = useState<any[]>([]);
   const [isPingingBackends, setIsPingingBackends] = useState(false);
   const [isVerifyingSync, setIsVerifyingSync] = useState(false);
@@ -736,10 +740,14 @@ export default function App() {
     const missingServices: { name: string; port: number }[] = [];
 
     const standardServices = [
-      { id: "byos", name: "Veklom BYOS Workspace Backend", url: "http://localhost:8081", port: 8081, setter: setByosUrl },
-      { id: "cappo", name: "CAPPO Core Authorization Backend", url: "http://localhost:8082", port: 8082, setter: setCappoUrl },
-      { id: "gnomeledger", name: "Gnome Ledger Receipts Store", url: "http://localhost:8083", port: 8083, setter: setGnomeledgerUrl },
-      { id: "vnp", name: "veklom-vnp Node", url: "http://localhost:8084", port: 8084, setter: setVnpUrl }
+      // CANONICAL — replaced from http://localhost:8081
+      { id: "byos", name: "Veklom BYOS Workspace Backend", url: (typeof process !== "undefined" ? process.env.VEKLOM_API_URL : undefined) || "https://api.veklom.com", port: 8081, setter: setByosUrl },
+      // CANONICAL — replaced from http://localhost:8082
+      { id: "cappo", name: "CAPPO Core Authorization Backend", url: (typeof process !== "undefined" ? process.env.CAPPO_URL : undefined) || "https://cappo.veklom.com", port: 8082, setter: setCappoUrl },
+      // CANONICAL — replaced from http://localhost:8083
+      { id: "gnomeledger", name: "Gnome Ledger Receipts Store", url: (typeof process !== "undefined" ? process.env.GNOMELEDGER_URL : undefined) || "https://pgl.veklom.com", port: 8083, setter: setGnomeledgerUrl },
+      // CANONICAL — replaced from http://localhost:8084
+      { id: "vnp", name: "veklom-vnp Node", url: (typeof process !== "undefined" ? process.env.VNP_URL : undefined) || "https://vnp.veklom.com", port: 8084, setter: setVnpUrl }
     ];
 
     for (const service of standardServices) {
@@ -2255,7 +2263,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
               {/* Tab 2: Capability Graph */}
               {activeTab === "capabilityGraph" && (
                 <div className="animate-fadeIn">
-                  <CapabilityGraphComponent companyGraph={result.companyGraph} capabilities={result.capabilities} />
+                  <CapabilityGraphComponent companyGraph={result.companyGraph} capabilities={result.capabilities} killedCaps={killedCaps} />
                 </div>
               )}
 
@@ -3753,6 +3761,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     constitutionState={constitutionState}
                     blueprintHash={result.hash}
                     packets={result?.agentPackets}
+                    blueprint={result}
                   />
                 </div>
               )}

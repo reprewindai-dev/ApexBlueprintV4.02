@@ -5,11 +5,14 @@ import { Globe, Activity, ChevronRight, HelpCircle, Layers, Shield, Check, GitBr
 interface CapabilityGraphProps {
   companyGraph: CompanyGraph;
   capabilities: Capability[];
+  killedCaps?: Record<string, boolean>;
 }
 
-export default function CapabilityGraphComponent({ companyGraph, capabilities }: CapabilityGraphProps) {
+export default function CapabilityGraphComponent({ companyGraph, capabilities, killedCaps }: CapabilityGraphProps) {
   const [selectedNode, setSelectedNode] = useState<any>(null);
   const [activeSubTab, setActiveSubTab] = useState<"def" | "surf" | "owners" | "jurisdiction" | "verification">("def");
+  const [visualizeMode, setVisualizeMode] = useState<"type" | "status" | "cost" | "verification">("type");
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
   // Dynamic coordinate generation for nodes based on compiled blueprint
   const viewBoxWidth = 500;
@@ -47,7 +50,7 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities }:
       type: "product",
       x,
       y: 120,
-      color: "#FFD60A",
+      color: "#0A84FF",
       desc: prod.businessValue || `Product offering: ${prod.name}`,
     };
   });
@@ -183,25 +186,139 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities }:
     }
   });
 
+  // Dynamic node color and badge calculation helper
+  const getNodeVisuals = (node: any) => {
+    if (node.type !== "capability") {
+      return { color: node.color, extraLabel: "" };
+    }
+
+    if (killedCaps && killedCaps[node.id]) {
+      return { color: "#EF4444", extraLabel: "HALTED" };
+    }
+
+    const cap = capabilities.find(c => c.id === node.id);
+    if (!cap) return { color: node.color, extraLabel: "" };
+
+    let color = node.color;
+    let extraLabel = "";
+
+    if (visualizeMode === "status") {
+      const state = cap.maturityState?.toLowerCase() || "";
+      if (state.includes("production")) {
+        color = "#10B981"; // Emerald green
+        extraLabel = "PROD";
+      } else if (state.includes("simulated")) {
+        color = "#F59E0B"; // Amber orange
+        extraLabel = "SIM";
+      } else {
+        color = "#3B82F6"; // Blue
+        extraLabel = "CONCEPT";
+      }
+    } else if (visualizeMode === "cost") {
+      const price = cap.pricingModel?.priceFloor || 0;
+      if (price === 0) {
+        color = "#10B981"; // Emerald free
+        extraLabel = "FREE";
+      } else if (price < 0.02) {
+        color = "#60A5FA"; // Cyan/blue
+        extraLabel = `$${price}`;
+      } else if (price < 0.1) {
+        color = "#F59E0B"; // Amber
+        extraLabel = `$${price}`;
+      } else {
+        color = "#EF4444"; // Red
+        extraLabel = `$${price}`;
+      }
+    } else if (visualizeMode === "verification") {
+      const state = cap.verificationState?.toLowerCase() || "";
+      if (state.includes("verified")) {
+        color = "#10B981"; // Emerald
+        extraLabel = "SAFE";
+      } else if (state.includes("drift")) {
+        color = "#EF4444"; // Red
+        extraLabel = "DRIFT";
+      } else {
+        color = "#6B7280"; // Slate gray
+        extraLabel = "UNVERIFIED";
+      }
+    }
+
+    return { color, extraLabel };
+  };
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-2 border-b border-[#222] pb-3">
-        <Globe size={18} className="text-[#00F0FF]" />
-        <h3 className="text-xl font-black text-white uppercase tracking-tight">Interactive Capability Network Graph</h3>
+      <div className="flex items-center justify-between border-b border-[#222] pb-3">
+        <div className="flex items-center gap-2">
+          <Globe size={18} className="text-[#00F0FF]" />
+          <h3 className="text-xl font-black text-white uppercase tracking-tight">Interactive Capability Network Graph</h3>
+        </div>
+        <span className="text-[9px] bg-emerald-500/10 text-emerald-400 px-2 py-0.5 font-bold border border-emerald-500/30 uppercase tracking-widest">
+          Dynamic state trace active
+        </span>
       </div>
+
       <p className="text-xs font-mono text-[#666] uppercase leading-relaxed max-w-4xl">
-        Click any node to focus on its specific boundary layers, interfaces, and alignment rules. Linear paths indicate capability dependencies and systems mapping.
+        Rendered from the latest blueprint compile. Select an overlay filter to project unit cost, implementation maturity, or ledger audit status onto the physical nodes. Hover any node to trace downstream dependency pathways.
       </p>
+
+      {/* Dynamic Graph Visualizer Controls */}
+      <div className="flex flex-wrap items-center gap-3 bg-[#0A0A0A] border-2 border-[#222] p-3 text-xs font-mono uppercase">
+        <span className="text-[#666] font-black text-[10px] tracking-wider block">[ Visualization Overlay filter ]</span>
+        <div className="flex flex-wrap gap-1.5">
+          {[
+            { id: "type", label: "Capability Category / Type", desc: "Color by domain, product, capability, or system" },
+            { id: "status", label: "Implementation Status", desc: "Color by maturity (Production vs Simulated vs Concept)" },
+            { id: "cost", label: "Unit Cost / Price", desc: "Highlight by unit pricing tier" },
+            { id: "verification", label: "Verification Safety", desc: "Color by certified verification state" }
+          ].map(opt => (
+            <button
+              key={opt.id}
+              onClick={() => setVisualizeMode(opt.id as any)}
+              className={`px-3 py-1.5 border font-bold transition-all cursor-pointer text-[10px] uppercase tracking-wider ${
+                visualizeMode === opt.id
+                  ? "bg-[#00F0FF]/15 border-[#00F0FF] text-[#00F0FF] font-black"
+                  : "bg-black border-[#222] text-gray-400 hover:text-white hover:border-[#444]"
+              }`}
+              title={opt.desc}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Interactive SVG Canvas */}
         <div className="lg:col-span-8 p-4 bg-[#050505] border-2 border-[#1E293B] relative rounded-none overflow-hidden h-[400px]">
-          <svg className="w-full h-full" viewBox="0 0 500 360">
-            {/* Grid background */}
+          <svg className="w-full h-full" viewBox="0 0 500 380">
+            {/* Grid background & arrow markers */}
             <defs>
               <pattern id="graph-grid" width="20" height="20" patternUnits="userSpaceOnUse">
                 <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#111" strokeWidth="1" />
               </pattern>
+              <marker
+                id="arrow"
+                viewBox="0 0 10 10"
+                refX="14"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto-start-reverse"
+              >
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+              </marker>
+              <marker
+                id="arrow-dashed"
+                viewBox="0 0 10 10"
+                refX="14"
+                refY="5"
+                markerWidth="5"
+                markerHeight="5"
+                orient="auto-start-reverse"
+              >
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#FFD60A" />
+              </marker>
             </defs>
             <rect width="100%" height="100%" fill="url(#graph-grid)" />
 
@@ -215,19 +332,32 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities }:
               const midY = (src.y + tgt.y) / 2;
               const pathData = `M ${src.x} ${src.y} C ${src.x} ${midY}, ${tgt.x} ${midY}, ${tgt.x} ${tgt.y}`;
 
+              const isHoveredNetwork = hoveredNode 
+                ? (link.source === hoveredNode || link.target === hoveredNode)
+                : false;
+              const opacity = hoveredNode ? (isHoveredNetwork ? "1" : "0.15") : "0.5";
+              const isHaltedLink = killedCaps && (killedCaps[link.source] || killedCaps[link.target]);
+              const strokeColor = isHoveredNetwork 
+                ? "#00F0FF" 
+                : (isHaltedLink ? "#EF4444" : (link.dashed ? "#FFD60A" : "#333"));
+              const strokeWidth = isHoveredNetwork 
+                ? "2.5" 
+                : (isHaltedLink ? "2.0" : (link.dashed ? "1.5" : "1.5"));
+
               return (
-                <g key={i}>
+                <g key={i} style={{ opacity, transition: "opacity 0.2s" }}>
                   <path
                     d={pathData}
                     fill="none"
-                    stroke={link.dashed ? "#00F0FF" : "#222"}
-                    strokeWidth={link.dashed ? "1.5" : "2"}
+                    stroke={strokeColor}
+                    strokeWidth={strokeWidth}
                     strokeDasharray={link.dashed ? "4 4" : "0"}
                     className={link.dashed ? "animate-[dash_2s_linear_infinite]" : ""}
+                    markerEnd={link.dashed ? "url(#arrow-dashed)" : "url(#arrow)"}
                   />
                   {/* Small animated signal bubble on links */}
-                  <circle r="2" fill="#00F0FF" className="glow-cyan">
-                    <animateMotion dur="3s" repeatCount="indefinite" path={pathData} />
+                  <circle r={isHoveredNetwork ? "3" : "2"} fill={isHoveredNetwork ? "#FFD60A" : "#00F0FF"} className="glow-cyan">
+                    <animateMotion dur={isHoveredNetwork ? "1.5s" : "3s"} repeatCount="indefinite" path={pathData} />
                   </circle>
                 </g>
               );
@@ -236,17 +366,28 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities }:
             {/* Render Nodes */}
             {nodes.map((node) => {
               const isSelected = selectedNode?.id === node.id;
+              const isHovered = hoveredNode === node.id;
+              const isRelated = hoveredNode 
+                ? (hoveredNode === node.id || links.some(l => (l.source === hoveredNode && l.target === node.id) || (l.target === hoveredNode && l.source === node.id)))
+                : false;
+              
+              const opacity = hoveredNode ? (isRelated ? "1" : "0.3") : "1";
+              const { color, extraLabel } = getNodeVisuals(node);
+
               return (
                 <g
                   key={node.id}
                   transform={`translate(${node.x}, ${node.y})`}
                   onClick={() => { setSelectedNode(node); setActiveSubTab("def"); }}
+                  onMouseEnter={() => setHoveredNode(node.id)}
+                  onMouseLeave={() => setHoveredNode(null)}
                   className="cursor-pointer group"
+                  style={{ opacity, transition: "opacity 0.2s" }}
                 >
                   <circle
                     r={node.type === "domain" ? "12" : node.type === "product" ? "10" : "8"}
-                    fill={node.color}
-                    stroke={isSelected ? "#FFF" : "#050505"}
+                    fill={color}
+                    stroke={isSelected ? "#FFF" : (isHovered ? "#00F0FF" : "#050505")}
                     strokeWidth="2"
                     className="group-hover:scale-125 transition-transform duration-200"
                   />
@@ -254,16 +395,16 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities }:
                   <circle
                     r={node.type === "domain" ? "16" : "12"}
                     fill="none"
-                    stroke={node.color}
+                    stroke={color}
                     strokeWidth="1"
-                    opacity={isSelected ? "0.8" : "0.2"}
-                    className="animate-ping"
+                    opacity={isSelected || isHovered ? "0.8" : "0.2"}
+                    className={isSelected || isHovered ? "animate-ping" : ""}
                     style={{ animationDuration: "3s" }}
                   />
                   <text
                     y="-16"
                     textAnchor="middle"
-                    fill={isSelected ? "#00F0FF" : "#E0E0E0"}
+                    fill={isSelected || isHovered ? "#00F0FF" : "#E0E0E0"}
                     fontSize="7.5"
                     fontFamily="monospace"
                     fontWeight="bold"
@@ -271,16 +412,70 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities }:
                   >
                     {node.label}
                   </text>
+
+                  {/* Draw extra dynamic label/badge if enabled and present */}
+                  {extraLabel && (
+                    <g transform="translate(0, 16)">
+                      <rect
+                        x="-24"
+                        y="-6"
+                        width="48"
+                        height="11"
+                        fill="#050505"
+                        stroke={color}
+                        strokeWidth="0.5"
+                        rx="1"
+                      />
+                      <text
+                        textAnchor="middle"
+                        fill={color}
+                        fontSize="5.5"
+                        fontFamily="monospace"
+                        fontWeight="black"
+                        y="1"
+                      >
+                        {extraLabel}
+                      </text>
+                    </g>
+                  )}
                 </g>
               );
             })}
           </svg>
 
-          <div className="absolute bottom-3 left-3 flex gap-4 text-[8px] font-mono uppercase text-[#444]">
-            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#BF5AF2] block rounded-full" /> Domain</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#0A84FF] block rounded-full" /> Product</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#00F0FF] block rounded-full" /> Capability</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#FF375F] block rounded-full" /> system</span>
+          {/* Dynamic Map Legend based on visual Mode */}
+          <div className="absolute bottom-3 left-3 right-3 flex justify-between text-[8px] font-mono uppercase text-[#666]">
+            {visualizeMode === "type" && (
+              <div className="flex gap-4">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#BF5AF2] block rounded-full" /> Domain</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#0A84FF] block rounded-full" /> Product</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#00F0FF] block rounded-full" /> Capability</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#FF375F] block rounded-full" /> System</span>
+              </div>
+            )}
+            {visualizeMode === "status" && (
+              <div className="flex gap-4">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#10B981] block rounded-full" /> Sovereign Production</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#F59E0B] block rounded-full" /> Partially Simulated</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#3B82F6] block rounded-full" /> Conceptual / Draft</span>
+              </div>
+            )}
+            {visualizeMode === "cost" && (
+              <div className="flex gap-4">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#10B981] block rounded-full" /> Free ($0.00)</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#60A5FA] block rounded-full" /> Low (&lt; $0.02)</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#F59E0B] block rounded-full" /> Mid (&lt; $0.10)</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#EF4444] block rounded-full" /> High (&ge; $0.10)</span>
+              </div>
+            )}
+            {visualizeMode === "verification" && (
+              <div className="flex gap-4">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#10B981] block rounded-full" /> Verified Safety</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#6B7280] block rounded-full" /> Unverified Design</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-[#EF4444] block rounded-full" /> Drift Detected</span>
+              </div>
+            )}
+            <span className="text-[#555] hidden sm:inline">Hover a node to trace lineage pathways</span>
           </div>
         </div>
 
