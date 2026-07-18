@@ -249,9 +249,9 @@ export const AgentPackets: React.FC<AgentPacketsProps> = ({
     }
   ];
 
-  const packetsToUse = compiledPackets && compiledPackets.length > 0 ? compiledPackets : defaultPackets;
+  const packetsToUse = compiledPackets && compiledPackets.length > 0 ? compiledPackets : [];
   const [activePacketId, setActivePacketId] = useState<string | null>(null);
-  const selectedPacket = packetsToUse.find(p => p.id === activePacketId) || packetsToUse[0] || defaultPackets[0];
+  const selectedPacket = packetsToUse.find(p => p.id === activePacketId) || packetsToUse[0];
 
   const getPreviewContent = (target: "agents-md" | "claude-md" | "spec-kit-json") => {
     const title = blueprint?.title || "Apex Sovereign Platform";
@@ -466,6 +466,35 @@ ${pkt.rollbackNotes}
       setTimeout(() => setCopiedId(null), 2000);
     });
   };
+
+  if (packetsToUse.length === 0) {
+    return (
+      <div className="space-y-6 animate-fadeIn text-[#E0E0E0]">
+        {/* Header */}
+        <div className="border-b border-[#222] pb-4">
+          <div className="flex items-center gap-2">
+            <Cpu className="text-[#00F0FF]" size={18} />
+            <h3 className="text-xl font-black text-white uppercase tracking-tight">Agent Execution Packets</h3>
+          </div>
+          <p className="text-xs font-mono text-[#666] uppercase mt-1">
+            Deterministic work orders designed to hand off directly to coding agents (Cursor, Windsurf, Anti-Gravity)
+          </p>
+        </div>
+
+        <div className="border-2 border-dashed border-red-500/20 p-12 text-center rounded-none font-mono bg-red-950/5">
+          <div className="max-w-md mx-auto space-y-4">
+            <div className="w-12 h-12 rounded-full border border-red-500/30 bg-red-500/5 flex items-center justify-center mx-auto text-red-500">
+              <Cpu size={24} />
+            </div>
+            <h4 className="text-sm font-black text-white uppercase tracking-tight">NO_COMPILED_AGENT_PACKETS</h4>
+            <p className="text-[11px] text-gray-500 normal-case leading-relaxed font-sans">
+              No plan-derived agent packets exist. Ensure you have formulated a valid capability and compiled a corresponding work order plan.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fadeIn text-[#E0E0E0]">

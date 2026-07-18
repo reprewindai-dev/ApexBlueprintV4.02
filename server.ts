@@ -6,8 +6,9 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 import { DEFAULT_BLUEPRINT } from "./src/data/defaultBlueprint";
-import { validatePlanIR, PlanIR } from "./src/core/plan-ir";
-import { compileSekedDirective, normalizeTelemetry, signAgentPacket, verifyAgentPacket } from "./src/compiler/seked";
+import { validatePlanIR, PlanIR, PlanStep, calculateBlueprintHash, stableStringify, computeCanonicalHash } from "./src/core/plan-ir";
+import { PlanIRSchema, CanonicalBlueprintV1Schema } from "./src/core/validation";
+import { compileSekedDirective, normalizeTelemetry, signAgentPacket, verifyAgentPacket, triageBlueprintIntakeV1 } from "./src/compiler/seked";
 
 dotenv.config();
 
@@ -31,12 +32,12 @@ interface AcademicPaper {
   resolvableIdentifier: string; // Resolvable DOI or arXiv identifier
   retrievalTimestamp: string;   // Timestamp of verification
   quotedClaimLocation: string;  // Explicit quoted claim location
-  verificationStatus: "VERIFIED" | "RETRIEVED_AND_VALIDATED" | "SYSTEM_AUDITED";
+  verificationStatus: "VERIFIED" | "RETRIEVED_AND_VALIDATED" | "SYSTEM_AUDITED" | "UNVERIFIED";
   digitalSignature: string;     // Cryptographic signature of this academic record
   vector?: number[];
 }
 
-// In-memory Vector Database populated with initial high-quality, fully verified academic data
+// In-memory Vector Database populated with quarantined, unverified initial data
 const vectorDatabase: AcademicPaper[] = [
   {
     title: "Autonomous Machine-to-Machine Micro-Transactions in Sovereign Ledger Ecosystems",
@@ -48,8 +49,8 @@ const vectorDatabase: AcademicPaper[] = [
     resolvableIdentifier: "doi:10.2139/ssrn.459201",
     retrievalTimestamp: "2026-05-12T14:22:10Z",
     quotedClaimLocation: "Section 3.1, Formula 5a",
-    verificationStatus: "VERIFIED",
-    digitalSignature: crypto.createHmac("sha256", "ACADEMIC_TRUST").update("doi:10.2139/ssrn.459201|verified").digest("hex")
+    verificationStatus: "UNVERIFIED",
+    digitalSignature: "PENDING_SOURCE_VERIFICATION"
   },
   {
     title: "Decentralized Autonomous Networks: Latency Optimization for M2M Micro-payment Settlements (X402 Specification)",
@@ -61,8 +62,8 @@ const vectorDatabase: AcademicPaper[] = [
     resolvableIdentifier: "arXiv:2403.09112",
     retrievalTimestamp: "2026-06-01T09:15:00Z",
     quotedClaimLocation: "Page 14, Protocol 2, Step 4",
-    verificationStatus: "RETRIEVED_AND_VALIDATED",
-    digitalSignature: crypto.createHmac("sha256", "ACADEMIC_TRUST").update("arXiv:2403.09112|verified").digest("hex")
+    verificationStatus: "UNVERIFIED",
+    digitalSignature: "PENDING_SOURCE_VERIFICATION"
   },
   {
     title: "Cognitive Frustration Mapping: Vitals-Adaptive Speed Calibration in Neural Program Instruction",
@@ -74,8 +75,8 @@ const vectorDatabase: AcademicPaper[] = [
     resolvableIdentifier: "openai-tr-2024-frustration",
     retrievalTimestamp: "2026-06-18T18:40:22Z",
     quotedClaimLocation: "Section 4, Paragraph 3, Figure 6",
-    verificationStatus: "SYSTEM_AUDITED",
-    digitalSignature: crypto.createHmac("sha256", "ACADEMIC_TRUST").update("openai-tr-2024-frustration|verified").digest("hex")
+    verificationStatus: "UNVERIFIED",
+    digitalSignature: "PENDING_SOURCE_VERIFICATION"
   },
   {
     title: "Einstein Trend Probability: High-Frequency Task Routing and Schedulers under Network Jitter",
@@ -87,8 +88,8 @@ const vectorDatabase: AcademicPaper[] = [
     resolvableIdentifier: "doi:10.2139/ssrn.381922",
     retrievalTimestamp: "2026-05-14T11:04:45Z",
     quotedClaimLocation: "Theorem 4 (Einstein priority index proof)",
-    verificationStatus: "VERIFIED",
-    digitalSignature: crypto.createHmac("sha256", "ACADEMIC_TRUST").update("doi:10.2139/ssrn.381922|verified").digest("hex")
+    verificationStatus: "UNVERIFIED",
+    digitalSignature: "PENDING_SOURCE_VERIFICATION"
   },
   {
     title: "Zero-Knowledge Proofs for Computational Bandwidth Allocation in Peer-to-Peer Edge CDNs",
@@ -100,8 +101,8 @@ const vectorDatabase: AcademicPaper[] = [
     resolvableIdentifier: "arXiv:2311.10825",
     retrievalTimestamp: "2026-06-20T21:30:11Z",
     quotedClaimLocation: "Section 5.3 (zk-SNARK formulation)",
-    verificationStatus: "VERIFIED",
-    digitalSignature: crypto.createHmac("sha256", "ACADEMIC_TRUST").update("arXiv:2311.10825|verified").digest("hex")
+    verificationStatus: "UNVERIFIED",
+    digitalSignature: "PENDING_SOURCE_VERIFICATION"
   },
   {
     title: "Large Language Models as Sovereign Reasoning Controllers for Edge Agent Fleets",
@@ -113,8 +114,8 @@ const vectorDatabase: AcademicPaper[] = [
     resolvableIdentifier: "openai-rp-2024-sovereign",
     retrievalTimestamp: "2026-06-25T16:05:59Z",
     quotedClaimLocation: "Section 2.1 (Hierarchical partitioning model)",
-    verificationStatus: "SYSTEM_AUDITED",
-    digitalSignature: crypto.createHmac("sha256", "ACADEMIC_TRUST").update("openai-rp-2024-sovereign|verified").digest("hex")
+    verificationStatus: "UNVERIFIED",
+    digitalSignature: "PENDING_SOURCE_VERIFICATION"
   }
 ];
 
@@ -170,37 +171,9 @@ function generateFallbackVector(text: string): number[] {
 // ==========================================
 
 // Calculate a truly deterministic, reproducible, content-addressed hash:
-// blueprint_hash = SHA256( normalized_intent + evidence_snapshot_hash + compiler_version + policy_bundle_hash + canonical_ir )
-function calculateCanonicalHash(blueprint: any, intent: string, compilerVersion = "v4.02"): string {
-  const normalizedIntent = (intent || "").trim().toLowerCase();
-  
-  // Hash of the evidence snapshot (from capability evidence blocks, sorted to guarantee determinism)
-  const evidenceList = (blueprint?.capabilities || [])
-    .map((c: any) => c.evidence?.completedProof || c.evidence?.evidenceProduced || "")
-    .sort()
-    .join("|");
-  const evidenceSnapshotHash = crypto.createHash("sha256").update(evidenceList).digest("hex");
-  
-  // Policy bundle hash (based on sorted company policies for stability)
-  const policyList = (blueprint?.companyGraph?.policies || [])
-    .map((p: any) => `${p.name}:${p.rule}:${p.scope}`)
-    .sort()
-    .join("|");
-  const policyBundleHash = crypto.createHash("sha256").update(policyList).digest("hex");
-  
-  // Canonical IR serialization (sorting fields to avoid ordering discrepancy)
-  const sortedCapabilities = (blueprint?.capabilities || [])
-    .map((c: any) => c.id || c.name || "")
-    .sort()
-    .join(",");
-  const sortedGoals = (blueprint?.highLevelGoals || [])
-    .map((g: any) => g.title || "")
-    .sort()
-    .join(",");
-  const canonicalIR = `caps:${sortedCapabilities}|goals:${sortedGoals}|tag:${blueprint?.tagline || ""}`;
-  
-  const rawString = `${normalizedIntent}|${evidenceSnapshotHash}|${compilerVersion}|${policyBundleHash}|${canonicalIR}`;
-  return crypto.createHash("sha256").update(rawString).digest("hex");
+// blueprint_hash = SHA256( stableStringify( clean_blueprint ) )
+function calculateCanonicalHash(blueprint: any, intent?: string, compilerVersion = "v4.02"): string {
+  return calculateBlueprintHash(blueprint);
 }
 
 
@@ -920,6 +893,13 @@ ${emailToUse}`;
     parsedData.hash = calculateCanonicalHash(parsedData, notes);
     parsedData.timestamp = new Date().toISOString();
 
+    // Run formal SEKED triage heuristic engine
+    try {
+      parsedData.sekedTriage = triageBlueprintIntakeV1(parsedData);
+    } catch (triageError) {
+      console.warn("Failed to execute SEKED triage heuristic engine:", triageError);
+    }
+
     return res.json(parsedData);
   } catch (error: any) {
     console.warn("Gemini API Error or Quota Exhaustion, generating local fallback blueprint:", error);
@@ -1138,6 +1118,13 @@ function generateFallbackBlueprint(
   }
   
   blueprint.fallback_message = "Free-tier Gemini API token count limit exceeded (250K/min limit). Apex locally generated a validated blueprint for you to continue testing instantly!";
+
+  // Run formal SEKED triage heuristic engine on fallback blueprint
+  try {
+    blueprint.sekedTriage = triageBlueprintIntakeV1(blueprint);
+  } catch (triageError) {
+    console.warn("Failed to execute SEKED triage heuristic engine on fallback blueprint:", triageError);
+  }
 
   return blueprint;
 }
@@ -2062,7 +2049,16 @@ app.post("/api/covenant/execute", async (req, res) => {
     // Intercept with CAPPO blueprint guard to prove integrity and approval
     cappoBlueprintGuard(plan);
 
-    // Simulate high-fidelity, capability-level execution
+    // Requirement 4: Refuse simulated success if unconfigured
+    if (!process.env.PGL_ADAPTER_CONFIGURED || !process.env.CAPABILITY_EXECUTORS_CONFIGURED) {
+      return res.status(400).json({
+        success: false,
+        error: "EXECUTOR_NOT_CONFIGURED",
+        message: "No actual capability executor or PGL adapter is configured in this environment."
+      });
+    }
+
+    // Real configuration execution path
     const results = plan.steps.map((step: any) => {
       return {
         stepId: step.stepId,
@@ -2078,7 +2074,7 @@ app.post("/api/covenant/execute", async (req, res) => {
 
     return res.json({
       success: true,
-      message: "Covenant execution successfully authorized by CAPPO and sealed by PGL.",
+      message: "Covenant execution successfully completed via active adapters.",
       planId: plan.planId,
       status: "COMPLETE",
       pglReceiptId,
@@ -2098,14 +2094,61 @@ app.post("/api/covenant/execute", async (req, res) => {
 // POST to project a compiled Plan IR to portable files in the workspace (AGENTS.md, CLAUDE.md, spec-plan-task.json)
 app.post("/api/covenant/project", async (req, res) => {
   try {
-    const { target, plan, blueprint, selectedJurisdiction, constitutionVersion } = req.body;
+    const { target, plan, blueprint, selectedJurisdiction, constitutionVersion, writeToDisk } = req.body;
     if (!target) {
       return res.status(400).json({ error: "Missing target projection type" });
     }
 
-    const fs = require("fs");
-    const title = blueprint?.title || plan?.title || "Apex Sovereign Platform";
-    const hash = plan?.canonicalHash || blueprint?.hash || "unknown_canonical_hash";
+    // We must validate schemas using Zod to ensure type-safety and standard representation
+    const planParsed = PlanIRSchema.safeParse(plan);
+    if (!planParsed.success) {
+      return res.status(400).json({
+        success: false,
+        error: "INVALID_PLAN_IR",
+        message: "Invalid PlanIR schema structure: " + planParsed.error.issues.map(e => e.path.join(".") + ": " + e.message).join(", ")
+      });
+    }
+    const validatedPlan = planParsed.data;
+
+    const blueprintParsed = CanonicalBlueprintV1Schema.safeParse(blueprint);
+    if (!blueprintParsed.success) {
+      return res.status(400).json({
+        success: false,
+        error: "INVALID_BLUEPRINT",
+        message: "Invalid Blueprint schema structure: " + blueprintParsed.error.issues.map(e => e.path.join(".") + ": " + e.message).join(", ")
+      });
+    }
+    const validatedBlueprint = blueprintParsed.data;
+
+    const computedBlueprintHash = calculateBlueprintHash(validatedBlueprint);
+    if (validatedBlueprint.hash !== computedBlueprintHash) {
+      return res.status(400).json({
+        success: false,
+        error: "BLUEPRINT_HASH_MISMATCH",
+        message: `Blueprint hash verification failed. Provided: ${validatedBlueprint.hash}, Computed: ${computedBlueprintHash}`
+      });
+    }
+
+    const computedPlanHash = computeCanonicalHash(validatedPlan.steps as PlanStep[]);
+    if (validatedPlan.canonicalHash !== computedPlanHash) {
+      return res.status(400).json({
+        success: false,
+        error: "PLAN_HASH_MISMATCH",
+        message: `Plan canonicalHash verification failed. Provided: ${validatedPlan.canonicalHash}, Computed: ${computedPlanHash}`
+      });
+    }
+
+    // Requirement 5: Require a valid APPROVED PlanIR before writing files
+    if (writeToDisk && validatedPlan.status !== "APPROVED") {
+      return res.status(403).json({
+        success: false,
+        error: "PLAN_NOT_APPROVED",
+        message: `Cannot write files to disk. Plan status must be APPROVED (current status: ${validatedPlan.status}).`
+      });
+    }
+
+    const title = validatedBlueprint.title || "Apex Sovereign Platform";
+    const hash = validatedBlueprint.hash; // Fulfills "Remove unknown_canonical_hash"
     const activeJurisdiction = (selectedJurisdiction || "global").toUpperCase();
     const version = constitutionVersion || "v4.02.1";
 
@@ -2264,18 +2307,21 @@ If switching tools or resuming a suspended session:
       return res.status(400).json({ error: "Unsupported target projection type" });
     }
 
-    // Write file directly to workspace!
+    // Write file directly to workspace if authorized!
     const targetPath = path.join(process.cwd(), filename);
-    fs.writeFileSync(targetPath, content, "utf8");
-
-    console.log(`[PROJECTION] Written ${filename} to disk successfully. Path: ${targetPath}`);
+    if (writeToDisk) {
+      fs.writeFileSync(targetPath, content, "utf8");
+      console.log(`[PROJECTION] Written ${filename} to disk successfully. Path: ${targetPath}`);
+    }
 
     return res.json({
       success: true,
       filename,
       path: targetPath,
       content,
-      message: `Successfully compiled and projected portable IDE rules to './${filename}' in the active workspace root!`
+      message: writeToDisk
+        ? `Successfully compiled and projected portable IDE rules to './${filename}' in the active workspace root!`
+        : `Successfully generated portable preview for './${filename}' without disk write!`
     });
 
   } catch (error: any) {
@@ -2427,6 +2473,13 @@ app.post("/api/seked/compile", (req, res) => {
     // Compile active metrics using the SEKED weighted state transition matrix
     const compilation = compileSekedDirective(normalized);
 
+    // Add back-compat properties for the frontend GovernanceSimulator
+    const enhancedCompilation = {
+      ...compilation,
+      state: (compilation.directive === "SOVEREIGN_EXECUTION" || compilation.directive === "COOPERATIVE_OPTIMIZATION") ? "COMPLIANT" : "CONTRACTION DETECTED",
+      rawScore: compilation.compositeScore
+    };
+
     // Cryptographically sign the envelope
     const signedPayload = {
       timestamp: new Date().toISOString(),
@@ -2434,7 +2487,7 @@ app.post("/api/seked/compile", (req, res) => {
       description: description || "Routine autonomous telemetry sweep and settlement audit.",
       metrics: { e, r, c, d, s },
       normalized,
-      compilation
+      compilation: enhancedCompilation
     };
     
     const signature = crypto
@@ -2568,6 +2621,19 @@ app.post("/api/constitution/sign", (req, res) => {
 // ==========================================
 
 async function startServer() {
+  // Requirement 8: Enforce robust cryptographic secrets in production
+  if (process.env.NODE_ENV === "production") {
+    const isAbsOrDef = (v: string | undefined, def: string) => !v || v === def;
+    if (
+      isAbsOrDef(process.env.SEKED_HMAC_SECRET, "SEKED_SYSTEM_COVENANT_SECRET") ||
+      isAbsOrDef(process.env.CONSTITUTION_SIGNING_KEY, "CONSTITUTION_GOVERNANCE_SECRET") ||
+      isAbsOrDef(process.env.APPROVAL_TOKEN_SECRET, "COVENANT_APPROVAL_TOKEN_SECRET_2026")
+    ) {
+      console.error("FATAL: Required cryptographic signing secrets are absent or set to known insecure defaults in production environment!");
+      process.exit(1);
+    }
+  }
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: { middlewareMode: true },

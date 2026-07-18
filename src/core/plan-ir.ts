@@ -129,14 +129,38 @@ function sha256(ascii: string): string {
   return result;
 }
 
+export function stableStringify(val: any): string {
+  if (val === null) return "null";
+  if (val === undefined) return "undefined";
+  if (Array.isArray(val)) {
+    return "[" + val.map(item => stableStringify(item)).join(",") + "]";
+  }
+  if (typeof val === "object") {
+    const keys = Object.keys(val).sort();
+    return "{" + keys.map(k => `${JSON.stringify(k)}:${stableStringify(val[k])}`).join(",") + "}";
+  }
+  return JSON.stringify(val);
+}
+
+export function calculateBlueprintHash(blueprint: any): string {
+  if (!blueprint) return "";
+  const clean = JSON.parse(JSON.stringify(blueprint));
+  delete clean.hash;
+  delete clean.timestamp;
+  delete clean.source;
+  delete clean.quota_fallback;
+  delete clean.fallback_message;
+  delete clean.sekedTriage;
+  return sha256(stableStringify(clean));
+}
+
 export function computeCanonicalHash(steps: PlanStep[]): string {
-  // Deterministic: sort by sequence, stringify with sorted keys
-  const canonical = JSON.stringify(
-    [...steps].sort((a, b) => a.sequence - b.sequence),
-    Object.keys(steps[0] ?? {}).sort()
-  );
+  const sortedSteps = [...steps].sort((a, b) => a.sequence - b.sequence);
+  const canonical = stableStringify(sortedSteps);
   return sha256(canonical);
 }
+
+export { sha256 };
 
 export function validatePlanIR(plan: PlanIR): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
