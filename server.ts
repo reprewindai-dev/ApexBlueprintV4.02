@@ -12,11 +12,15 @@ import { verifyAndValidateApprovalToken, verifyTokenForPlan } from "./src/core/t
 import { SEKED_HMAC_SECRET } from "./src/core/config";
 import { PlanIRSchema, CanonicalBlueprintV1Schema } from "./src/core/validation";
 import { compileSekedDirective, normalizeTelemetry, signAgentPacket, verifyAgentPacket, triageBlueprintIntakeV1 } from "./src/compiler/seked";
+import { callVeklomChat, checkVeklomHealth } from "./src/veklom-client";
+import { ApexWorkerRuntime } from "./src/core/apex-worker";
+import { z } from "zod";
 
 dotenv.config();
 
 export const app = express();
 const PORT = 3000;
+export const apexWorker = new ApexWorkerRuntime();
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
@@ -295,6 +299,73 @@ async function callVeklom(params: {
 // ==========================================
 // API ROUTES
 // ==========================================
+
+app.get("/health", async (_req, res) => {
+  const dependency = await checkVeklomHealth();
+  const worker = await apexWorker.snapshot();
+  res.status(dependency.reachable ? 200 : 503).json({
+    status: dependency.reachable ? "healthy" : "degraded",
+    service: "apex-blueprint",
+    veklom: dependency,
+    worker,
+  });
+});
+
+app.get("/api/veklom/health", async (_req, res) => {
+  const dependency = await checkVeklomHealth();
+  res.status(dependency.reachable ? 200 : 503).json(dependency);
+});
+
+// ==========================================
+// APEX TRUST-SPINE SPECIALIST WORKER
+// ==========================================
+
+const ApexTaskRequestSchema = z.object({
+  kind: z.enum(["blueprint.validate", "seked.compile", "veklom.health", "capability.execute"]),
+  payload: z.record(z.string(), z.unknown()),
+  maxAttempts: z.number().int().min(1).max(10).optional(),
+});
+
+function requireApexWorkerKey(req: express.Request, res: express.Response): boolean {
+  const configuredKey = process.env.APEX_WORKER_API_KEY;
+  if (process.env.NODE_ENV !== "production") return true;
+  if (!configuredKey || req.header("x-apex-worker-key") !== configuredKey) {
+    res.status(401).json({ error: "APEX_WORKER_UNAUTHORIZED" });
+    return false;
+  }
+  return true;
+}
+
+app.get("/api/apex/worker/status", async (_req, res) => {
+  res.json(await apexWorker.snapshot());
+});
+
+app.post("/api/apex/worker/tasks", async (req, res) => {
+  if (!requireApexWorkerKey(req, res)) return;
+  const parsed = ApexTaskRequestSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "INVALID_APEX_TASK", details: parsed.error.issues });
+  }
+  try {
+    const task = await apexWorker.enqueue(parsed.data.kind, parsed.data.payload, parsed.data.maxAttempts);
+    return res.status(202).json({ accepted: true, task });
+  } catch (error) {
+    return res.status(400).json({ error: error instanceof Error ? error.message : "Failed to enqueue Apex task." });
+  }
+});
+
+app.get("/api/apex/worker/tasks/:taskId", async (req, res) => {
+  const task = await apexWorker.get(req.params.taskId);
+  if (!task) return res.status(404).json({ error: "APEX_TASK_NOT_FOUND" });
+  return res.json(task);
+});
+
+app.post("/api/apex/worker/tasks/:taskId/cancel", async (req, res) => {
+  if (!requireApexWorkerKey(req, res)) return;
+  const task = await apexWorker.cancel(req.params.taskId);
+  if (!task) return res.status(404).json({ error: "APEX_TASK_NOT_FOUND" });
+  return res.json({ cancelled: task.status === "cancelled", task });
+});
 
 // 1. Compile Ingested Ideas & Generate Gold-Standard Business Plan + Blueprint
 app.post("/api/generate", async (req, res) => {
@@ -2822,6 +2893,8 @@ async function startServer() {
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
+
+  await apexWorker.start();
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`[ApexBlueprint Server] Running at http://localhost:${PORT}`);

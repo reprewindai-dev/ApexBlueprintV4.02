@@ -1,6 +1,7 @@
 node_modules/
 build/
 dist/
+.apex-worker/
 coverage/
 .DS_Store
 *.log
