@@ -54,7 +54,6 @@ import GovernanceSimulator from "./components/GovernanceSimulator";
 import { GapsDuplicates } from "./components/GapsDuplicates";
 import { SystemRoadmap } from "./components/SystemRoadmap";
 import { AgentPackets } from "./components/AgentPackets";
-import { ApexSpecialistPanel } from "./components/ApexSpecialistPanel";
 import { SovereignConstitution } from "./components/SovereignConstitution";
 import BuildExecutionAttestation from "./components/BuildExecutionAttestation";
 import PresentationDeck from "./components/PresentationDeck";
@@ -4057,7 +4056,6 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
               {/* Tab 10: Agent Packets */}
               {activeTab === "agentPackets" && (
                 <div className="animate-fadeIn">
-                  <ApexSpecialistPanel blueprint={result as Record<string, unknown> | undefined} />
                   <AgentPackets
                     selectedJurisdiction={selectedJurisdiction}
                     constitutionVersion={constitutionVersion}
