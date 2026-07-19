@@ -12,6 +12,7 @@ import { verifyAndValidateApprovalToken, verifyTokenForPlan } from "./src/core/t
 import { SEKED_HMAC_SECRET } from "./src/core/config";
 import { PlanIRSchema, CanonicalBlueprintV1Schema } from "./src/core/validation";
 import { compileSekedDirective, normalizeTelemetry, signAgentPacket, verifyAgentPacket, triageBlueprintIntakeV1 } from "./src/compiler/seked";
+import { callVeklomChat, checkVeklomHealth } from "./src/veklom-client";
 
 dotenv.config();
 
@@ -241,6 +242,20 @@ function cappoBlueprintGuard(plan: PlanIR): void {
 // ==========================================
 // API ROUTES
 // ==========================================
+
+app.get("/health", async (_req, res) => {
+  const dependency = await checkVeklomHealth();
+  res.status(dependency.reachable ? 200 : 503).json({
+    status: dependency.reachable ? "healthy" : "degraded",
+    service: "apex-blueprint",
+    veklom: dependency,
+  });
+});
+
+app.get("/api/veklom/health", async (_req, res) => {
+  const dependency = await checkVeklomHealth();
+  res.status(dependency.reachable ? 200 : 503).json(dependency);
+});
 
 // 1. Compile Ingested Ideas & Generate Gold-Standard Business Plan + Blueprint
 app.post("/api/generate", async (req, res) => {
@@ -693,7 +708,14 @@ ${emailToUse}`;
     const selectedProvider = provider || "gemini";
     let textResult = "";
 
-    if (selectedProvider === "gemini") {
+    if (selectedProvider === "veklom") {
+      const veklomResponse = await callVeklomChat({
+        systemPrompt,
+        userPrompt,
+        model: modelName,
+      });
+      textResult = veklomResponse.text;
+    } else if (selectedProvider === "gemini") {
       const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
       if (!activeApiKey) {
         throw new Error("Gemini API key is not configured. Please supply a key or configure it in secrets.");
@@ -1182,7 +1204,13 @@ app.post("/api/test-connection", async (req, res) => {
     const selectedProvider = provider || "gemini";
     const testPrompt = "Respond only with the word 'OK'.";
 
-    if (selectedProvider === "gemini") {
+    if (selectedProvider === "veklom") {
+      await callVeklomChat({
+        systemPrompt: testPrompt,
+        userPrompt: testPrompt,
+        model: modelName,
+      });
+    } else if (selectedProvider === "gemini") {
       const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
       if (!activeApiKey) {
         throw new Error("Gemini API key is not configured.");
