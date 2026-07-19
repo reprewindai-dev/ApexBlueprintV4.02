@@ -58,6 +58,7 @@ import { SovereignConstitution } from "./components/SovereignConstitution";
 import BuildExecutionAttestation from "./components/BuildExecutionAttestation";
 import PresentationDeck from "./components/PresentationDeck";
 import GovernedViewContainer from "./components/GovernedViewContainer";
+import { CodeDiffViewer } from "./components/CodeDiffViewer";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -405,6 +406,7 @@ export default function App() {
 
   // File explorer states
   const [selectedFilePath, setSelectedFilePath] = useState<string | null>("README.md");
+  const [explorerViewMode, setExplorerViewMode] = useState<"preview" | "diff">("preview");
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
     root: true,
     docs: true,
@@ -4088,36 +4090,72 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                   {/* Right Column: File Content Viewer */}
                   <div className="lg:col-span-8 bg-[#0A0A0A] border-2 border-[#222] p-5 flex flex-col justify-between rounded-none">
                     <div>
-                      <div className="flex items-center justify-between border-b border-[#222] pb-3 mb-4">
+                      <div className="flex flex-wrap items-center justify-between border-b border-[#222] pb-3 mb-4 gap-4">
                         <div className="flex items-center gap-2">
                           <FileCode size={16} className="text-[#00F0FF]" />
-                          <span className="text-xs font-mono text-white font-black uppercase truncate max-w-xs">{selectedFilePath || "No file selected"}</span>
+                          <span className="text-xs font-mono text-white font-black uppercase truncate max-w-[150px] sm:max-w-xs">{selectedFilePath || "No file selected"}</span>
                         </div>
 
-                        {selectedFilePath && selectedFileContent && (
-                          <button
-                            onClick={() => handleCopyFileContent(selectedFilePath, selectedFileContent)}
-                            className="flex items-center gap-1.5 px-3 py-1.5 border border-[#333] hover:border-white bg-[#111] text-xs font-bold text-[#E0E0E0] hover:text-white uppercase font-mono tracking-wider transition-colors rounded-none"
-                          >
-                            {copiedFilePath === selectedFilePath ? (
-                              <>
-                                <CheckCircle2 size={13} className="text-emerald-400" />
-                                <span className="text-emerald-400 font-mono text-[10px]">Copied!</span>
-                              </>
-                            ) : (
-                              <>
-                                <Copy size={13} />
-                                <span className="text-[#888] text-[10px] uppercase font-mono">Copy File</span>
-                              </>
-                            )}
-                          </button>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {/* Sub-view toggles for preview vs diff */}
+                          <div className="flex items-center bg-[#111] border border-[#222] p-0.5">
+                            <button
+                              onClick={() => setExplorerViewMode("preview")}
+                              className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                                explorerViewMode === "preview"
+                                  ? "bg-[#00F0FF] text-black"
+                                  : "text-gray-400 hover:text-white"
+                              }`}
+                            >
+                              Preview
+                            </button>
+                            <button
+                              onClick={() => setExplorerViewMode("diff")}
+                              className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition-colors ${
+                                explorerViewMode === "diff"
+                                  ? "bg-[#00F0FF] text-black"
+                                  : "text-gray-400 hover:text-white"
+                              }`}
+                            >
+                              Code Diff
+                            </button>
+                          </div>
+
+                          {selectedFilePath && selectedFileContent && (
+                            <button
+                              onClick={() => handleCopyFileContent(selectedFilePath, selectedFileContent)}
+                              className="flex items-center gap-1.5 px-2.5 py-1 border border-[#333] hover:border-white bg-[#111] text-[10px] font-bold text-[#E0E0E0] hover:text-white uppercase font-mono tracking-wider transition-colors rounded-none"
+                            >
+                              {copiedFilePath === selectedFilePath ? (
+                                <>
+                                  <CheckCircle2 size={12} className="text-emerald-400" />
+                                  <span className="text-emerald-400 font-mono">Copied!</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Copy size={12} />
+                                  <span>Copy</span>
+                                </>
+                              )}
+                            </button>
+                          )}
+                        </div>
                       </div>
 
                       {/* Document Viewer Render Area */}
                       <div className="max-h-[500px] overflow-y-auto px-1">
                         {selectedFilePath ? (
-                          <MarkdownRenderer content={selectedFileContent} />
+                          explorerViewMode === "diff" ? (
+                            <CodeDiffViewer
+                              filePath={selectedFilePath}
+                              currentContent={selectedFileContent}
+                              defaultContent={
+                                DEFAULT_BLUEPRINT.files.find((f) => f.path === selectedFilePath)?.content || ""
+                              }
+                            />
+                          ) : (
+                            <MarkdownRenderer content={selectedFileContent} />
+                          )
                         ) : (
                           <div className="h-44 flex flex-col items-center justify-center text-[#444] uppercase font-mono">
                             <FileCode size={30} className="mb-2 text-[#222]" />
