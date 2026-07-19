@@ -331,9 +331,9 @@ export default function App() {
 
   // Model selection configurations
   const [config, setConfig] = useState<ModelConfig>({
-    provider: "gemini",
+    provider: "veklom",
     apiKey: "",
-    modelName: "gemini-3.5-flash",
+    modelName: "qwen2.5-coder:1.5b",
     temperature: 0.2,
     authMode: "bearer",
     customHeaderName: "X-API-Key"
@@ -652,7 +652,9 @@ export default function App() {
           repoUrl: githubRepoUrl,
           notes: notes,
           businessPlanText: bizPlanText,
+          provider: config.provider,
           apiKey: config.apiKey,
+          modelName: config.modelName,
           customToken: githubToken
         })
       });
@@ -4503,7 +4505,10 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                       const prov = e.target.value;
                       let dModel = "gemini-3.5-flash";
                       let dUrl = "";
-                      if (prov === "openai") {
+                      if (prov === "veklom") {
+                        dModel = "qwen2.5-coder:1.5b";
+                        dUrl = "";
+                      } else if (prov === "openai") {
                         dModel = "gpt-4o";
                         dUrl = "";
                       } else if (prov === "anthropic") {
@@ -4523,6 +4528,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     }}
                     className="w-full bg-[#0A0A0A] border border-[#222] p-2.5 text-xs text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none font-mono"
                   >
+                    <option value="veklom">Veklom 4 Sovereign AI</option>
                     <option value="gemini">Google Gemini AI</option>
                     <option value="openai">OpenAI (GPT Models)</option>
                     <option value="anthropic">Anthropic (Claude Models)</option>
@@ -4560,7 +4566,9 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     value={config.customUrl || ""}
                     onChange={(e) => setConfig({ ...config, customUrl: e.target.value })}
                     placeholder={
-                      config.provider === "gemini"
+                      config.provider === "veklom"
+                        ? "Uses server-side VEKLOM_BASE_URL (or leave blank)"
+                        : config.provider === "gemini"
                         ? "e.g. http://localhost:1106/modelfarm/gemini (or leave blank)"
                         : config.provider === "openai"
                         ? "e.g. http://localhost:1106/modelfarm/openai (or leave blank)"
@@ -4585,6 +4593,8 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     <span>Provider API Key:</span>
                     {(config.provider === "llama" || config.provider === "custom" || config.customUrl) ? (
                       <span className="text-[9px] text-emerald-400 lowercase font-mono">Optional for local/Ollama style</span>
+                    ) : config.provider === "veklom" ? (
+                      <span className="text-[9px] text-emerald-400 lowercase font-mono">Uses server-side VEKLOM_API_KEY if empty</span>
                     ) : config.provider === "gemini" ? (
                       <span className="text-[9px] text-emerald-400 lowercase font-mono">Uses automatic server key if empty</span>
                     ) : null}
@@ -4594,7 +4604,9 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     value={config.apiKey}
                     onChange={(e) => setConfig({ ...config, apiKey: e.target.value })}
                     placeholder={
-                      (config.provider === "llama" || config.provider === "custom")
+                      config.provider === "veklom"
+                        ? "•••••••• (Or leave blank to use server VEKLOM_API_KEY)"
+                        : (config.provider === "llama" || config.provider === "custom")
                         ? "Not required for local connections (Ollama)"
                         : config.provider === "gemini"
                         ? "•••••••• (Or leave blank to use free server key)"
