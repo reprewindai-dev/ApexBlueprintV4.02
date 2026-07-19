@@ -6,7 +6,8 @@ import { signApprovalToken, verifyAndValidateApprovalToken, isFileModificationAu
 import { CanonicalBlueprintV1Schema, PlanIRSchema } from "../core/validation";
 import { createCheckpoint, getCheckpoint } from "../core/checkpoint";
 import { DEFAULT_BLUEPRINT } from "../data/defaultBlueprint";
-import { app } from "../../server";
+process.env.NODE_ENV = "test";
+const { app } = await import("../../server");
 
 describe("Milestone 1: Real Trust Spine Regression Tests", () => {
   
