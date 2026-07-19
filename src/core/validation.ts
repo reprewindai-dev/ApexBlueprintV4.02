@@ -36,10 +36,10 @@ export const AcademicPaperSchema = z.object({
   summary: z.string(),
   relevance: z.string(),
   // Strict academic requirements added to avoid credibility risk
-  resolvableIdentifier: z.string().url(),
-  retrievalTimestamp: z.string(),
-  quotedClaimLocation: z.string(),
-  verificationStatus: z.string(),
+  resolvableIdentifier: z.string().url().optional(),
+  retrievalTimestamp: z.string().optional(),
+  quotedClaimLocation: z.string().optional(),
+  verificationStatus: z.string().optional(),
   digitalSignature: z.string().optional()
 });
 

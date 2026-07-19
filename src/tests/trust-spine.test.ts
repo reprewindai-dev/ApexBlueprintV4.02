@@ -1,8 +1,12 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
-import { stableStringify, calculateBlueprintHash } from "../core/plan-ir";
-import { signApprovalToken, verifyAndValidateApprovalToken, isFileModificationAuthorized } from "../core/token";
+import http from "node:http";
+import { stableStringify, calculateBlueprintHash, computeCanonicalHash, PlanStep } from "../core/plan-ir";
+import { signApprovalToken, verifyAndValidateApprovalToken, isFileModificationAuthorized, verifyTokenForPlan } from "../core/token";
 import { CanonicalBlueprintV1Schema, PlanIRSchema } from "../core/validation";
+import { createCheckpoint, getCheckpoint } from "../core/checkpoint";
+import { DEFAULT_BLUEPRINT } from "../data/defaultBlueprint";
+import { app } from "../../server";
 
 describe("Milestone 1: Real Trust Spine Regression Tests", () => {
   
@@ -154,6 +158,235 @@ describe("Milestone 1: Real Trust Spine Regression Tests", () => {
 
       const result = CanonicalBlueprintV1Schema.safeParse(malformedBlueprint);
       assert.strictEqual(result.success, false);
+    });
+  });
+
+  describe("6. Wrong-Plan Approval-Token Rejection", () => {
+    it("should detect and reject a token intended for a different plan or blueprint hash", () => {
+      const correctPlanId = "plan-777";
+      const correctHash = "hash-777";
+      
+      const token = {
+        planId: correctPlanId,
+        canonicalHash: correctHash
+      };
+
+      assert.strictEqual(verifyTokenForPlan(token, correctPlanId, correctHash), true);
+      assert.strictEqual(verifyTokenForPlan(token, "wrong-plan-id", correctHash), false);
+      assert.strictEqual(verifyTokenForPlan(token, correctPlanId, "wrong-canonical-hash"), false);
+    });
+  });
+
+  describe("7. Projection Rejection for Unapproved Plans", () => {
+    it("should refuse writing projection files if the plan status is not APPROVED", async () => {
+      const blueprint = {
+        ...DEFAULT_BLUEPRINT,
+        title: "Sovereign Apex",
+        tagline: "Uncompromising ledger",
+        timestamp: "2026-07-18T12:00:00Z",
+      };
+      blueprint.hash = calculateBlueprintHash(blueprint);
+
+      const plan = {
+        planId: "9f8e7d6c-5b4a-4f2e-8d0c-9b8a7f6e5d4c",
+        version: "1.0.0",
+        status: "DRAFT", // NOT APPROVED
+        tenantId: "tenant-999",
+        agentId: "agent-999",
+        compiledAt: "2026-07-18T12:00:00Z",
+        intent: "Drafting a ledger projection sweep",
+        steps: [],
+        canonicalHash: "",
+        replayable: true
+      };
+      plan.canonicalHash = computeCanonicalHash(plan.steps);
+
+      const server = http.createServer(app);
+      await new Promise<void>((resolve) => server.listen(0, resolve));
+      const port = (server.address() as any).port;
+
+      try {
+        const response = await fetch(`http://localhost:${port}/api/covenant/project`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            target: "agents-md",
+            plan,
+            blueprint,
+            writeToDisk: true
+          })
+        });
+        
+        const data: any = await response.json();
+        if (response.status !== 403) {
+          console.error("DEBUG TEST 7 RET:", data);
+        }
+        assert.strictEqual(response.status, 403);
+        assert.strictEqual(data.success, false);
+        assert.strictEqual(data.error, "PLAN_NOT_APPROVED");
+      } finally {
+        server.close();
+      }
+    });
+  });
+
+  describe("8. Execution Rejection & Fake PGL Receipt Prevention", () => {
+    it("should reject execution requests with EXECUTOR_NOT_CONFIGURED when adapters are unconfigured", async () => {
+      const origAdapter = process.env.PGL_ADAPTER_CONFIGURED;
+      const origExecutors = process.env.CAPABILITY_EXECUTORS_CONFIGURED;
+      delete process.env.PGL_ADAPTER_CONFIGURED;
+      delete process.env.CAPABILITY_EXECUTORS_CONFIGURED;
+
+      const server = http.createServer(app);
+      await new Promise<void>((resolve) => server.listen(0, resolve));
+      const port = (server.address() as any).port;
+
+      const step: PlanStep = {
+        stepId: "12345678-1234-1234-1234-123456789012",
+        sequence: 1,
+        capability: "read_balance",
+        lane: 1,
+        inputSchema: {},
+        expectedOutput: {},
+        riskLevel: "LOW",
+        requiresApproval: false,
+        idempotencyKey: "key-12345"
+      };
+
+      const plan = {
+        planId: "2a3b4c5d-6e7f-8a9b-0c1d-2e3f4a5b6c7d",
+        version: "1.0.0",
+        status: "APPROVED",
+        tenantId: "tenant-555",
+        agentId: "agent-555",
+        compiledAt: "2026-07-18T12:00:00Z",
+        intent: "Execute payment",
+        steps: [step],
+        canonicalHash: "",
+        replayable: true
+      };
+      plan.canonicalHash = computeCanonicalHash(plan.steps);
+
+      try {
+        const response = await fetch(`http://localhost:${port}/api/covenant/execute`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ plan })
+        });
+
+        const data: any = await response.json();
+        assert.strictEqual(response.status, 400);
+        assert.strictEqual(data.success, false);
+        assert.strictEqual(data.error, "EXECUTOR_NOT_CONFIGURED");
+      } finally {
+        process.env.PGL_ADAPTER_CONFIGURED = origAdapter;
+        process.env.CAPABILITY_EXECUTORS_CONFIGURED = origExecutors;
+        server.close();
+      }
+    });
+  });
+
+  describe("9. Agent Packets Generation & Fallback Leakage Prevention", () => {
+    it("should properly project compiled input details into AGENTS.md, but omit default Rust/Solidity/Go packets if none are compiled", async () => {
+      const blueprint = {
+        title: "Custom Sovereign Enterprise",
+        tagline: "Highly verified",
+        timestamp: "2026-07-18T12:00:00Z",
+        hash: "",
+        highLevelGoals: [],
+        competitiveMoat: [],
+        capabilities: [
+          {
+            id: "cap-ledger",
+            name: "Sovereign Ledger Core",
+            purpose: "Durable record keeping",
+            businessOutcome: "Immutable audits",
+            inputs: ["txn_payload"],
+            outputs: ["block_hash"],
+            maturityState: "Verified"
+          }
+        ],
+        agentPackets: [], // Empty compilation - MUST NOT leak Rust, Solidity or Go default packets
+        securityProfile: {
+          authenticationMethod: "mfa",
+          encryptionAtRest: true,
+          transitSecurity: "tls1.3",
+          auditRetentionProfile: "90days"
+        }
+      };
+      blueprint.hash = calculateBlueprintHash(blueprint);
+
+      const server = http.createServer(app);
+      await new Promise<void>((resolve) => server.listen(0, resolve));
+      const port = (server.address() as any).port;
+
+      try {
+        const response = await fetch(`http://localhost:${port}/api/covenant/project`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            target: "agents-md",
+            blueprint,
+            writeToDisk: false // Preview generation
+          })
+        });
+        
+        const data: any = await response.json();
+        assert.strictEqual(response.status, 200);
+        assert.strictEqual(data.success, true);
+        
+        // Assert custom capabilities are generated
+        assert.match(data.content, /Sovereign Ledger Core/);
+        // Assert no leakage of Rust, Solidity or Go default packets
+        assert.match(data.content, /No active work orders dispatched/);
+        assert.doesNotMatch(data.content, /Rust Asynchronous Einstein Scheduler/);
+        assert.doesNotMatch(data.content, /Solidity X402 Escrow Smart Contract/);
+      } finally {
+        server.close();
+      }
+    });
+  });
+
+  describe("10. Checkpoint Continuation Across Agent Projections", () => {
+    it("should allow Agent B to resume and continue from a checkpoint persisted by Agent A", () => {
+      // 1. Create a checkpoint as Agent A
+      const checkpointAInput = {
+        parentCheckpointId: null,
+        blueprintHash: "hash-alpha-123",
+        packetHash: "pkt-alpha-123",
+        repositoryCommitSha: "commit-abc123",
+        modifiedFiles: ["src/scheduler/einstein.rs"],
+        testResults: { success: true, count: 8 },
+        unresolvedWork: "Implement telemetry buffering",
+        agentIdentity: "Agent-A"
+      };
+
+      const checkpointA = createCheckpoint(checkpointAInput);
+      assert.ok(checkpointA.checkpointId.startsWith("chk-"));
+      assert.strictEqual(checkpointA.agentIdentity, "Agent-A");
+
+      // 2. Load the checkpoint and verify resume by Agent B
+      const retrieved = getCheckpoint(checkpointA.checkpointId);
+      assert.ok(retrieved);
+      assert.strictEqual(retrieved.agentIdentity, "Agent-A");
+      assert.strictEqual(retrieved.parentCheckpointId, null);
+
+      // 3. Create continuation checkpoint as Agent B
+      const checkpointBInput = {
+        parentCheckpointId: checkpointA.checkpointId, // Link to A
+        blueprintHash: "hash-beta-456",
+        packetHash: "pkt-beta-456",
+        repositoryCommitSha: "commit-def456",
+        modifiedFiles: ["src/scheduler/einstein.rs", "src/scheduler/telemetry.rs"],
+        testResults: { success: true, count: 12 },
+        unresolvedWork: "None. Telemetry buffering complete.",
+        agentIdentity: "Agent-B"
+      };
+
+      const checkpointB = createCheckpoint(checkpointBInput);
+      assert.ok(checkpointB.checkpointId.startsWith("chk-"));
+      assert.strictEqual(checkpointB.agentIdentity, "Agent-B");
+      assert.strictEqual(checkpointB.parentCheckpointId, checkpointA.checkpointId);
     });
   });
 

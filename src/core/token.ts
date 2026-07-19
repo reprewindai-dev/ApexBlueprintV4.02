@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import { stableStringify } from "./plan-ir";
 import { ApprovalTokenSchema } from "./validation";
+import { APPROVAL_TOKEN_SECRET } from "./config";
 
-const APPROVAL_TOKEN_SECRET = process.env.APPROVAL_TOKEN_SECRET || "COVENANT_APPROVAL_TOKEN_SECRET_2026";
 
 /**
  * Signs an approval token deterministically based on its metadata.
@@ -70,5 +70,13 @@ export function verifyAndValidateApprovalToken(tokenInput: any): any {
 export function isFileModificationAuthorized(token: any, filePath: string): boolean {
   if (!token || !Array.isArray(token.allowedFiles)) return false;
   return token.allowedFiles.includes(filePath);
+}
+
+/**
+ * Verifies that the approval token's plan metadata matches the expected plan.
+ */
+export function verifyTokenForPlan(token: any, expectedPlanId: string, expectedCanonicalHash: string): boolean {
+  if (!token) return false;
+  return token.planId === expectedPlanId && token.canonicalHash === expectedCanonicalHash;
 }
 

@@ -28,6 +28,11 @@ export interface AcademicPaper {
   source: string;
   summary: string;
   relevance: string;
+  resolvableIdentifier?: string;
+  retrievalTimestamp?: string;
+  quotedClaimLocation?: string;
+  verificationStatus?: string;
+  digitalSignature?: string;
 }
 
 export interface VirtualFile {

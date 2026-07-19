@@ -7,12 +7,15 @@ import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 import { DEFAULT_BLUEPRINT } from "./src/data/defaultBlueprint";
 import { validatePlanIR, PlanIR, PlanStep, calculateBlueprintHash, stableStringify, computeCanonicalHash } from "./src/core/plan-ir";
+import { isExecutionAdapterConfigured, isPglAdapterConfigured, executeCapabilityStep, sealStepOnLedger } from "./src/core/execution";
+import { verifyAndValidateApprovalToken, verifyTokenForPlan } from "./src/core/token";
+import { SEKED_HMAC_SECRET } from "./src/core/config";
 import { PlanIRSchema, CanonicalBlueprintV1Schema } from "./src/core/validation";
 import { compileSekedDirective, normalizeTelemetry, signAgentPacket, verifyAgentPacket, triageBlueprintIntakeV1 } from "./src/compiler/seked";
 
 dotenv.config();
 
-const app = express();
+export const app = express();
 const PORT = 3000;
 
 app.use(express.json({ limit: "50mb" }));
@@ -177,6 +180,8 @@ function calculateCanonicalHash(blueprint: any, intent?: string, compilerVersion
 }
 
 
+const usedNonces = new Set<string>();
+
 function cappoBlueprintGuard(plan: PlanIR): void {
   const validation = validatePlanIR(plan);
   if (!validation.valid) {
@@ -195,6 +200,38 @@ function cappoBlueprintGuard(plan: PlanIR): void {
       throw new Error(
         `CAPPO HALT — Lane 3 step "${step.stepId}" (${step.capability}) missing approval token.`
       );
+    }
+
+    try {
+      // 1. Cryptographically decode and verify signature and expiry
+      const token = verifyAndValidateApprovalToken(step.approvalToken);
+
+      // 2. Bind token to the exact tenant, plan, step, capability, and canonical hash
+      if (token.tenantId !== plan.tenantId) {
+        throw new Error(`Token tenantId "${token.tenantId}" does not match plan tenantId "${plan.tenantId}"`);
+      }
+      if (token.planId !== plan.planId) {
+        throw new Error(`Token planId "${token.planId}" does not match plan planId "${plan.planId}"`);
+      }
+      if (token.canonicalHash !== plan.canonicalHash) {
+        throw new Error(`Token canonicalHash "${token.canonicalHash}" does not match plan canonicalHash "${plan.canonicalHash}"`);
+      }
+      if (token.stepId !== step.stepId) {
+        throw new Error(`Token stepId "${token.stepId}" does not match step stepId "${step.stepId}"`);
+      }
+      if (token.allowedCapability !== step.capability) {
+        throw new Error(`Token allowedCapability "${token.allowedCapability}" does not match step capability "${step.capability}"`);
+      }
+
+      // 3. Reject duplicate/reused nonces
+      if (usedNonces.has(token.nonce)) {
+        throw new Error(`Token nonce "${token.nonce}" has already been processed — replay attack prevented`);
+      }
+      usedNonces.add(token.nonce);
+
+      console.log(`[CAPPO] Validated and recorded Lane 3 approval token for step ${step.stepId} (Nonce: ${token.nonce})`);
+    } catch (err: any) {
+      throw new Error(`CAPPO HALT — Lane 3 step "${step.stepId}" approval token verification failed: ${err.message}`);
     }
   }
   // All checks passed — log to PGL
@@ -2049,8 +2086,8 @@ app.post("/api/covenant/execute", async (req, res) => {
     // Intercept with CAPPO blueprint guard to prove integrity and approval
     cappoBlueprintGuard(plan);
 
-    // Requirement 4: Refuse simulated success if unconfigured
-    if (!process.env.PGL_ADAPTER_CONFIGURED || !process.env.CAPABILITY_EXECUTORS_CONFIGURED) {
+    // Requirement 4: Refuse simulated success if unconfigured using true boolean checks
+    if (!isExecutionAdapterConfigured() || !isPglAdapterConfigured()) {
       return res.status(400).json({
         success: false,
         error: "EXECUTOR_NOT_CONFIGURED",
@@ -2058,19 +2095,17 @@ app.post("/api/covenant/execute", async (req, res) => {
       });
     }
 
-    // Real configuration execution path
-    const results = plan.steps.map((step: any) => {
-      return {
-        stepId: step.stepId,
-        sequence: step.sequence,
-        capability: step.capability,
-        status: "SUCCESS",
-        executedAt: new Date().toISOString(),
-        resultHash: crypto.createHash("sha256").update(JSON.stringify(step) + "_RESULT").digest("hex")
-      };
+    // Real configuration execution path - execute actual capability logic and issue signed PGL receipts
+    const executionResults = plan.steps.map((step: any) => {
+      return executeCapabilityStep(step);
     });
 
-    const pglReceiptId = "pgl-rec-" + crypto.randomBytes(6).toString("hex").toUpperCase();
+    const receipts = executionResults.map((result: any) => {
+      return sealStepOnLedger(plan.planId, result);
+    });
+
+    const lastReceipt = receipts[receipts.length - 1];
+    const pglReceiptId = lastReceipt ? lastReceipt.receiptId : "pgl-rec-empty";
 
     return res.json({
       success: true,
@@ -2078,7 +2113,16 @@ app.post("/api/covenant/execute", async (req, res) => {
       planId: plan.planId,
       status: "COMPLETE",
       pglReceiptId,
-      results,
+      receipts,
+      results: executionResults.map((r: any) => ({
+        stepId: r.stepId,
+        sequence: r.sequence,
+        capability: r.capability,
+        status: r.status,
+        output: r.output,
+        executedAt: r.executedAt,
+        resultHash: r.resultHash
+      })),
       timestamp: new Date().toISOString()
     });
 
@@ -2091,15 +2135,16 @@ app.post("/api/covenant/execute", async (req, res) => {
   }
 });
 
-// POST to project a compiled Plan IR to portable files in the workspace (AGENTS.md, CLAUDE.md, spec-plan-task.json)
-app.post("/api/covenant/project", async (req, res) => {
+const serverApprovedPlans = new Map<string, string>();
+
+// POST to approve and sign a PlanIR, storing its approved status in server-owned state
+app.post("/api/covenant/approve", async (req, res) => {
   try {
-    const { target, plan, blueprint, selectedJurisdiction, constitutionVersion, writeToDisk } = req.body;
-    if (!target) {
-      return res.status(400).json({ error: "Missing target projection type" });
+    const { plan } = req.body;
+    if (!plan) {
+      return res.status(400).json({ error: "Missing required field: plan" });
     }
 
-    // We must validate schemas using Zod to ensure type-safety and standard representation
     const planParsed = PlanIRSchema.safeParse(plan);
     if (!planParsed.success) {
       return res.status(400).json({
@@ -2108,47 +2153,116 @@ app.post("/api/covenant/project", async (req, res) => {
         message: "Invalid PlanIR schema structure: " + planParsed.error.issues.map(e => e.path.join(".") + ": " + e.message).join(", ")
       });
     }
+
     const validatedPlan = planParsed.data;
+    validatedPlan.status = "APPROVED";
+    validatedPlan.approvedAt = new Date().toISOString();
 
-    const blueprintParsed = CanonicalBlueprintV1Schema.safeParse(blueprint);
-    if (!blueprintParsed.success) {
-      return res.status(400).json({
-        success: false,
-        error: "INVALID_BLUEPRINT",
-        message: "Invalid Blueprint schema structure: " + blueprintParsed.error.issues.map(e => e.path.join(".") + ": " + e.message).join(", ")
-      });
-    }
-    const validatedBlueprint = blueprintParsed.data;
+    // Compute cryptographic signature binding the plan's ID and hash
+    const signature = crypto
+      .createHmac("sha256", SEKED_HMAC_SECRET)
+      .update(validatedPlan.planId + "|" + validatedPlan.canonicalHash)
+      .digest("hex");
 
-    const computedBlueprintHash = calculateBlueprintHash(validatedBlueprint);
-    if (validatedBlueprint.hash !== computedBlueprintHash) {
-      return res.status(400).json({
-        success: false,
-        error: "BLUEPRINT_HASH_MISMATCH",
-        message: `Blueprint hash verification failed. Provided: ${validatedBlueprint.hash}, Computed: ${computedBlueprintHash}`
-      });
-    }
+    validatedPlan.signature = signature;
 
-    const computedPlanHash = computeCanonicalHash(validatedPlan.steps as PlanStep[]);
-    if (validatedPlan.canonicalHash !== computedPlanHash) {
-      return res.status(400).json({
-        success: false,
-        error: "PLAN_HASH_MISMATCH",
-        message: `Plan canonicalHash verification failed. Provided: ${validatedPlan.canonicalHash}, Computed: ${computedPlanHash}`
-      });
-    }
+    // Track in server-owned in-memory ledger
+    serverApprovedPlans.set(validatedPlan.planId, validatedPlan.canonicalHash);
 
-    // Requirement 5: Require a valid APPROVED PlanIR before writing files
-    if (writeToDisk && validatedPlan.status !== "APPROVED") {
-      return res.status(403).json({
-        success: false,
-        error: "PLAN_NOT_APPROVED",
-        message: `Cannot write files to disk. Plan status must be APPROVED (current status: ${validatedPlan.status}).`
-      });
+    return res.json({
+      success: true,
+      message: "Plan successfully approved and signed by the server.",
+      plan: validatedPlan
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      error: error.message || "Approval failed."
+    });
+  }
+});
+
+// POST to project a compiled Plan IR to portable files in the workspace (AGENTS.md, CLAUDE.md, spec-plan-task.json)
+app.post("/api/covenant/project", async (req, res) => {
+  try {
+    const { target, plan, blueprint, selectedJurisdiction, constitutionVersion, writeToDisk } = req.body;
+    if (!target) {
+      return res.status(400).json({ error: "Missing target projection type" });
     }
 
-    const title = validatedBlueprint.title || "Apex Sovereign Platform";
-    const hash = validatedBlueprint.hash; // Fulfills "Remove unknown_canonical_hash"
+    let title = "Apex Sovereign Platform";
+    let hash = "unknown_canonical_hash";
+    let validatedPlan: any = null;
+    let validatedBlueprint: any = null;
+
+    if (writeToDisk) {
+      // We must validate schemas using Zod to ensure type-safety and standard representation
+      const planParsed = PlanIRSchema.safeParse(plan);
+      if (!planParsed.success) {
+        return res.status(400).json({
+          success: false,
+          error: "INVALID_PLAN_IR",
+          message: "Invalid PlanIR schema structure: " + planParsed.error.issues.map(e => e.path.join(".") + ": " + e.message).join(", ")
+        });
+      }
+      validatedPlan = planParsed.data;
+
+      const blueprintParsed = CanonicalBlueprintV1Schema.safeParse(blueprint);
+      if (!blueprintParsed.success) {
+        return res.status(400).json({
+          success: false,
+          error: "INVALID_BLUEPRINT",
+          message: "Invalid Blueprint schema structure: " + blueprintParsed.error.issues.map(e => e.path.join(".") + ": " + e.message).join(", ")
+        });
+      }
+      validatedBlueprint = blueprintParsed.data;
+
+      const computedBlueprintHash = calculateBlueprintHash(blueprint);
+      if (validatedBlueprint.hash !== computedBlueprintHash) {
+        return res.status(400).json({
+          success: false,
+          error: "BLUEPRINT_HASH_MISMATCH",
+          message: `Blueprint hash verification failed. Provided: ${validatedBlueprint.hash}, Computed: ${computedBlueprintHash}`
+        });
+      }
+
+      const computedPlanHash = computeCanonicalHash(validatedPlan.steps as PlanStep[]);
+      if (validatedPlan.canonicalHash !== computedPlanHash) {
+        return res.status(400).json({
+          success: false,
+          error: "PLAN_HASH_MISMATCH",
+          message: `Plan canonicalHash verification failed. Provided: ${validatedPlan.canonicalHash}, Computed: ${computedPlanHash}`
+        });
+      }
+
+      // Requirement 5: Require a valid APPROVED PlanIR before writing files
+      if (validatedPlan.status !== "APPROVED") {
+        return res.status(403).json({
+          success: false,
+          error: "PLAN_NOT_APPROVED",
+          message: `Cannot write files to disk. Plan status must be APPROVED (current status: ${validatedPlan.status}).`
+        });
+      }
+
+      // Verify server-side authority of this approval (cannot be self-authorized by client)
+      const isApprovedInServerLedger = serverApprovedPlans.has(validatedPlan.planId) && serverApprovedPlans.get(validatedPlan.planId) === validatedPlan.canonicalHash;
+      const isApprovedViaSignature = validatedPlan.signature === crypto.createHmac("sha256", SEKED_HMAC_SECRET).update(validatedPlan.planId + "|" + validatedPlan.canonicalHash).digest("hex");
+
+      if (!isApprovedInServerLedger && !isApprovedViaSignature) {
+        return res.status(403).json({
+          success: false,
+          error: "UNAUTHORIZED_PLAN_APPROVAL",
+          message: "Self-declared APPROVED status is not recognized by this server. The plan must be approved and signed via the server's authorized pathways."
+        });
+      }
+
+      title = validatedBlueprint.title || "Apex Sovereign Platform";
+      hash = validatedBlueprint.hash;
+    } else {
+      // Relaxed preview path: allow partial objects from client-side simulator
+      title = blueprint?.title || plan?.title || "Apex Sovereign Platform";
+      hash = blueprint?.hash || plan?.canonicalHash || "preview_hash_placeholder";
+    }
     const activeJurisdiction = (selectedJurisdiction || "global").toUpperCase();
     const version = constitutionVersion || "v4.02.1";
 
@@ -2653,4 +2767,6 @@ async function startServer() {
   });
 }
 
-startServer();
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}

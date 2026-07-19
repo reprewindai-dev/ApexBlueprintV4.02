@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { SEKED_HMAC_SECRET } from "../core/config";
 
 export interface SekedInput {
   E: number; // Execution Jitter / Latency
@@ -32,7 +33,7 @@ export interface AgentPacket {
 }
 
 // Private system key for deterministic, mock-free cryptographic signing of directives and execution packets
-const SEKED_SYSTEM_SECRET = process.env.SEKED_SYSTEM_SECRET || "APEX_SEKED_GOVERNANCE_SIGNING_KEY_SECURE_2026";
+const SEKED_SYSTEM_SECRET = SEKED_HMAC_SECRET;
 
 /**
  * Normalizes raw metrics into 0-9 continuous scales based on physical invariants
