@@ -59,6 +59,7 @@ import BuildExecutionAttestation from "./components/BuildExecutionAttestation";
 import PresentationDeck from "./components/PresentationDeck";
 import GovernedViewContainer from "./components/GovernedViewContainer";
 import { CodeDiffViewer } from "./components/CodeDiffViewer";
+import { BlueprintFileChart } from "./components/BlueprintFileChart";
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -2560,6 +2561,9 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                       </div>
                     </div>
                   </div>
+
+                  {/* Dynamic Architectural breakdown via BlueprintFileChart */}
+                  <BlueprintFileChart files={combinedFiles} />
                 </div>
               )}
 
