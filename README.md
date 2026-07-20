@@ -1,14 +1,20 @@
-# Veklom & ABIDE Sovereign Agentic Control Plane
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-This repository contains the core architecture, schemas, and governance specifications for the Veklom and ABIDE agentic ecosystem. Built under the strict guidelines of the Agentic AI Foundation (AAIF) and locked under Constitution v4.02.1.
+# Run and deploy your AI Studio app
 
-## Core Invariant: ABIDE Proposes, CAPPO Disposes
+This contains everything you need to run your app locally.
 
-To prevent autonomous agentic drift, the planning layer (ABIDE) is mathematically decoupled from the authorization layer (CAPPO). ABIDE compiles human intent into a proposed execution graph, which CAPPO independently evaluates against deterministic policies before any state-changing action is executed.
+View your app in AI Studio: https://ai.studio/apps/12adbbc2-9ab0-4f1e-8b65-57b75c9b40d0
 
-## Getting Started
+## Run Locally
 
-1. Deploy the sovereign BYOS backend using PostgreSQL.
-2. Configure the Interlink cAPI router to discover local capabilities.
-3. Initialize the CAPPO policy engine with your organizational rules.
-4. Anchor all execution evidence to the PGL ledger.
+**Prerequisites:**  Node.js
+
+
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
