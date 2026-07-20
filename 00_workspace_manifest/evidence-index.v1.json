@@ -1,0 +1,12 @@
+{
+  "evidenceIndexVersion": "1.0.0",
+  "blueprintHash": "1fd96aab88ac84ab321bc3289a1e9243fb411b16d492dcd714d5fdc05b986045",
+  "evidenceVerified": false,
+  "evidenceRecords": [
+    {
+      "claim": "Sub-millisecond payment settlement latency below 15ms limit.",
+      "status": "UNVERIFIED_DESIGN_INTENT",
+      "assessedBy": "System Exporter Heuristics"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "manifestType": "Promotion-Rule Schema",
+  "version": "v4.02.2",
+  "promotionRules": [
+    {
+      "id": "cap-abide-intent-compiler",
+      "name": "ABIDE Intent Compilation & Graph Synthesis",
+      "maturityState": "UNVERIFIED_DESIGN_INTENT",
+      "rules": [
+        {
+          "targetMaturity": "Sovereign Production",
+          "requiredEvidenceClass": "VERIFIED_EXISTING",
+          "requiredTestsCount": 4,
+          "extraValidationNeeded": "Requires automated NIST compliance signature verify."
+        },
+        {
+          "targetMaturity": "Partially Simulated",
+          "requiredEvidenceClass": "INFERRED_FROM_CODE",
+          "requiredTestsCount": 2,
+          "extraValidationNeeded": "Static AST coverage scan validation."
+        }
+      ]
+    },
+    {
+      "id": "cap-cappo-policy-gate",
+      "name": "CAPPO Covenant Gate Policy Evaluation",
+      "maturityState": "UNVERIFIED_DESIGN_INTENT",
+      "rules": [
+        {
+          "targetMaturity": "Sovereign Production",
+          "requiredEvidenceClass": "VERIFIED_EXISTING",
+          "requiredTestsCount": 4,
+          "extraValidationNeeded": "Requires automated NIST compliance signature verify."
+        },
+        {
+          "targetMaturity": "Partially Simulated",
+          "requiredEvidenceClass": "INFERRED_FROM_CODE",
+          "requiredTestsCount": 2,
+          "extraValidationNeeded": "Static AST coverage scan validation."
+        }
+      ]
+    },
+    {
+      "id": "cap-pgl-evidence-anchor",
+      "name": "Hierarchical Evidence Anchoring",
+      "maturityState": "UNVERIFIED_DESIGN_INTENT",
+      "rules": [
+        {
+          "targetMaturity": "Sovereign Production",
+          "requiredEvidenceClass": "VERIFIED_EXISTING",
+          "requiredTestsCount": 4,
+          "extraValidationNeeded": "Requires automated NIST compliance signature verify."
+        },
+        {
+          "targetMaturity": "Partially Simulated",
+          "requiredEvidenceClass": "INFERRED_FROM_CODE",
+          "requiredTestsCount": 2,
+          "extraValidationNeeded": "Static AST coverage scan validation."
+        }
+      ]
+    },
+    {
+      "id": "cap-interlink-mcp-router",
+      "name": "Dynamic Capability Discovery & Routing",
+      "maturityState": "UNVERIFIED_DESIGN_INTENT",
+      "rules": [
+        {
+          "targetMaturity": "Sovereign Production",
+          "requiredEvidenceClass": "VERIFIED_EXISTING",
+          "requiredTestsCount": 4,
+          "extraValidationNeeded": "Requires automated NIST compliance signature verify."
+        },
+        {
+          "targetMaturity": "Partially Simulated",
+          "requiredEvidenceClass": "INFERRED_FROM_CODE",
+          "requiredTestsCount": 2,
+          "extraValidationNeeded": "Static AST coverage scan validation."
+        }
+      ]
+    }
+  ]
+}

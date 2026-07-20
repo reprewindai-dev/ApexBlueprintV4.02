@@ -1,0 +1,30 @@
+{
+  "constitutionVersion": "v4.02.2",
+  "constitutionLockState": "UNLOCKED_PLANNING_PHASE",
+  "activeJurisdictionProfile": "global",
+  "blueprintHash": "1fd96aab88ac84ab321bc3289a1e9243fb411b16d492dcd714d5fdc05b986045",
+  "compilationTimestamp": "2026-07-20T09:01:36.556Z",
+  "approvedBy": "NONE (NO HUMAN SIGN-OFF)",
+  "appliedPacks": [
+    "Sovereign Constitution Core Standard",
+    "Global Sovereign Standards Core",
+    "M2M Cryptographic Evidence Standard"
+  ],
+  "verificationClaims": [
+    {
+      "claim": "All model enclaves pin databases to regional hosts (e.g. AWS ca-central-1 for Canada).",
+      "status": "UNVERIFIED_DESIGN_INTENT",
+      "evidence": "None (No active enclaves or source code present in export)"
+    },
+    {
+      "claim": "Sub-millisecond payment settlement latency below 15ms limit.",
+      "status": "PROJECTED_BUSINESS_ASSUMPTION",
+      "evidence": "X402 Ledger design parameters"
+    },
+    {
+      "claim": "Hardware enclaves verify local key storage.",
+      "status": "UNVERIFIED_DESIGN_INTENT",
+      "evidence": "Pending local TPM sandbox runs"
+    }
+  ]
+}

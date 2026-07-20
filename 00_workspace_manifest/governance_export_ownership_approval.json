@@ -1,0 +1,107 @@
+{
+  "manifestType": "Ownership and Approval Manifest",
+  "version": "v4.02.2",
+  "lockState": "UNLOCKED_PLANNING_PHASE",
+  "signOffAuditLogs": [
+    {
+      "id": "cap-abide-intent-compiler",
+      "name": "ABIDE Intent Compilation & Graph Synthesis",
+      "owners": {
+        "primary": "pluggedfinds41@gmail.com",
+        "technical": "Unassigned",
+        "data": "Unassigned",
+        "compliance": "Unassigned"
+      },
+      "approvalWorkflow": {
+        "approverRoles": [
+          "Chief Compliance Officer",
+          "VP of Engineering",
+          "SecOps Lead"
+        ],
+        "status": "PENDING_HUMAN_APPROVAL",
+        "approvalTimestamps": {
+          "Chief Compliance Officer": "PENDING",
+          "VP of Engineering": "PENDING",
+          "SecOps Lead": "PENDING"
+        },
+        "requiredSignOffCount": 3,
+        "overrideRationale": "No human sign-offs have been recorded. Auto-generation of approval state is forbidden."
+      }
+    },
+    {
+      "id": "cap-cappo-policy-gate",
+      "name": "CAPPO Covenant Gate Policy Evaluation",
+      "owners": {
+        "primary": "Compliance Officer",
+        "technical": "Unassigned",
+        "data": "Unassigned",
+        "compliance": "Unassigned"
+      },
+      "approvalWorkflow": {
+        "approverRoles": [
+          "Chief Compliance Officer",
+          "VP of Engineering",
+          "SecOps Lead"
+        ],
+        "status": "PENDING_HUMAN_APPROVAL",
+        "approvalTimestamps": {
+          "Chief Compliance Officer": "PENDING",
+          "VP of Engineering": "PENDING",
+          "SecOps Lead": "PENDING"
+        },
+        "requiredSignOffCount": 3,
+        "overrideRationale": "No human sign-offs have been recorded. Auto-generation of approval state is forbidden."
+      }
+    },
+    {
+      "id": "cap-pgl-evidence-anchor",
+      "name": "Hierarchical Evidence Anchoring",
+      "owners": {
+        "primary": "Lead Ledger Architect",
+        "technical": "Unassigned",
+        "data": "Unassigned",
+        "compliance": "Unassigned"
+      },
+      "approvalWorkflow": {
+        "approverRoles": [
+          "Chief Compliance Officer",
+          "VP of Engineering",
+          "SecOps Lead"
+        ],
+        "status": "PENDING_HUMAN_APPROVAL",
+        "approvalTimestamps": {
+          "Chief Compliance Officer": "PENDING",
+          "VP of Engineering": "PENDING",
+          "SecOps Lead": "PENDING"
+        },
+        "requiredSignOffCount": 3,
+        "overrideRationale": "No human sign-offs have been recorded. Auto-generation of approval state is forbidden."
+      }
+    },
+    {
+      "id": "cap-interlink-mcp-router",
+      "name": "Dynamic Capability Discovery & Routing",
+      "owners": {
+        "primary": "pluggedfinds41@gmail.com",
+        "technical": "Unassigned",
+        "data": "Unassigned",
+        "compliance": "Unassigned"
+      },
+      "approvalWorkflow": {
+        "approverRoles": [
+          "Chief Compliance Officer",
+          "VP of Engineering",
+          "SecOps Lead"
+        ],
+        "status": "PENDING_HUMAN_APPROVAL",
+        "approvalTimestamps": {
+          "Chief Compliance Officer": "PENDING",
+          "VP of Engineering": "PENDING",
+          "SecOps Lead": "PENDING"
+        },
+        "requiredSignOffCount": 3,
+        "overrideRationale": "No human sign-offs have been recorded. Auto-generation of approval state is forbidden."
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "packetId": "packet-001",
+  "title": "Build Einstein Prioritized Scheduler",
+  "status": "NOT_STARTED",
+  "executionEligibility": "BLOCKED",
+  "targetRole": "Scheduler Backend Engineer",
+  "objective": "Create Einstein optimized reputation priority router.",
+  "files": [
+    "src/scheduler/einstein.rs"
+  ]
+}

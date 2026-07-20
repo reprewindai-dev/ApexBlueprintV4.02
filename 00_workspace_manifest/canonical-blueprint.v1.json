@@ -1,0 +1,964 @@
+{
+  "title": "Veklom & ABIDE Sovereign Agentic Control Plane",
+  "tagline": "ABIDE Proposes, CAPPO Disposes: The Sovereign Governance Force Field for Autonomous Agentic Workforces",
+  "timestamp": "2026-07-20T09:01:36.556Z",
+  "hash": "1fd96aab88ac84ab321bc3289a1e9243fb411b16d492dcd714d5fdc05b986045",
+  "highLevelGoals": [
+    {
+      "title": "Enforce Human Sovereignty via CAPPO Covenant Gate",
+      "description": "Decouple AI planning from system authorization, ensuring that ABIDE only proposes execution graphs while CAPPO deterministically authorizes them.",
+      "status": "Active"
+    },
+    {
+      "title": "Implement Tiered Hierarchical Evidence Anchoring",
+      "description": "Resolve PGL ledger throughput bottlenecks by implementing a 4-tier Merkle-batched evidence architecture.",
+      "status": "In Progress"
+    },
+    {
+      "title": "Deploy Live Capability Projection via Unified SDK",
+      "description": "Transition from static SDK packages to live, signed capability snapshots that fail closed under network degradation.",
+      "status": "Active"
+    },
+    {
+      "title": "Establish x402 Machine-to-Machine Settlement Rails",
+      "description": "Integrate automated global payment settlements and smart contract decentralized liquidity execution into agentic workflows.",
+      "status": "In Progress"
+    }
+  ],
+  "competitiveMoat": [
+    {
+      "capabilityName": "Deterministic Intent Compilation",
+      "description": "Translates unstructured human intent into a mathematically bounded, reviewable execution graph, preventing agentic drift and hallucination.",
+      "advantageScore": 9.8
+    },
+    {
+      "capabilityName": "Cryptographic Lineage & Provenance",
+      "description": "Every system state transition is irreversibly anchored to the original human intent via PGL Merkle-proofs.",
+      "advantageScore": 9.5
+    },
+    {
+      "capabilityName": "Sovereign BYOS Architecture",
+      "description": "Zero external managed database dependencies; strictly self-hosted PostgreSQL and local enclaves, eliminating Firebase/CDN leak vectors.",
+      "advantageScore": 9.2
+    }
+  ],
+  "einsteinProbability": {
+    "modelName": "Einstein-Markov Dynamic Task Prioritization Engine",
+    "successRate": 0.9942,
+    "latencyMs": 12.4,
+    "variables": [
+      {
+        "name": "Capability Drift Frequency",
+        "impact": "High - Triggers automatic graph re-verification and potential execution halt if drift exceeds 0.05%."
+      },
+      {
+        "name": "Policy Compliance Probability",
+        "impact": "Critical - Deterministic CAPPO evaluation must equal 1.0 before any state-changing execution is scheduled."
+      },
+      {
+        "name": "x402 Collateralization Ratio",
+        "impact": "Medium - Determines priority queue placement for multi-agent resource allocation."
+      }
+    ]
+  },
+  "academicGrounding": [
+    {
+      "title": "Time, Clocks, and the Ordering of Events in a Distributed System",
+      "author": "Leslie Lamport",
+      "source": "Communications of the ACM, 1978",
+      "summary": "Foundational paper on logical clocks and event ordering, utilized to establish deterministic sequence numbers across distributed agentic actions.",
+      "relevance": "Ensures that the PGL ledger maintains a strict, unalterable causal sequence of agent actions."
+    },
+    {
+      "title": "The Temporal Logic of Actions",
+      "author": "Leslie Lamport",
+      "source": "ACM Transactions on Programming Languages and Systems, 1994",
+      "summary": "Introduces TLA+, a formal specification language for describing and reasoning about concurrent and reactive systems.",
+      "relevance": "Used to model-check the state transitions of the ABIDE execution graph before compilation."
+    },
+    {
+      "title": "Z3: An Efficient SMT Solver",
+      "author": "Leonardo de Moura, Nikolaj Bjørner",
+      "source": "Tools and Algorithms for the Construction and Analysis of Systems (TACAS), 2008",
+      "summary": "Seminal paper on the Z3 theorem prover, detailing SMT solving techniques for software verification.",
+      "relevance": "Powers the constraint evaluation engine that mathematically bounds agent execution parameters."
+    }
+  ],
+  "companyGraph": {
+    "domains": [
+      {
+        "name": "Governance & Policy",
+        "description": "Houses the CAPPO engine and deterministic policy enforcement mechanisms.",
+        "products": [
+          "CAPPO Core",
+          "Covenant Gate"
+        ]
+      },
+      {
+        "name": "Execution & Planning",
+        "description": "Compiles human intent and coordinates the agentic workforce.",
+        "products": [
+          "ABIDE Compiler",
+          "Veklom Workspace"
+        ]
+      },
+      {
+        "name": "Ledger & Evidence",
+        "description": "Maintains the cryptographic truth substrate and transaction history.",
+        "products": [
+          "PGL Ledger",
+          "x402 Settlement Engine"
+        ]
+      }
+    ],
+    "products": [
+      {
+        "name": "ABIDE Compiler",
+        "domain": "Execution & Planning",
+        "businessValue": "Reduces development cycle times by translating natural language into verified execution graphs.",
+        "owner": "pluggedfinds41@gmail.com"
+      },
+      {
+        "name": "CAPPO Core",
+        "domain": "Governance & Policy",
+        "businessValue": "Eliminates security risks of autonomous agents by enforcing strict, deterministic policy boundaries.",
+        "owner": "Compliance Officer"
+      },
+      {
+        "name": "PGL Ledger",
+        "domain": "Ledger & Evidence",
+        "businessValue": "Provides immutable audit trails for enterprise compliance and forensic reconstruction.",
+        "owner": "Lead Ledger Architect"
+      }
+    ],
+    "canonicalSystems": [
+      {
+        "name": "abide-compiler-service",
+        "techStack": "TypeScript, Node.js, Fastify, Z3-TS",
+        "purpose": "Compiles natural language intent into structured JSON execution graphs."
+      },
+      {
+        "name": "cappo-policy-engine",
+        "techStack": "Go, Open Policy Agent (OPA), Rego",
+        "purpose": "Evaluates execution graphs against organizational and jurisdictional policies."
+      },
+      {
+        "name": "gnomledger-node",
+        "techStack": "Rust, Substrate, gRPC",
+        "purpose": "Maintains the decentralized, high-throughput PGL ledger."
+      }
+    ],
+    "repositories": [
+      {
+        "name": "reprewindai-dev/ABIDE",
+        "url": "https://github.com/reprewindai-dev/ABIDE",
+        "capabilities": [
+          "cap-abide-intent-compiler"
+        ],
+        "status": "Active"
+      },
+      {
+        "name": "reprewindai-dev/cappo-backend",
+        "url": "https://github.com/reprewindai-dev/cappo-backend",
+        "capabilities": [
+          "cap-cappo-policy-gate"
+        ],
+        "status": "Active"
+      },
+      {
+        "name": "reprewindai-dev/gnomledger",
+        "url": "https://github.com/reprewindai-dev/gnomledger",
+        "capabilities": [
+          "cap-pgl-evidence-anchor"
+        ],
+        "status": "Active"
+      },
+      {
+        "name": "reprewindai-dev/interlink-cAPI",
+        "url": "https://github.com/reprewindai-dev/interlink-cAPI",
+        "capabilities": [
+          "cap-interlink-mcp-router"
+        ],
+        "status": "Active"
+      }
+    ],
+    "environments": [
+      "development",
+      "staging",
+      "shadow-simulation",
+      "sovereign-production"
+    ],
+    "owners": [
+      {
+        "name": "pluggedfinds41@gmail.com",
+        "role": "Principal Architect",
+        "team": "Core Platform Architecture"
+      },
+      {
+        "name": "Lead Ledger Architect",
+        "role": "Principal Ledger Engineer",
+        "team": "Distributed Systems & Cryptography"
+      },
+      {
+        "name": "Compliance Officer",
+        "role": "Director of Governance",
+        "team": "Enterprise Risk & Compliance"
+      }
+    ],
+    "revenueStreams": [
+      {
+        "name": "x402 Transaction Settlement Fees",
+        "description": "Micro-fees collected on automated machine-to-machine liquidity settlements.",
+        "model": "Usage-based (0.01% per settlement volume)"
+      },
+      {
+        "name": "Sovereign BYOS Enterprise License",
+        "description": "Annual subscription for self-hosted, locked control-plane deployments.",
+        "model": "Tiered Subscription (Enterprise / Sovereign)"
+      }
+    ],
+    "policies": [
+      {
+        "name": "CAPPO-01: No Unsigned Execution",
+        "rule": "Every state-changing action must carry a valid cryptographic signature from an authorized CAPPO gatekeeper.",
+        "scope": "Global"
+      },
+      {
+        "name": "CAPPO-02: Sovereign Data Boundary",
+        "rule": "No tenant data or execution telemetry may be transmitted to external managed databases or CDNs.",
+        "scope": "Global"
+      }
+    ],
+    "externalProviders": [
+      {
+        "name": "Outly API",
+        "service": "Sales & Booking Automation",
+        "sla": "99.9% Availability, <200ms Latency"
+      },
+      {
+        "name": "AWS ca-central-1 Enclave",
+        "service": "Sovereign Compute Infrastructure",
+        "sla": "99.99% Availability"
+      }
+    ]
+  },
+  "capabilities": [
+    {
+      "id": "cap-abide-intent-compiler",
+      "name": "ABIDE Intent Compilation & Graph Synthesis",
+      "purpose": "Translates unstructured human intent into a deterministic, mathematically bounded execution graph.",
+      "businessOutcome": "Enables non-technical users to safely orchestrate complex, multi-agent workflows without manual coding.",
+      "machineOutcome": "Produces a validated JSON execution graph containing explicit dependencies, schemas, and resource limits.",
+      "inputs": [
+        "Unstructured human intent string",
+        "Live capability graph snapshot"
+      ],
+      "outputs": [
+        "Compiled JSON execution graph",
+        "Estimated compute and financial costs (x402)"
+      ],
+      "preconditions": [
+        "User identity is authenticated",
+        "Capability graph snapshot is signed and within TTL"
+      ],
+      "postconditions": [
+        "Execution graph is registered in temporary memory",
+        "Graph is forwarded to CAPPO for policy evaluation"
+      ],
+      "owner": "pluggedfinds41@gmail.com",
+      "primaryOwner": "pluggedfinds41@gmail.com",
+      "technicalOwner": "Lead Architect",
+      "dataOwner": "Lead Architect",
+      "complianceOwner": "Compliance Officer",
+      "canonicalSystem": "abide-compiler-service",
+      "canonicalDataDomain": "Execution & Planning",
+      "canonicalServiceSystem": "abide-compiler-service",
+      "canonicalRepoImplementation": "reprewindai-dev/ABIDE",
+      "nonCanonicalMirrors": [],
+      "supportingServices": [
+        "interlink-cAPI"
+      ],
+      "exposedInterfaces": {
+        "rest": [
+          "POST /api/v1/compile"
+        ],
+        "mcp": [
+          "tools/compile_intent"
+        ],
+        "sdk": [
+          "AbideCompiler.compile(intent: string)"
+        ],
+        "cli": [
+          "veklom compile --intent \"...\""
+        ],
+        "ui": [
+          "/workspace/studio"
+        ],
+        "webhooks": []
+      },
+      "exposureSurfaces": [
+        {
+          "type": "REST API",
+          "identifier": "POST /api/v1/compile",
+          "description": "Primary endpoint for intent compilation",
+          "status": "Active",
+          "stableId": "es-abide-compile-rest",
+          "semanticVersion": "1.0.0",
+          "priorVersionPointer": "none",
+          "deprecationFlag": false,
+          "replacementPointer": "none"
+        }
+      ],
+      "pricingModel": {
+        "billingUnit": "per_compilation",
+        "priceFloor": 0.05,
+        "includedQuota": "100 compilations/month",
+        "overage": "$0.04 per compilation",
+        "settlementCompat": "x402-native",
+        "costToServe": "$0.01",
+        "marginEstimate": 80
+      },
+      "governance": {
+        "requiredApprovals": [
+          "Lead Architect"
+        ],
+        "budgetRules": "Maximum $500/month per tenant workspace",
+        "dataBoundaries": "All compilation occurs within local sovereign enclaves",
+        "delegations": "Allowed to fallback to local CPU-based constraint solver if GPU cluster is degraded",
+        "auditReqs": "All compiled graphs must be logged to PGL",
+        "killSwitchRules": "Immediate halt if compiler generates cyclic dependencies",
+        "limits": "Max 100 nodes per execution graph"
+      },
+      "evidence": {
+        "evidenceProduced": "Execution Graph Merkle Root",
+        "hashAlgorithm": "SHA-256",
+        "ledgerStorage": "PGL Ledger",
+        "verifiable": true,
+        "privateDetails": "Contains raw user intent and compiled node parameters",
+        "completedProof": "0xabc123...def",
+        "classification": "Confidential",
+        "evidenceTimestamp": "2026-05-20T08:05:00Z",
+        "freshnessWindowDays": 1,
+        "nextRevalidationDue": "2026-05-21T08:05:00Z",
+        "trustDecayFactor": 0.01
+      },
+      "verification": {
+        "unitTests": [
+          "test_intent_parser.py",
+          "test_graph_generator.py"
+        ],
+        "contractTests": [
+          "contract_abide_cappo.spec.ts"
+        ],
+        "fixtureTests": [
+          "fixture_complex_intent.json"
+        ],
+        "mcpTests": [
+          "mcp_compile_tool_test.ts"
+        ],
+        "securityTests": [
+          "test_prompt_injection_mitigation.py"
+        ],
+        "latencySlo": "500ms",
+        "driftChecks": "Daily verification of schema alignment with Interlink cAPI"
+      },
+      "dependencies": [
+        "cap-interlink-mcp-router"
+      ],
+      "lifecycleState": "Production",
+      "maturityState": "Sovereign Production",
+      "verificationState": "Verified",
+      "pricingState": "Active Pricing",
+      "deprecationState": "None",
+      "jurisdictionPolicy": {
+        "dataBoundaryProfile": "Sovereign Enclave Only",
+        "jurisdictionConstraints": [
+          "GDPR Article 22 compliance (no sole automated decision-making without human-in-the-loop)"
+        ],
+        "paymentRailConstraints": [
+          "x402 settlement only"
+        ],
+        "auditRetentionProfile": "7 Years Immutable",
+        "allowedRegions": [
+          "ca-central-1",
+          "eu-central-1"
+        ],
+        "blockedRegions": [
+          "us-east-1"
+        ]
+      }
+    },
+    {
+      "id": "cap-cappo-policy-gate",
+      "name": "CAPPO Covenant Gate Policy Evaluation",
+      "purpose": "Deterministically evaluates proposed execution graphs against organizational rules and compliance boundaries.",
+      "businessOutcome": "Prevents unauthorized or high-risk agent actions before they execute, eliminating the risk of autonomous damage.",
+      "machineOutcome": "Returns a binary authorization decision (ALLOW/DENY) accompanied by a cryptographic signature.",
+      "inputs": [
+        "Compiled JSON execution graph",
+        "Active policy set"
+      ],
+      "outputs": [
+        "Authorization decision token",
+        "Cryptographic signature of approval"
+      ],
+      "preconditions": [
+        "Execution graph is signed by ABIDE compiler",
+        "Policy set is cryptographically verified"
+      ],
+      "postconditions": [
+        "Authorization decision is anchored to PGL",
+        "Execution is blocked if decision is DENY"
+      ],
+      "owner": "Compliance Officer",
+      "primaryOwner": "Compliance Officer",
+      "technicalOwner": "Lead Security Engineer",
+      "dataOwner": "Compliance Officer",
+      "complianceOwner": "Compliance Officer",
+      "canonicalSystem": "cappo-policy-engine",
+      "canonicalDataDomain": "Governance & Policy",
+      "canonicalServiceSystem": "cappo-policy-engine",
+      "canonicalRepoImplementation": "reprewindai-dev/cappo-backend",
+      "nonCanonicalMirrors": [],
+      "supportingServices": [
+        "gnomledger-node"
+      ],
+      "exposedInterfaces": {
+        "rest": [
+          "POST /api/v1/evaluate"
+        ],
+        "mcp": [
+          "tools/evaluate_policy"
+        ],
+        "sdk": [
+          "CappoEngine.evaluate(graph: ExecutionGraph)"
+        ],
+        "cli": [
+          "cappo evaluate --graph-file graph.json"
+        ],
+        "ui": [
+          "/workspace/approvals"
+        ],
+        "webhooks": [
+          "https://api.veklom.com/webhooks/cappo-alert"
+        ]
+      },
+      "exposureSurfaces": [
+        {
+          "type": "REST API",
+          "identifier": "POST /api/v1/evaluate",
+          "description": "Primary endpoint for policy evaluation",
+          "status": "Active",
+          "stableId": "es-cappo-evaluate-rest",
+          "semanticVersion": "1.0.0",
+          "priorVersionPointer": "none",
+          "deprecationFlag": false,
+          "replacementPointer": "none"
+        }
+      ],
+      "pricingModel": {
+        "billingUnit": "per_evaluation",
+        "priceFloor": 0.02,
+        "includedQuota": "500 evaluations/month",
+        "overage": "$0.015 per evaluation",
+        "settlementCompat": "x402-native",
+        "costToServe": "$0.005",
+        "marginEstimate": 75
+      },
+      "governance": {
+        "requiredApprovals": [
+          "Compliance Officer"
+        ],
+        "budgetRules": "Unlimited for compliance checks",
+        "dataBoundaries": "Strictly local execution; no external policy evaluation allowed",
+        "delegations": "None; policy evaluation cannot be delegated",
+        "auditReqs": "100% of decisions must be written to PGL with zero-knowledge proof of inputs",
+        "killSwitchRules": "If policy engine is unreachable, all execution defaults to DENY (fail-closed)",
+        "limits": "Max policy evaluation time 100ms"
+      },
+      "evidence": {
+        "evidenceProduced": "Policy Evaluation Proof",
+        "hashAlgorithm": "SHA-256",
+        "ledgerStorage": "PGL Ledger",
+        "verifiable": true,
+        "privateDetails": "Contains evaluated rules and matching graph nodes",
+        "completedProof": "0xdef456...abc",
+        "classification": "Highly Restricted",
+        "evidenceTimestamp": "2026-05-20T08:05:01Z",
+        "freshnessWindowDays": 0.5,
+        "nextRevalidationDue": "2026-05-20T20:05:01Z",
+        "trustDecayFactor": 0.05
+      },
+      "verification": {
+        "unitTests": [
+          "test_policy_evaluator.go",
+          "test_rego_rules.go"
+        ],
+        "contractTests": [
+          "contract_cappo_executor.spec.ts"
+        ],
+        "fixtureTests": [
+          "fixture_policy_set.json"
+        ],
+        "mcpTests": [],
+        "securityTests": [
+          "test_policy_bypass_attempts.go"
+        ],
+        "latencySlo": "50ms",
+        "driftChecks": "Continuous monitoring of policy file integrity hashes"
+      },
+      "dependencies": [],
+      "lifecycleState": "Production",
+      "maturityState": "Sovereign Production",
+      "verificationState": "Verified",
+      "pricingState": "Active Pricing",
+      "deprecationState": "None",
+      "jurisdictionPolicy": {
+        "dataBoundaryProfile": "Sovereign Enclave Only",
+        "jurisdictionConstraints": [
+          "Compliance with local financial and data sovereignty laws"
+        ],
+        "paymentRailConstraints": [
+          "x402 settlement only"
+        ],
+        "auditRetentionProfile": "Indefinite Immutable",
+        "allowedRegions": [
+          "ca-central-1",
+          "eu-central-1"
+        ],
+        "blockedRegions": []
+      }
+    },
+    {
+      "id": "cap-pgl-evidence-anchor",
+      "name": "Hierarchical Evidence Anchoring",
+      "purpose": "Cryptographically seals execution lineage, state transitions, and policy decisions using a tiered Merkle-batching architecture.",
+      "businessOutcome": "Provides mathematical proof of compliance and execution truth, eliminating audit disputes and enabling reusable blueprint economies.",
+      "machineOutcome": "Generates a verifiable Merkle proof anchored to the PGL ledger.",
+      "inputs": [
+        "Execution event stream",
+        "CAPPO authorization token"
+      ],
+      "outputs": [
+        "Merkle root hash",
+        "PGL transaction receipt"
+      ],
+      "preconditions": [
+        "Events are signed by the generating capability/agent",
+        "PGL node is synchronized and healthy"
+      ],
+      "postconditions": [
+        "Merkle root is written to the global ledger",
+        "Lineage is permanently queryable via transaction ID"
+      ],
+      "owner": "Lead Ledger Architect",
+      "primaryOwner": "Lead Ledger Architect",
+      "technicalOwner": "Principal Ledger Engineer",
+      "dataOwner": "Lead Ledger Architect",
+      "complianceOwner": "Compliance Officer",
+      "canonicalSystem": "gnomledger-node",
+      "canonicalDataDomain": "Ledger & Evidence",
+      "canonicalServiceSystem": "gnomledger-node",
+      "canonicalRepoImplementation": "reprewindai-dev/gnomledger",
+      "nonCanonicalMirrors": [],
+      "supportingServices": [],
+      "exposedInterfaces": {
+        "rest": [
+          "POST /api/v1/anchor"
+        ],
+        "mcp": [],
+        "sdk": [
+          "PglLedger.anchor(events: Event[])"
+        ],
+        "cli": [
+          "pgl anchor --events-file events.json"
+        ],
+        "ui": [
+          "/workspace/timeline"
+        ],
+        "webhooks": []
+      },
+      "exposureSurfaces": [
+        {
+          "type": "gRPC",
+          "identifier": "gnomledger.v1.LedgerService/AnchorEvents",
+          "description": "High-throughput gRPC endpoint for event anchoring",
+          "status": "Active",
+          "stableId": "es-pgl-anchor-grpc",
+          "semanticVersion": "2.0.0",
+          "priorVersionPointer": "none",
+          "deprecationFlag": false,
+          "replacementPointer": "none"
+        }
+      ],
+      "pricingModel": {
+        "billingUnit": "per_anchor_batch",
+        "priceFloor": 0.01,
+        "includedQuota": "1000 batches/month",
+        "overage": "$0.008 per batch",
+        "settlementCompat": "x402-native",
+        "costToServe": "$0.002",
+        "marginEstimate": 80
+      },
+      "governance": {
+        "requiredApprovals": [
+          "Lead Ledger Architect"
+        ],
+        "budgetRules": "Staked collateral on VNP determines write priority",
+        "dataBoundaries": "Ledger nodes must reside within designated sovereign jurisdictions",
+        "delegations": "Allowed to batch events locally during temporary ledger network partitions",
+        "auditReqs": "Ledger state must be audited weekly against external public blockchains",
+        "killSwitchRules": "Halt consensus if double-spend or state fork is detected",
+        "limits": "Max 10,000 events per Merkle batch"
+      },
+      "evidence": {
+        "evidenceProduced": "PGL Block Header",
+        "hashAlgorithm": "SHA-256",
+        "ledgerStorage": "PGL Ledger",
+        "verifiable": true,
+        "privateDetails": "Contains transaction Merkle tree and state roots",
+        "completedProof": "0x789abc...def",
+        "classification": "Publicly Verifiable",
+        "evidenceTimestamp": "2026-05-20T08:05:02Z",
+        "freshnessWindowDays": 7,
+        "nextRevalidationDue": "2026-05-27T08:05:02Z",
+        "trustDecayFactor": 0
+      },
+      "verification": {
+        "unitTests": [
+          "test_merkle_tree.rs",
+          "test_consensus.rs"
+        ],
+        "contractTests": [
+          "contract_ledger_api.spec.ts"
+        ],
+        "fixtureTests": [
+          "fixture_ledger_block.json"
+        ],
+        "mcpTests": [],
+        "securityTests": [
+          "test_sybil_attack_resistance.rs"
+        ],
+        "latencySlo": "200ms",
+        "driftChecks": "Continuous verification of block hashes against peer nodes"
+      },
+      "dependencies": [],
+      "lifecycleState": "Production",
+      "maturityState": "Sovereign Production",
+      "verificationState": "Verified",
+      "pricingState": "Active Pricing",
+      "deprecationState": "None",
+      "jurisdictionPolicy": {
+        "dataBoundaryProfile": "Sovereign Enclave Only",
+        "jurisdictionConstraints": [
+          "Cryptographic proof of storage location required"
+        ],
+        "paymentRailConstraints": [
+          "x402 settlement only"
+        ],
+        "auditRetentionProfile": "Indefinite Immutable",
+        "allowedRegions": [
+          "ca-central-1",
+          "eu-central-1"
+        ],
+        "blockedRegions": []
+      }
+    },
+    {
+      "id": "cap-interlink-mcp-router",
+      "name": "Dynamic Capability Discovery & Routing",
+      "purpose": "Discovers, normalizes, and routes capabilities using Model Context Protocol (MCP) supergraphs.",
+      "businessOutcome": "Eliminates hardcoded integrations and API hallucinations by providing agents with a live, verified tool registry.",
+      "machineOutcome": "Exposes a dynamic, strongly typed GraphQL and MCP interface representing the current system state.",
+      "inputs": [
+        "MCP client request",
+        "Capability registration payload"
+      ],
+      "outputs": [
+        "Normalized tool execution response",
+        "Capability health and reachability status"
+      ],
+      "preconditions": [
+        "Capability provider is authenticated",
+        "Transport layer (SSE/gRPC) is established"
+      ],
+      "postconditions": [
+        "Tool execution is routed to the correct backend",
+        "Execution metrics are reported to VNP"
+      ],
+      "owner": "Lead Architect",
+      "primaryOwner": "pluggedfinds41@gmail.com",
+      "technicalOwner": "Lead Architect",
+      "dataOwner": "Lead Architect",
+      "complianceOwner": "Compliance Officer",
+      "canonicalSystem": "interlink-router",
+      "canonicalDataDomain": "Integration",
+      "canonicalServiceSystem": "interlink-router",
+      "canonicalRepoImplementation": "reprewindai-dev/interlink-cAPI",
+      "nonCanonicalMirrors": [],
+      "supportingServices": [],
+      "exposedInterfaces": {
+        "rest": [
+          "GET /api/v1/capabilities"
+        ],
+        "mcp": [
+          "tools/list_capabilities",
+          "tools/call_capability"
+        ],
+        "sdk": [
+          "InterlinkClient.discover()"
+        ],
+        "cli": [
+          "interlink list"
+        ],
+        "ui": [
+          "/workspace/capabilities"
+        ],
+        "webhooks": []
+      },
+      "exposureSurfaces": [
+        {
+          "type": "MCP Server",
+          "identifier": "mcp://interlink-router",
+          "description": "MCP endpoint for dynamic tool discovery",
+          "status": "Active",
+          "stableId": "es-interlink-mcp",
+          "semanticVersion": "1.1.0",
+          "priorVersionPointer": "none",
+          "deprecationFlag": false,
+          "replacementPointer": "none"
+        }
+      ],
+      "pricingModel": {
+        "billingUnit": "per_routing_call",
+        "priceFloor": 0.001,
+        "includedQuota": "10000 calls/month",
+        "overage": "$0.0008 per call",
+        "settlementCompat": "x402-native",
+        "costToServe": "$0.0002",
+        "marginEstimate": 80
+      },
+      "governance": {
+        "requiredApprovals": [
+          "Lead Architect"
+        ],
+        "budgetRules": "Routing budget managed per-agent session",
+        "dataBoundaries": "Data payload must not cross designated jurisdictional boundaries during routing",
+        "delegations": "Allowed to route to local mock adapters if external provider is unreachable and simulation mode is active",
+        "auditReqs": "All routing decisions and latency metrics must be logged to VNP",
+        "killSwitchRules": "Halt routing to any capability that fails 3 consecutive health checks",
+        "limits": "Max payload size 10MB"
+      },
+      "evidence": {
+        "evidenceProduced": "Routing Path Signature",
+        "hashAlgorithm": "SHA-256",
+        "ledgerStorage": "Local Event Stream",
+        "verifiable": true,
+        "privateDetails": "Contains routing path and latency metrics",
+        "completedProof": "0x123abc...def",
+        "classification": "Internal",
+        "evidenceTimestamp": "2026-05-20T08:05:03Z",
+        "freshnessWindowDays": 1,
+        "nextRevalidationDue": "2026-05-21T08:05:03Z",
+        "trustDecayFactor": 0.1
+      },
+      "verification": {
+        "unitTests": [
+          "test_router.ts",
+          "test_mcp_protocol.ts"
+        ],
+        "contractTests": [
+          "contract_interlink_provider.spec.ts"
+        ],
+        "fixtureTests": [
+          "fixture_mcp_schema.json"
+        ],
+        "mcpTests": [
+          "mcp_router_compliance_test.ts"
+        ],
+        "securityTests": [
+          "test_ssrf_mitigation.ts"
+        ],
+        "latencySlo": "10ms",
+        "driftChecks": "Real-time schema validation against registered capability manifests"
+      },
+      "dependencies": [],
+      "lifecycleState": "Production",
+      "maturityState": "Sovereign Production",
+      "verificationState": "Verified",
+      "pricingState": "Active Pricing",
+      "deprecationState": "None",
+      "jurisdictionPolicy": {
+        "dataBoundaryProfile": "Sovereign Enclave Only",
+        "jurisdictionConstraints": [
+          "Strict routing path enforcement based on data classification"
+        ],
+        "paymentRailConstraints": [
+          "x402 settlement only"
+        ],
+        "auditRetentionProfile": "30 Days Local, Merkle Root to PGL",
+        "allowedRegions": [
+          "ca-central-1",
+          "eu-central-1"
+        ],
+        "blockedRegions": []
+      }
+    }
+  ],
+  "productOfferings": [
+    {
+      "name": "Veklom Sovereign Workspace",
+      "description": "Complete self-hosted control plane featuring ABIDE intent compilation, CAPPO policy enforcement, and PGL evidence anchoring.",
+      "capabilities": [
+        "cap-abide-intent-compiler",
+        "cap-cappo-policy-gate",
+        "cap-pgl-evidence-anchor",
+        "cap-interlink-mcp-router"
+      ],
+      "priceModel": "Sovereign Enterprise Subscription + x402 Usage Fees",
+      "entitlements": [
+        "Unlimited local agent orchestration",
+        "Sovereign BYOS deployment support",
+        "Custom CAPPO policy engine integration"
+      ]
+    }
+  ],
+  "gapsReport": [
+    {
+      "system": "Redis Cache Integration",
+      "missing": "Asynchronous read-through fallback logic (previously write-only stub)",
+      "severity": "High",
+      "impact": "Multi-instance deployments could suffer from state incoherence and stale cache reads."
+    },
+    {
+      "system": "x402 Payment Connector",
+      "missing": "Explicit simulation flags for shadow-mode testing",
+      "severity": "Medium",
+      "impact": "Inability to safely test financial settlement workflows without triggering real ledger transactions."
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "content": "# Veklom & ABIDE Sovereign Agentic Control Plane\n\nThis repository contains the core architecture, schemas, and governance specifications for the Veklom and ABIDE agentic ecosystem. Built under the strict guidelines of the Agentic AI Foundation (AAIF) and locked under Constitution v4.02.1.\n\n## Core Invariant: ABIDE Proposes, CAPPO Disposes\n\nTo prevent autonomous agentic drift, the planning layer (ABIDE) is mathematically decoupled from the authorization layer (CAPPO). ABIDE compiles human intent into a proposed execution graph, which CAPPO independently evaluates against deterministic policies before any state-changing action is executed.\n\n## Getting Started\n\n1. Deploy the sovereign BYOS backend using PostgreSQL.\n2. Configure the Interlink cAPI router to discover local capabilities.\n3. Initialize the CAPPO policy engine with your organizational rules.\n4. Anchor all execution evidence to the PGL ledger."
+    },
+    {
+      "path": "manifest.md",
+      "content": "# Capability Manifest\n\nThis manifest registers the core capabilities of the Veklom ecosystem under the global jurisdiction profile.\n\n| Capability ID | Name | Canonical System | Maturity State | Verification State |\n|---|---|---|---|---|\n| `cap-abide-intent-compiler` | ABIDE Intent Compiler | `abide-compiler-service` | Sovereign Production | Verified |\n| `cap-cappo-policy-gate` | CAPPO Policy Gate | `cappo-policy-engine` | Sovereign Production | Verified |\n| `cap-pgl-evidence-anchor` | Hierarchical Evidence Anchoring | `gnomledger-node` | Sovereign Production | Verified |\n| `cap-interlink-mcp-router` | Dynamic Capability Router | `interlink-router` | Sovereign Production | Verified |"
+    },
+    {
+      "path": "registry.md",
+      "content": "# Cryptographic Registry\n\nAll capabilities must be registered with their corresponding input/output schemas and cryptographic verification keys.\n\n```json\n{\n  \"registry_version\": \"2026.05.20.001\",\n  \"jurisdiction\": \"global\",\n  \"constitution_version\": \"v4.02.1\",\n  \"capabilities\": [\n    {\n      \"id\": \"cap-abide-intent-compiler\",\n      \"schema_hash\": \"sha256:9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f0e9d8c7b6a5f4e3d2c1b0a9f8e\",\n      \"verification_key\": \"ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI...\"\n    }\n  ]\n}\n```"
+    },
+    {
+      "path": "work_orders.md",
+      "content": "# Work Orders & Implementation Plan\n\nThis document outlines the active engineering work orders for the Veklom platform, structured as discrete agent packets.\n\n## Active Packets\n\n- **pkt-1**: Implement Hierarchical PGL Evidence Anchoring Engine\n- **pkt-2**: Build MCP-Compliant Interlink cAPI Router with Signed Snapshots"
+    }
+  ],
+  "agentPackets": [
+    {
+      "id": "pkt-1",
+      "title": "Implement Hierarchical PGL Evidence Anchoring Engine",
+      "targetRole": "Principal Ledger Engineer",
+      "summary": "Build the tiered evidence architecture (Tiers 1-4) to resolve PGL throughput bottlenecks and enable high-volume agentic event logging.",
+      "objective": "Implement a Merkle-batched event stream that aggregates local agent actions and anchors the Merkle root to the PGL ledger synchronously only during critical state transitions.",
+      "scope": "Modify the `gnomledger-node` repository to support local event buffering, Merkle tree generation, and batch anchoring endpoints.",
+      "files": [
+        "reprewindai-dev/gnomledger/src/merkle.rs",
+        "reprewindai-dev/gnomledger/src/batch_anchor.rs"
+      ],
+      "contracts": "The batch anchoring endpoint must accept a list of signed events, verify their signatures, construct a Merkle tree, and return the root hash along with a verifiable Merkle proof.",
+      "dependencies": [
+        "cap-pgl-evidence-anchor"
+      ],
+      "tests": [
+        "test_merkle_generation_performance",
+        "test_batch_anchoring_under_load",
+        "test_proof_verification_logic"
+      ],
+      "migrations": "Database schema migration to support local event buffering tables in the PostgreSQL stub.",
+      "performanceTargets": "Throughput > 5000 events/second, batch anchoring latency < 50ms.",
+      "securityConstraints": "All buffered events must be encrypted at rest using AES-256-GCM with keys managed inside the sovereign enclave.",
+      "docsToUpdate": [
+        "registry.md",
+        "manifest.md"
+      ],
+      "definitionOfDone": [
+        "Code passes all unit and integration tests",
+        "Merkle proof verification is mathematically proven in the test suite",
+        "No external Firebase or CDN dependencies are introduced",
+        "OpenTelemetry instrumentation is fully implemented and verified"
+      ],
+      "rollbackNotes": "If the batch anchoring engine fails, fall back to synchronous single-event anchoring while logging a degradation alert to VNP."
+    },
+    {
+      "id": "pkt-2",
+      "title": "Build MCP-Compliant Interlink cAPI Router with Signed Snapshots",
+      "targetRole": "Systems Architect / Integration Engineer",
+      "summary": "Implement the live capability graph projection and signed snapshot mechanism for the Unified SDK to prevent mid-run graph mutation.",
+      "objective": "Ensure that the Unified SDK can query a signed, immutable snapshot of the capability graph at the start of an execution run, failing closed if the snapshot expires or the router is unreachable.",
+      "scope": "Modify the `interlink-cAPI` and `veklom-sdk` repositories to implement the signed snapshot protocol and fail-closed logic.",
+      "files": [
+        "reprewindai-dev/interlink-cAPI/src/snapshot.ts",
+        "reprewindai-dev/veklom-sdk/src/client.ts"
+      ],
+      "contracts": "The SDK must reject any capability execution if the current time exceeds the snapshot TTL, or if the snapshot signature is invalid.",
+      "dependencies": [
+        "cap-interlink-mcp-router"
+      ],
+      "tests": [
+        "test_snapshot_signature_verification",
+        "test_sdk_fail_closed_on_expiry",
+        "test_mcp_tool_routing_with_snapshot"
+      ],
+      "migrations": "None required.",
+      "performanceTargets": "Snapshot generation time < 5ms, SDK resolution overhead < 1ms.",
+      "securityConstraints": "Snapshots must be signed using the platform's private Ed25519 key held inside the secure enclave.",
+      "docsToUpdate": [
+        "README.md",
+        "registry.md"
+      ],
+      "definitionOfDone": [
+        "SDK successfully fails closed when snapshot TTL expires",
+        "All MCP compliance tests pass successfully",
+        "Signature verification is implemented without external cryptographic dependencies",
+        "Code is fully documented and reviewed by the Lead Architect"
+      ],
+      "rollbackNotes": "In case of critical failure, revert the SDK to the last-known-good static capability mapping while raising a high-severity alert in the Approval Inbox."
+    }
+  ],
+  "sekedTriage": {
+    "scores": {
+      "E": {
+        "score": 9,
+        "reasoning": "Efficiency compilation: latency 12.4ms, success rate 99%, with 4/4 capabilities specifying exact latency SLO goals."
+      },
+      "R": {
+        "score": 0,
+        "reasoning": "Academic validation check: 0/3 citations verified with complete resolvable identifiers, retrieval times, claim locations, and digital signatures."
+      },
+      "C": {
+        "score": 9,
+        "reasoning": "Compliance analysis: detected 22 declared tests across 4 capabilities. Drift prevention mechanisms active in 4/4 modules."
+      },
+      "D": {
+        "score": 9,
+        "reasoning": "Sovereignty check complete. Evaluated 4/4 capability jurisdiction profiles and 2 global policies. 0 profiles are missing."
+      },
+      "S": {
+        "score": 9,
+        "reasoning": "Settlement audit complete. Evaluated 4/4 capability pricing parameters. 4 capabilities are strictly machine-to-machine x402 settlement compliant."
+      }
+    },
+    "compositeScore": 7.2,
+    "directive": "COOPERATIVE_OPTIMIZATION",
+    "timestamp": "2026-07-20T09:01:36.556Z",
+    "signature": "8d4eeac1f16a80de342d3200cfa27e18ca106c6c2b8058e0a6482054220976ba"
+  },
+  "cacheStatus": {
+    "hit": false,
+    "key": "e6d4057d6197937a81cc5c26b4656a6d4340b24433eb508ba2d4f94a6c9485f6",
+    "type": "MEMORY",
+    "latencyMs": 77373
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "planId": "plan-ir-1fd96aab",
+  "version": "4.02.0",
+  "status": "DRAFT",
+  "tenantId": "tenant-default",
+  "agentId": "agent-exporter-v1",
+  "compiledAt": "2026-07-20T09:01:36.556Z",
+  "intent": "Compile planning specification",
+  "steps": [],
+  "canonicalHash": "1fd96aab88ac84ab321bc3289a1e9243fb411b16d492dcd714d5fdc05b986045",
+  "replayable": false,
+  "einsteinScore": 0,
+  "ssrnValidated": false
+}
