@@ -2,6 +2,9 @@ node_modules/
 build/
 dist/
 coverage/
+.tmp/
+.tmp-tests/
+.npm-cache/
 .DS_Store
 *.log
 .env*

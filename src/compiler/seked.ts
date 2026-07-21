@@ -1,5 +1,6 @@
 import crypto from "crypto";
 import { SEKED_HMAC_SECRET } from "../core/config";
+import { safeTimingSafeEqualHex } from "../core/crypto-utils";
 
 export interface SekedInput {
   E: number; // Execution Jitter / Latency
@@ -110,7 +111,7 @@ export function compileSekedDirective(input: SekedInput): SekedResult {
  * Cryptographically signs an execution packet to ensure that no unauthorized drift occurs during execution
  */
 export function signAgentPacket(packet: AgentPacket): string {
-  const payload = `${packet.id}|${packet.title}|${packet.scope}|${packet.files.sort().join(",")}|${packet.contracts}`;
+  const payload = `${packet.id}|${packet.title}|${packet.scope}|${[...packet.files].sort().join(",")}|${packet.contracts}`;
   return crypto
     .createHmac("sha256", SEKED_SYSTEM_SECRET)
     .update(payload)
@@ -122,10 +123,7 @@ export function signAgentPacket(packet: AgentPacket): string {
  */
 export function verifyAgentPacket(packet: AgentPacket, signature: string): boolean {
   const expectedSig = signAgentPacket(packet);
-  return crypto.timingSafeEqual(
-    Buffer.from(signature, "hex"),
-    Buffer.from(expectedSig, "hex")
-  );
+  return safeTimingSafeEqualHex(expectedSig, signature);
 }
 
 

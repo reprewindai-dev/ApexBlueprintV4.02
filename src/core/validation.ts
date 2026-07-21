@@ -362,10 +362,10 @@ export const ApprovalTokenSchema = z.object({
   allowedCapability: z.string(),
   allowedRepositories: z.array(z.string()),
   allowedFiles: z.array(z.string()),
-  issuedAt: z.string(),
-  expiresAt: z.string(),
+  issuedAt: z.string().datetime({ offset: true }),
+  expiresAt: z.string().datetime({ offset: true }),
   nonce: z.string(),
-  signature: z.string()
+  signature: z.string().regex(/^[0-9a-f]{64}$/i, "signature must be a 64-character hexadecimal digest")
 });
 
 // Zod schema for Checkpoint

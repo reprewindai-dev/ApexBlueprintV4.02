@@ -61,6 +61,18 @@ import GovernedViewContainer from "./components/GovernedViewContainer";
 import { CodeDiffViewer } from "./components/CodeDiffViewer";
 import { BlueprintFileChart } from "./components/BlueprintFileChart";
 
+const clientEnv = (import.meta as any).env ?? {};
+
+function readClientEnv(...names: string[]): string | undefined {
+  for (const name of names) {
+    const value = clientEnv[name] ?? (typeof process !== "undefined" ? process.env?.[name] : undefined);
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+  return undefined;
+}
+
 interface ErrorBoundaryProps {
   children: React.ReactNode;
 }
@@ -466,13 +478,13 @@ export default function App() {
 
   // Veklom Plural Backends Status & Test Harness States
   // CANONICAL — replaced from http://localhost:8081
-  const [byosUrl, setByosUrl] = useState(() => (typeof process !== "undefined" ? process.env.VEKLOM_API_URL : undefined) || "https://api.veklom.com");
+  const [byosUrl, setByosUrl] = useState(() => readClientEnv("VITE_VEKLOM_API_URL", "VEKLOM_API_URL") || "https://api.veklom.com");
   // CANONICAL — replaced from http://localhost:8082
-  const [cappoUrl, setCappoUrl] = useState(() => (typeof process !== "undefined" ? process.env.CAPPO_URL : undefined) || "https://cappo.veklom.com");
+  const [cappoUrl, setCappoUrl] = useState(() => readClientEnv("VITE_CAPPO_URL", "CAPPO_URL") || "https://cappo.veklom.com");
   // CANONICAL — replaced from http://localhost:8083
-  const [gnomeledgerUrl, setGnomeledgerUrl] = useState(() => (typeof process !== "undefined" ? process.env.GNOMELEDGER_URL : undefined) || "https://pgl.veklom.com");
+  const [gnomeledgerUrl, setGnomeledgerUrl] = useState(() => readClientEnv("VITE_GNOMELEDGER_URL", "GNOMELEDGER_URL") || "https://pgl.veklom.com");
   // CANONICAL — replaced from http://localhost:8084
-  const [vnpUrl, setVnpUrl] = useState(() => (typeof process !== "undefined" ? process.env.VNP_URL : undefined) || "https://vnp.veklom.com");
+  const [vnpUrl, setVnpUrl] = useState(() => readClientEnv("VITE_VNP_URL", "VNP_URL") || "https://vnp.veklom.com");
   const [backendStatuses, setBackendStatuses] = useState<any[]>([]);
   const [isPingingBackends, setIsPingingBackends] = useState(false);
   const [isVerifyingSync, setIsVerifyingSync] = useState(false);
@@ -744,13 +756,13 @@ export default function App() {
 
     const standardServices = [
       // CANONICAL — replaced from http://localhost:8081
-      { id: "byos", name: "Veklom BYOS Workspace Backend", url: (typeof process !== "undefined" ? process.env.VEKLOM_API_URL : undefined) || "https://api.veklom.com", port: 8081, setter: setByosUrl },
+      { id: "byos", name: "Veklom BYOS Workspace Backend", url: readClientEnv("VITE_VEKLOM_API_URL", "VEKLOM_API_URL") || "https://api.veklom.com", port: 8081, setter: setByosUrl },
       // CANONICAL — replaced from http://localhost:8082
-      { id: "cappo", name: "CAPPO Core Authorization Backend", url: (typeof process !== "undefined" ? process.env.CAPPO_URL : undefined) || "https://cappo.veklom.com", port: 8082, setter: setCappoUrl },
+      { id: "cappo", name: "CAPPO Core Authorization Backend", url: readClientEnv("VITE_CAPPO_URL", "CAPPO_URL") || "https://cappo.veklom.com", port: 8082, setter: setCappoUrl },
       // CANONICAL — replaced from http://localhost:8083
-      { id: "gnomeledger", name: "Gnome Ledger Receipts Store", url: (typeof process !== "undefined" ? process.env.GNOMELEDGER_URL : undefined) || "https://pgl.veklom.com", port: 8083, setter: setGnomeledgerUrl },
+      { id: "gnomeledger", name: "Gnome Ledger Receipts Store", url: readClientEnv("VITE_GNOMELEDGER_URL", "GNOMELEDGER_URL") || "https://pgl.veklom.com", port: 8083, setter: setGnomeledgerUrl },
       // CANONICAL — replaced from http://localhost:8084
-      { id: "vnp", name: "veklom-vnp Node", url: (typeof process !== "undefined" ? process.env.VNP_URL : undefined) || "https://vnp.veklom.com", port: 8084, setter: setVnpUrl }
+      { id: "vnp", name: "veklom-vnp Node", url: readClientEnv("VITE_VNP_URL", "VNP_URL") || "https://vnp.veklom.com", port: 8084, setter: setVnpUrl }
     ];
 
     for (const service of standardServices) {

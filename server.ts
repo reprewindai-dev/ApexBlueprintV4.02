@@ -6,10 +6,12 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import dotenv from "dotenv";
 import { DEFAULT_BLUEPRINT } from "./src/data/defaultBlueprint";
-import { validatePlanIR, PlanIR, PlanStep, calculateBlueprintHash, stableStringify, computeCanonicalHash } from "./src/core/plan-ir";
+import { validatePlanIR, calculateBlueprintHash, stableStringify, computeCanonicalHash } from "./src/core/plan-ir";
+import type { PlanIR, PlanStep } from "./src/core/plan-ir";
 import { isExecutionAdapterConfigured, isPglAdapterConfigured, executeCapabilityStep, sealStepOnLedger } from "./src/core/execution";
 import { verifyAndValidateApprovalToken, verifyTokenForPlan } from "./src/core/token";
-import { SEKED_HMAC_SECRET } from "./src/core/config";
+import { SEKED_HMAC_SECRET, CONSTITUTION_SIGNING_KEY } from "./src/core/config";
+import { pickFirstEnvValue, resolveHttpBaseUrl, validateHttpBaseUrl } from "./src/core/network";
 import { PlanIRSchema, CanonicalBlueprintV1Schema } from "./src/core/validation";
 import { compileSekedDirective, normalizeTelemetry, signAgentPacket, verifyAgentPacket, triageBlueprintIntakeV1 } from "./src/compiler/seked";
 
@@ -20,6 +22,26 @@ const PORT = 3000;
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
+
+const ALLOW_LOCAL_NETWORKS = process.env.NODE_ENV !== "production";
+
+function buildValidatedBaseUrl(value: string | undefined, fallback: string, label: string): string {
+  return resolveHttpBaseUrl(value, fallback, {
+    label,
+    allowLocalNetworks: ALLOW_LOCAL_NETWORKS,
+  });
+}
+
+function buildValidatedCustomUrl(value: string | undefined, label: string): string | undefined {
+  if (!value || !value.trim()) {
+    return undefined;
+  }
+  return validateHttpBaseUrl(value, {
+    label,
+    allowLocalNetworks: ALLOW_LOCAL_NETWORKS,
+  });
+}
+
 
 // ==========================================
 // VECTOR DATABASE & ACADEMIC GROUNDING SETUP
@@ -244,9 +266,11 @@ async function callVeklom(params: {
   model?: string;
   apiKey?: string;
 }): Promise<string> {
-  const baseUrl =
-    process.env.VEKLOM_BASE_URL?.replace(/\/+$/, "") ||
-    "https://api.veklom.com";
+  const baseUrl = buildValidatedBaseUrl(
+    pickFirstEnvValue("VEKLOM_BASE_URL", "VEKLOM_API_URL", "VITE_VEKLOM_API_URL"),
+    "https://api.veklom.com",
+    "Veklom base URL"
+  );
 
   const apiKey = process.env.VEKLOM_API_KEY || params.apiKey;
 
@@ -761,7 +785,10 @@ ${emailToUse}`;
       }
 
       // Check if custom URL or environment base URL is provided
-      const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+      const geminiBaseUrl = buildValidatedCustomUrl(
+        customUrl || pickFirstEnvValue("AI_INTEGRATIONS_GEMINI_BASE_URL", "VITE_AI_INTEGRATIONS_GEMINI_BASE_URL"),
+        "Gemini base URL"
+      );
       const aiOptions: any = {
         apiKey: activeApiKey,
         httpOptions: {
@@ -791,13 +818,17 @@ ${emailToUse}`;
       // Determine base URL to use
       let openAiBaseUrl = "https://api.openai.com/v1";
       if (customUrl) {
-        openAiBaseUrl = customUrl;
+        openAiBaseUrl = buildValidatedCustomUrl(customUrl, "OpenAI-compatible base URL")!;
       } else if (selectedProvider === "llama") {
-        openAiBaseUrl = "http://localhost:11434/v1";
+        openAiBaseUrl = buildValidatedBaseUrl("http://localhost:11434/v1", "http://localhost:11434/v1", "Llama base URL");
       } else if (selectedProvider === "deepseek") {
-        openAiBaseUrl = "https://api.deepseek.com/v1";
+        openAiBaseUrl = buildValidatedBaseUrl("https://api.deepseek.com/v1", "https://api.deepseek.com/v1", "DeepSeek base URL");
       } else if (selectedProvider === "openai") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "http://localhost:1106/modelfarm/openai";
+        openAiBaseUrl = buildValidatedBaseUrl(
+          pickFirstEnvValue("AI_INTEGRATIONS_OPENAI_BASE_URL", "VITE_AI_INTEGRATIONS_OPENAI_BASE_URL"),
+          "https://api.openai.com/v1",
+          "OpenAI base URL"
+        );
       }
 
       // Clean the endpoint: strip trailing slashes, make sure it has /chat/completions
@@ -825,7 +856,7 @@ ${emailToUse}`;
           // Default fallback
           headers.Authorization = `Bearer ${apiKey}`;
         }
-      } else if (selectedProvider === "openai" && !process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
+      } else if (selectedProvider === "openai" && !pickFirstEnvValue("AI_INTEGRATIONS_OPENAI_BASE_URL", "VITE_AI_INTEGRATIONS_OPENAI_BASE_URL")) {
         // Only require API key if using real OpenAI without a local modelfarm/proxy override
         throw new Error("OpenAI API key is required for this model provider.");
       }
@@ -865,7 +896,10 @@ ${emailToUse}`;
         throw new Error("Anthropic API key is required.");
       }
 
-      const anthropicUrl = customUrl || "https://api.anthropic.com/v1/messages";
+      const anthropicUrl = buildValidatedCustomUrl(
+        customUrl || "https://api.anthropic.com/v1/messages",
+        "Anthropic base URL"
+      )!;
 
       const headers = {
         "Content-Type": "application/json",
@@ -903,7 +937,11 @@ ${emailToUse}`;
         throw new Error("Free server compilation key is currently exhausted. Please provide your own LLM Key under settings.");
       }
 
-      const geminiBaseUrl = process.env.AI_INTEGRATIONS_GEMINI_BASE_URL || "http://localhost:1106/modelfarm/gemini";
+      const geminiBaseUrl = buildValidatedBaseUrl(
+        pickFirstEnvValue("AI_INTEGRATIONS_GEMINI_BASE_URL", "VITE_AI_INTEGRATIONS_GEMINI_BASE_URL"),
+        "http://localhost:1106/modelfarm/gemini",
+        "Gemini base URL"
+      );
       const aiOptions: any = {
         apiKey: activeApiKey,
         httpOptions: { headers: { "User-Agent": "aistudio-build" } },
@@ -1249,7 +1287,10 @@ app.post("/api/test-connection", async (req, res) => {
         throw new Error("Gemini API key is not configured.");
       }
 
-      const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+      const geminiBaseUrl = buildValidatedCustomUrl(
+        customUrl || pickFirstEnvValue("AI_INTEGRATIONS_GEMINI_BASE_URL", "VITE_AI_INTEGRATIONS_GEMINI_BASE_URL"),
+        "Gemini base URL"
+      );
       const aiOptions: any = {
         apiKey: activeApiKey,
         httpOptions: { headers: { "User-Agent": "aistudio-build" } },
@@ -1271,14 +1312,20 @@ app.post("/api/test-connection", async (req, res) => {
     } else if (selectedProvider === "openai" || selectedProvider === "llama" || selectedProvider === "deepseek" || selectedProvider === "custom") {
       let openAiBaseUrl = "https://api.openai.com/v1";
       if (customUrl) {
-        openAiBaseUrl = customUrl;
+        openAiBaseUrl = buildValidatedCustomUrl(customUrl, "OpenAI-compatible base URL")!;
       } else if (selectedProvider === "llama") {
-        openAiBaseUrl = "http://localhost:11434/v1";
+        openAiBaseUrl = buildValidatedBaseUrl("http://localhost:11434/v1", "http://localhost:11434/v1", "Llama base URL");
       } else if (selectedProvider === "deepseek") {
-        openAiBaseUrl = "https://api.deepseek.com/v1";
+        openAiBaseUrl = buildValidatedBaseUrl("https://api.deepseek.com/v1", "https://api.deepseek.com/v1", "DeepSeek base URL");
       } else if (selectedProvider === "openai") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "http://localhost:1106/modelfarm/openai";
+        openAiBaseUrl = buildValidatedBaseUrl(
+          pickFirstEnvValue("AI_INTEGRATIONS_OPENAI_BASE_URL", "VITE_AI_INTEGRATIONS_OPENAI_BASE_URL"),
+          "https://api.openai.com/v1",
+          "OpenAI base URL"
+        );
       }
+
+      openAiBaseUrl = buildValidatedBaseUrl(openAiBaseUrl, openAiBaseUrl, "OpenAI-compatible base URL");
 
       let cleanUrl = openAiBaseUrl.replace(/\/+$/, "");
       if (!cleanUrl.endsWith("/chat/completions")) {
@@ -1326,7 +1373,10 @@ app.post("/api/test-connection", async (req, res) => {
         throw new Error("Anthropic API key is required.");
       }
 
-      const anthropicUrl = customUrl || "https://api.anthropic.com/v1/messages";
+      const anthropicUrl = buildValidatedCustomUrl(
+        customUrl || "https://api.anthropic.com/v1/messages",
+        "Anthropic base URL"
+      )!;
       const headers = {
         "Content-Type": "application/json",
         "x-api-key": activeApiKey,
@@ -1386,7 +1436,10 @@ app.post("/api/academic/search", async (req, res) => {
       throw new Error("Gemini API key is required to calculate search embeddings.");
     }
 
-    const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+    const geminiBaseUrl = buildValidatedCustomUrl(
+      customUrl || pickFirstEnvValue("AI_INTEGRATIONS_GEMINI_BASE_URL", "VITE_AI_INTEGRATIONS_GEMINI_BASE_URL"),
+      "Gemini base URL"
+    );
     const aiOptions: any = {
       apiKey: activeApiKey,
       httpOptions: { headers: { "User-Agent": "aistudio-build" } },
@@ -1452,7 +1505,10 @@ app.post("/api/academic/scrape", async (req, res) => {
     let match;
 
     const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-    const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+    const geminiBaseUrl = buildValidatedCustomUrl(
+      customUrl || pickFirstEnvValue("AI_INTEGRATIONS_GEMINI_BASE_URL", "VITE_AI_INTEGRATIONS_GEMINI_BASE_URL"),
+      "Gemini base URL"
+    );
     let ai = null;
     if (activeApiKey || geminiBaseUrl) {
       const aiOptions: any = {
@@ -1922,7 +1978,8 @@ app.get("/api/backends/status", async (req, res) => {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), 1000); // 1s timeout
       
-      const response = await fetch(b.url + "/health", { signal: controller.signal }).catch(() => null);
+      const backendUrl = String(b.url);
+      const response = await fetch(`${buildValidatedBaseUrl(backendUrl, backendUrl, `${b.id} backend URL`)}/health`, { signal: controller.signal }).catch(() => null);
       clearTimeout(id);
 
       if (response && response.ok) {
@@ -2036,7 +2093,10 @@ ${JSON.stringify(blueprint, null, 2)}`;
         throw new Error("Gemini API key is not configured.");
       }
 
-      const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
+      const geminiBaseUrl = buildValidatedCustomUrl(
+        customUrl || pickFirstEnvValue("AI_INTEGRATIONS_GEMINI_BASE_URL", "VITE_AI_INTEGRATIONS_GEMINI_BASE_URL"),
+        "Gemini base URL"
+      );
       const aiOptions: any = {
         apiKey: activeApiKey,
         httpOptions: { headers: { "User-Agent": "aistudio-build" } },
@@ -2666,7 +2726,7 @@ app.post("/api/seked/compile", (req, res) => {
     };
     
     const signature = crypto
-      .createHmac("sha256", process.env.SEKED_HMAC_SECRET || "SEKED_SYSTEM_COVENANT_SECRET")
+      .createHmac("sha256", SEKED_HMAC_SECRET)
       .update(JSON.stringify(signedPayload))
       .digest("hex");
 
@@ -2772,7 +2832,7 @@ app.post("/api/constitution/sign", (req, res) => {
     const contentHash = crypto.createHash("sha256").update(content).digest("hex");
     const signingInput = `${constitutionVersion}|${jurisdiction}|${contentHash}|${authorizedEmail || "system"}`;
     const cryptographicSignature = crypto
-      .createHmac("sha256", process.env.CONSTITUTION_SIGNING_KEY || "CONSTITUTION_GOVERNANCE_SECRET")
+      .createHmac("sha256", CONSTITUTION_SIGNING_KEY)
       .update(signingInput)
       .digest("hex");
 
@@ -2800,9 +2860,9 @@ async function startServer() {
   if (process.env.NODE_ENV === "production") {
     const isAbsOrDef = (v: string | undefined, def: string) => !v || v === def;
     if (
-      isAbsOrDef(process.env.SEKED_HMAC_SECRET, "SEKED_SYSTEM_COVENANT_SECRET") ||
-      isAbsOrDef(process.env.CONSTITUTION_SIGNING_KEY, "CONSTITUTION_GOVERNANCE_SECRET") ||
-      isAbsOrDef(process.env.APPROVAL_TOKEN_SECRET, "COVENANT_APPROVAL_TOKEN_SECRET_2026")
+      isAbsOrDef(process.env.SEKED_HMAC_SECRET, "") ||
+      isAbsOrDef(process.env.CONSTITUTION_SIGNING_KEY, "") ||
+      isAbsOrDef(process.env.APPROVAL_TOKEN_SECRET, "")
     ) {
       console.error("FATAL: Required cryptographic signing secrets are absent or set to known insecure defaults in production environment!");
       process.exit(1);

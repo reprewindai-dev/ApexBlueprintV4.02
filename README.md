@@ -15,6 +15,13 @@ View your app in AI Studio: https://ai.studio/apps/12adbbc2-9ab0-4f1e-8b65-57b75
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+2. Set the required environment variables in [.env.local](.env.local)
+   - `GEMINI_API_KEY` for Gemini calls
+   - `SEKED_HMAC_SECRET`, `CONSTITUTION_SIGNING_KEY`, and `APPROVAL_TOKEN_SECRET` for signed workflows
+   - `VITE_VEKLOM_API_URL`, `VITE_CAPPO_URL`, `VITE_GNOMELEDGER_URL`, `VITE_VNP_URL` for browser-visible backend URLs
 3. Run the app:
    `npm run dev`
+
+## Tests
+- Run `npm test` for the deterministic suite.
+- Set `RUN_LIVE_VEKLOM_TESTS=true` only when you want the optional external integration checks to execute.

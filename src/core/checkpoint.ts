@@ -3,7 +3,15 @@ import path from "path";
 import crypto from "crypto";
 import { CheckpointSchema } from "./validation";
 
-const DB_PATH = path.join(process.cwd(), "checkpoints_db.json");
+function resolveCheckpointDbPath(): string {
+  if (process.env.CHECKPOINT_DB_PATH) {
+    return process.env.CHECKPOINT_DB_PATH;
+  }
+  if (process.env.NODE_ENV === "test") {
+    return path.join(process.cwd(), ".tmp-tests", "checkpoints_db.json");
+  }
+  return path.join(process.cwd(), "checkpoints_db.json");
+}
 
 export interface Checkpoint {
   checkpointId: string;
@@ -23,10 +31,11 @@ export interface Checkpoint {
  */
 export function loadAllCheckpoints(): Checkpoint[] {
   try {
-    if (!fs.existsSync(DB_PATH)) {
+    const dbPath = resolveCheckpointDbPath();
+    if (!fs.existsSync(dbPath)) {
       return [];
     }
-    const data = fs.readFileSync(DB_PATH, "utf8");
+    const data = fs.readFileSync(dbPath, "utf8");
     const list = JSON.parse(data);
     if (!Array.isArray(list)) return [];
     return list;
@@ -41,7 +50,9 @@ export function loadAllCheckpoints(): Checkpoint[] {
  */
 function saveAllCheckpoints(checkpoints: Checkpoint[]): void {
   try {
-    fs.writeFileSync(DB_PATH, JSON.stringify(checkpoints, null, 2), "utf8");
+    const dbPath = resolveCheckpointDbPath();
+    fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+    fs.writeFileSync(dbPath, JSON.stringify(checkpoints, null, 2), "utf8");
   } catch (err) {
     console.error("Failed to save checkpoints to disk:", err);
   }
@@ -60,7 +71,6 @@ export function createCheckpoint(input: Omit<Checkpoint, "checkpointId" | "times
     ...input
   };
 
-  // Zod structural & type validation
   const parsed = CheckpointSchema.safeParse(checkpoint);
   if (!parsed.success) {
     throw new Error(`Checkpoint validation failed: ${parsed.error.issues.map(e => e.path.join(".") + ": " + e.message).join(", ")}`);

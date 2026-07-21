@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { PlanStep } from "./plan-ir";
+import type { PlanStep } from "./plan-ir";
 import { SEKED_HMAC_SECRET } from "./config";
 
 export interface ExecutionResult {
@@ -95,7 +95,6 @@ export function executeCapabilityStep(step: PlanStep): ExecutionResult {
         break;
       }
       default: {
-        // Fallback or generic execution
         output = {
           executed: true,
           inputsReceived: Object.keys(inputs),
@@ -111,7 +110,6 @@ export function executeCapabilityStep(step: PlanStep): ExecutionResult {
   }
 
   const executedAt = new Date().toISOString();
-  // Compute true content-addressed result hash from the capability output
   const resultPayload = JSON.stringify({ stepId: step.stepId, output, executedAt, status });
   const resultHash = crypto.createHash("sha256").update(resultPayload).digest("hex");
 
@@ -133,14 +131,12 @@ export function executeCapabilityStep(step: PlanStep): ExecutionResult {
 export function sealStepOnLedger(planId: string, result: ExecutionResult): PglReceipt {
   const timestamp = new Date().toISOString();
   const receiptId = "pgl-rec-" + crypto.createHash("sha256").update(result.stepId + timestamp).digest("hex").substring(0, 12).toUpperCase();
-  
-  // Create a composite hash binding the step ID, capability, and outcome hash
+
   const compositeHash = crypto
     .createHash("sha256")
     .update(`${planId}|${result.stepId}|${result.capability}|${result.resultHash}|${timestamp}`)
     .digest("hex");
 
-  // Sign with the centralized SEKED secret
   const signature = crypto
     .createHmac("sha256", SEKED_HMAC_SECRET)
     .update(compositeHash)

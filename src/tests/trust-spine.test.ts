@@ -1,7 +1,8 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
 import http from "node:http";
-import { stableStringify, calculateBlueprintHash, computeCanonicalHash, PlanStep } from "../core/plan-ir";
+import { stableStringify, calculateBlueprintHash, computeCanonicalHash } from "../core/plan-ir";
+import type { PlanStep } from "../core/plan-ir";
 import { signApprovalToken, verifyAndValidateApprovalToken, isFileModificationAuthorized, verifyTokenForPlan } from "../core/token";
 import { CanonicalBlueprintV1Schema, PlanIRSchema } from "../core/validation";
 import { createCheckpoint, getCheckpoint } from "../core/checkpoint";
@@ -97,6 +98,30 @@ describe("Milestone 1: Real Trust Spine Regression Tests", () => {
       assert.throws(() => {
         verifyAndValidateApprovalToken(tamperedObj);
       }, /cryptographic tampering detected/);
+    });
+
+    it("should reject malformed approval signatures before verification", () => {
+      const tokenObj = {
+        issuer: "CAPPO_AUTHORIZER_MAIN",
+        tenantId: "tenant-999",
+        planId: "3b235378-0cf7-4fbe-9014-996ff4207901",
+        canonicalHash: "ae24f5a6b0c2d3e4f5a6b0c2d3e4f5a6b0c2d3e4f5a6b0c2d3e4f5a6b0c2d3e4",
+        stepId: "f92b7cfa-4687-43cf-be44-fa3046124cb1",
+        allowedCapability: "Sovereign Settlement Layer",
+        allowedRepositories: ["https://github.com/apex/sovereign"],
+        allowedFiles: ["src/scheduler/einstein.rs", "src/scheduler/telemetry.rs"],
+        issuedAt: new Date().toISOString(),
+        expiresAt: new Date(Date.now() + 3600000).toISOString(),
+        nonce: "xyz-777",
+        signature: ""
+      };
+
+      tokenObj.signature = signApprovalToken(tokenObj);
+      const malformed = { ...tokenObj, signature: "not-a-hex-digest" };
+
+      assert.throws(() => {
+        verifyAndValidateApprovalToken(malformed);
+      }, /signature/);
     });
   });
 
