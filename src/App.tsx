@@ -1917,13 +1917,13 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-[#E0E0E0] font-sans selection:bg-[#00F0FF]/30 selection:text-[#00F0FF] relative overflow-x-hidden border-4 border-[#1A1A1A]">
+    <div className="h-screen flex flex-col bg-[#050505] text-[#E0E0E0] font-sans selection:bg-[#00F0FF]/30 selection:text-[#00F0FF] relative overflow-hidden border-4 border-[#1A1A1A]">
       
       {/* Background radial grid */}
       <div className="absolute top-0 left-0 w-full h-full theme-grid-bg opacity-20 pointer-events-none" />
 
       {/* Global Header */}
-      <header className="h-16 border-b border-[#222] bg-[#080808] sticky top-0 z-40 print:hidden flex items-center justify-between px-6">
+      <header className="h-16 shrink-0 border-b border-[#222] bg-[#080808] z-40 print:hidden flex items-center justify-between px-6">
         <div className="flex items-center gap-4">
           <div className="w-3.5 h-3.5 rounded-full bg-[#00F0FF] glow-dot-cyan"></div>
           <div>
@@ -1956,7 +1956,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
       </header>
 
       {/* Main Page Container */}
-      <main className="w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10 print:p-0">
+      <main className="flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10 print:p-0 overflow-y-auto">
         
         {/* Intro Banner */}
         <section className="max-w-4xl mx-auto mb-12 print:hidden text-center">
