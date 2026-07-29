@@ -18,7 +18,7 @@ import { compileSekedDirective, normalizeTelemetry, signAgentPacket, verifyAgent
 dotenv.config();
 
 export const app = express();
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT || "3011", 10);
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
