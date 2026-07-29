@@ -23,12 +23,16 @@ const PORT = parseInt(process.env.PORT || "3011", 10);
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-app.get("/health", (req, res) => {
+app.get("/live", (req, res) => {
+  return res.status(200).json({ status: "alive" });
+});
+
+app.get("/ready", (req, res) => {
   const hasSecrets = !!process.env.SEKED_HMAC_SECRET && !!process.env.CONSTITUTION_SIGNING_KEY;
   if (process.env.NODE_ENV === "production" && !hasSecrets) {
-    return res.status(503).json({ process: "ready", secrets: "unavailable", overall: "degraded" });
+    return res.status(503).json({ process: "ready", secrets: "unavailable", status: "degraded" });
   }
-  return res.status(200).json({ process: "ready", secrets: "ready", overall: "ready" });
+  return res.status(200).json({ process: "ready", secrets: "ready", status: "ready" });
 });
 
 const ALLOW_LOCAL_NETWORKS = process.env.NODE_ENV !== "production";
