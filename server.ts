@@ -14,6 +14,7 @@ import { SEKED_HMAC_SECRET, CONSTITUTION_SIGNING_KEY } from "./src/core/config";
 import { pickFirstEnvValue, resolveHttpBaseUrl, validateHttpBaseUrl } from "./src/core/network";
 import { PlanIRSchema, CanonicalBlueprintV1Schema } from "./src/core/validation";
 import { compileSekedDirective, normalizeTelemetry, signAgentPacket, verifyAgentPacket, triageBlueprintIntakeV1 } from "./src/compiler/seked";
+import { apexDiscovery, requirePaidCapability } from "./src/machine-access";
 
 dotenv.config();
 
@@ -332,8 +333,12 @@ async function callVeklom(params: {
 // API ROUTES
 // ==========================================
 
+// Machine discovery is public. Capability execution is never free.
+app.get("/.well-known/apex.json", apexDiscovery);
+app.get("/machine", apexDiscovery);
+
 // 1. Compile Ingested Ideas & Generate Gold-Standard Business Plan + Blueprint
-app.post("/api/generate", async (req, res) => {
+app.post("/api/generate", requirePaidCapability("blueprint.generate"), async (req, res) => {
   const {
     notes,
     codebaseContext,
@@ -1278,7 +1283,7 @@ function generateFallbackBlueprint(
 }
 
 // Endpoint to verify connection to the selected LLM provider with custom authentication headers
-app.post("/api/test-connection", async (req, res) => {
+app.post("/api/test-connection", requirePaidCapability("provider.test"), async (req, res) => {
   const startTime = Date.now();
   try {
     const {
@@ -1436,7 +1441,7 @@ app.post("/api/test-connection", async (req, res) => {
 });
 
 // 2. Query Vector DB with Text Embeddings (Semantic Search)
-app.post("/api/academic/search", async (req, res) => {
+app.post("/api/academic/search", requirePaidCapability("academic.search"), async (req, res) => {
   try {
     const { query, apiKey, customUrl } = req.body;
     if (!query) {
@@ -1497,7 +1502,7 @@ app.post("/api/academic/search", async (req, res) => {
 });
 
 // 3. Populate Vector DB via Live Scraper (arXiv API Ingress)
-app.post("/api/academic/scrape", async (req, res) => {
+app.post("/api/academic/scrape", requirePaidCapability("academic.scrape"), async (req, res) => {
   try {
     const { keyword, apiKey, customUrl } = req.body;
     if (!keyword) {
@@ -1591,7 +1596,7 @@ app.post("/api/academic/scrape", async (req, res) => {
 });
 
 // 4. Connect GitHub Repository & Cross-Reference Codebase Alignment
-app.post("/api/github/analyze", async (req, res) => {
+app.post("/api/github/analyze", requirePaidCapability("github.analyze"), async (req, res) => {
   try {
     const { repoUrl, notes, businessPlanText, apiKey, customToken } = req.body;
 
@@ -1790,7 +1795,7 @@ You must return a valid JSON object matching this schema exactly:
   }
 });
 
-app.post("/api/github/push-blueprint", async (req, res) => {
+app.post("/api/github/push-blueprint", requirePaidCapability("github.push-blueprint"), async (req, res) => {
   try {
     const { repoUrl, token, branchName, blueprint, baseBranch = "main" } = req.body;
 
@@ -1929,7 +1934,7 @@ app.post("/api/github/push-blueprint", async (req, res) => {
 // ==========================================================
 
 // GET backend status and active routes
-app.get("/api/backends/status", async (req, res) => {
+app.get("/api/backends/status", requirePaidCapability("backends.status"), async (req, res) => {
   const { byosUrl, cappoUrl, gnomeledgerUrl, vnpUrl } = req.query;
 
   const defaultBackends = [
@@ -2025,7 +2030,7 @@ app.get("/api/backends/status", async (req, res) => {
 });
 
 // POST to verify deep sync & trigger test execution checks
-app.post("/api/backends/verify-sync", async (req, res) => {
+app.post("/api/backends/verify-sync", requirePaidCapability("backends.verify-sync"), async (req, res) => {
   const { byosUrl, cappoUrl, gnomeledgerUrl, vnpUrl, connectionId, connectionVersion } = req.body;
 
   const logs: string[] = [];
@@ -2057,7 +2062,7 @@ app.post("/api/backends/verify-sync", async (req, res) => {
 });
 
 // POST to generate Jest/Vitest test suites using the active LLM or high-fidelity fallback
-app.post("/api/test-harness/generate", async (req, res) => {
+app.post("/api/test-harness/generate", requirePaidCapability("test-harness.generate"), async (req, res) => {
   const {
     targetSpec,
     testFramework = "jest",
@@ -2209,7 +2214,7 @@ ${JSON.stringify(blueprint, null, 2)}`;
 });
 
 // POST to execute a validated Plan IR using Covenant and CAPPO
-app.post("/api/covenant/execute", async (req, res) => {
+app.post("/api/covenant/execute", requirePaidCapability("covenant.execute"), async (req, res) => {
   try {
     const { plan } = req.body;
     if (!plan) {
@@ -2271,7 +2276,7 @@ app.post("/api/covenant/execute", async (req, res) => {
 const serverApprovedPlans = new Map<string, string>();
 
 // POST to approve and sign a PlanIR, storing its approved status in server-owned state
-app.post("/api/covenant/approve", async (req, res) => {
+app.post("/api/covenant/approve", requirePaidCapability("covenant.approve"), async (req, res) => {
   try {
     const { plan } = req.body;
     if (!plan) {
@@ -2316,7 +2321,7 @@ app.post("/api/covenant/approve", async (req, res) => {
 });
 
 // POST to project a compiled Plan IR to portable files in the workspace (AGENTS.md, CLAUDE.md, spec-plan-task.json)
-app.post("/api/covenant/project", async (req, res) => {
+app.post("/api/covenant/project", requirePaidCapability("covenant.project"), async (req, res) => {
   try {
     const { target, plan, blueprint, selectedJurisdiction, constitutionVersion, writeToDisk } = req.body;
     if (!target) {
@@ -2700,7 +2705,7 @@ describe("Veklom Canonical System Integration & Authority Boundaries", () => {
 
 // 1. SEKED COMPILER INTEGRATION ENDPOINT
 // Converts raw telemetry and state inputs into deterministically signed system directives.
-app.post("/api/seked/compile", (req, res) => {
+app.post("/api/seked/compile", requirePaidCapability("seked.compile"), (req, res) => {
   const { e, r, c, d, s, description, systemName } = req.body;
   
   if (e === undefined || r === undefined || c === undefined || d === undefined || s === undefined) {
@@ -2755,7 +2760,7 @@ app.post("/api/seked/compile", (req, res) => {
 
 // 2. REPOSITORY INTELLIGENCE ENGINE ENDPOINT
 // Scans the workspace directory recursively to verify files, sizes, LOC count, and check hashes for drift control.
-app.get("/api/repo-intelligence", (req, res) => {
+app.get("/api/repo-intelligence", requirePaidCapability("repo.intelligence"), (req, res) => {
   try {
     const rootDir = process.cwd();
     const repoFiles: any[] = [];
@@ -2833,7 +2838,7 @@ app.get("/api/repo-intelligence", (req, res) => {
 
 // 3. SECURE CONSTITUTION REVISION SIGNATURE ENDPOINT
 // Issues an HMAC-backed cryptographic proof of authority when committing a revised constitution.
-app.post("/api/constitution/sign", (req, res) => {
+app.post("/api/constitution/sign", requirePaidCapability("constitution.sign"), (req, res) => {
   const { constitutionVersion, jurisdiction, content, authorizedEmail } = req.body;
 
   if (!constitutionVersion || !jurisdiction || !content) {
