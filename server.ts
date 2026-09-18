@@ -14,6 +14,7 @@ import { SEKED_HMAC_SECRET, CONSTITUTION_SIGNING_KEY } from "./src/core/config";
 import { pickFirstEnvValue, resolveHttpBaseUrl, validateHttpBaseUrl } from "./src/core/network";
 import { PlanIRSchema, CanonicalBlueprintV1Schema } from "./src/core/validation";
 import { compileSekedDirective, normalizeTelemetry, signAgentPacket, verifyAgentPacket, triageBlueprintIntakeV1 } from "./src/compiler/seked";
+import { apexDiscovery, requirePaidCapability } from "./src/machine-access";
 
 dotenv.config();
 
@@ -332,8 +333,12 @@ async function callVeklom(params: {
 // API ROUTES
 // ==========================================
 
+// Machine discovery is public. Capability execution is never free.
+app.get("/.well-known/apex.json", apexDiscovery);
+app.get("/machine", apexDiscovery);
+
 // 1. Compile Ingested Ideas & Generate Gold-Standard Business Plan + Blueprint
-app.post("/api/generate", async (req, res) => {
+app.post("/api/generate", requirePaidCapability("blueprint.generate"), async (req, res) => {
   const {
     notes,
     codebaseContext,
@@ -2700,7 +2705,7 @@ describe("Veklom Canonical System Integration & Authority Boundaries", () => {
 
 // 1. SEKED COMPILER INTEGRATION ENDPOINT
 // Converts raw telemetry and state inputs into deterministically signed system directives.
-app.post("/api/seked/compile", (req, res) => {
+app.post("/api/seked/compile", requirePaidCapability("seked.compile"), (req, res) => {
   const { e, r, c, d, s, description, systemName } = req.body;
   
   if (e === undefined || r === undefined || c === undefined || d === undefined || s === undefined) {
@@ -2755,7 +2760,7 @@ app.post("/api/seked/compile", (req, res) => {
 
 // 2. REPOSITORY INTELLIGENCE ENGINE ENDPOINT
 // Scans the workspace directory recursively to verify files, sizes, LOC count, and check hashes for drift control.
-app.get("/api/repo-intelligence", (req, res) => {
+app.get("/api/repo-intelligence", requirePaidCapability("repo.intelligence"), (req, res) => {
   try {
     const rootDir = process.cwd();
     const repoFiles: any[] = [];
@@ -2833,7 +2838,7 @@ app.get("/api/repo-intelligence", (req, res) => {
 
 // 3. SECURE CONSTITUTION REVISION SIGNATURE ENDPOINT
 // Issues an HMAC-backed cryptographic proof of authority when committing a revised constitution.
-app.post("/api/constitution/sign", (req, res) => {
+app.post("/api/constitution/sign", requirePaidCapability("constitution.sign"), (req, res) => {
   const { constitutionVersion, jurisdiction, content, authorizedEmail } = req.body;
 
   if (!constitutionVersion || !jurisdiction || !content) {
