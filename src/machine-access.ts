@@ -16,6 +16,17 @@ const defaultPriceMinor = Number.parseInt(process.env.APEX_DEFAULT_PRICE_MINOR |
 
 export const apexMachineCapabilities = [
   { id: "blueprint.generate", method: "POST", path: "/api/generate" },
+  { id: "provider.test", method: "POST", path: "/api/test-connection" },
+  { id: "academic.search", method: "POST", path: "/api/academic/search" },
+  { id: "academic.scrape", method: "POST", path: "/api/academic/scrape" },
+  { id: "github.analyze", method: "POST", path: "/api/github/analyze" },
+  { id: "github.push-blueprint", method: "POST", path: "/api/github/push-blueprint" },
+  { id: "backends.status", method: "GET", path: "/api/backends/status" },
+  { id: "backends.verify-sync", method: "POST", path: "/api/backends/verify-sync" },
+  { id: "test-harness.generate", method: "POST", path: "/api/test-harness/generate" },
+  { id: "covenant.execute", method: "POST", path: "/api/covenant/execute" },
+  { id: "covenant.approve", method: "POST", path: "/api/covenant/approve" },
+  { id: "covenant.project", method: "POST", path: "/api/covenant/project" },
   { id: "seked.compile", method: "POST", path: "/api/seked/compile" },
   { id: "repo.intelligence", method: "GET", path: "/api/repo-intelligence" },
   { id: "constitution.sign", method: "POST", path: "/api/constitution/sign" },
