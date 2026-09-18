@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Machine-readable Apex discovery
+# https://apex.veklom.com/.well-known/apex.json
