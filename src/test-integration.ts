@@ -2,7 +2,7 @@ import { DEFAULT_BLUEPRINT } from "./data/defaultBlueprint";
 
 async function runDiagnostics() {
   console.log("======================================================================");
-  console.log("       APEX BLUEPRINT — SYSTEMS DIAGNOSTIC & CONTRACT VERIFIER        ");
+  console.log("       ABIDE BLUEPRINT — SYSTEMS DIAGNOSTIC & CONTRACT VERIFIER        ");
   console.log("======================================================================");
   console.log(`Timestamp: ${new Date().toISOString()}`);
   console.log(`Runtime: Node.js ${process.version}`);
@@ -10,6 +10,11 @@ async function runDiagnostics() {
 
   const LOCAL_SERVER_URL = "http://localhost:3000";
   let failures = 0;
+
+  if (process.env.RUN_INTEGRATION_TESTS !== "1") {
+    console.warn("Skipping integration diagnostics in src/test-integration.ts. Set RUN_INTEGRATION_TESTS=1 to run them.");
+    return;
+  }
 
   // 1. Schema Validation on Compiled Blueprints
   console.log("[TEST 1/4] Validating Blueprint Core JSON Schema Alignment...");
@@ -93,12 +98,12 @@ async function runDiagnostics() {
   // 4. GitHub Code Alignment Tree Parser Validation
   console.log("\n[TEST 4/4] Validating GitHub Codebase Alignment Ingress Model...");
   try {
-    const testGitUrl = "https://github.com/reprewindai-dev/Apex-Blueprint";
+    const testGitUrl = "https://github.com/reprewindai-dev/Abide-Blueprint";
     console.log(`  Parsing sample repository target URL: ${testGitUrl}`);
     
     const regex = /github\.com\/([^\/]+)\/([^\/]+)/i;
     const match = testGitUrl.match(regex);
-    if (!match || match[1] !== "reprewindai-dev" || match[2] !== "Apex-Blueprint") {
+    if (!match || match[1] !== "reprewindai-dev" || match[2] !== "Abide-Blueprint") {
       throw new Error("GitHub Ingress URL RegEx Parser failed to extract owner or repository name.");
     }
     
@@ -113,7 +118,7 @@ async function runDiagnostics() {
   console.log("                        DIAGNOSTIC SUMMARY                            ");
   console.log("======================================================================");
   if (failures === 0) {
-    console.log("  🏆 ALL CHECKS PASSED: The Apex Blueprint contracts & payload structures");
+    console.log("  🏆 ALL CHECKS PASSED: The Abide Blueprint contracts & payload structures");
     console.log("     are 100% correct and ready for integration with IDEs!");
   } else {
     console.log(`  ⚠️  Diagnostics completed with ${failures} contract validation errors.`);

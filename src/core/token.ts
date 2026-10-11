@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { stableStringify } from "./plan-ir";
 import { ApprovalTokenSchema } from "./validation";
 import { APPROVAL_TOKEN_SECRET } from "./config";
-import { safeTimingSafeEqualHex } from "./crypto-utils";
+
 
 /**
  * Signs an approval token deterministically based on its metadata.
@@ -43,9 +43,14 @@ export function verifyAndValidateApprovalToken(tokenInput: any): any {
 
   const token = parsed.data;
 
-  // Cryptographic check
+  // Cryptographic check with buffer length validation to prevent RangeErrors
   const expectedSig = signApprovalToken(token);
-  if (!safeTimingSafeEqualHex(expectedSig, token.signature)) {
+  const sigBuf = Buffer.from(token.signature, "hex");
+  const expBuf = Buffer.from(expectedSig, "hex");
+  
+  const isValidSig = sigBuf.length === expBuf.length && crypto.timingSafeEqual(sigBuf, expBuf);
+
+  if (!isValidSig) {
     throw new Error("Invalid token signature — cryptographic tampering detected");
   }
 
@@ -74,3 +79,4 @@ export function verifyTokenForPlan(token: any, expectedPlanId: string, expectedC
   if (!token) return false;
   return token.planId === expectedPlanId && token.canonicalHash === expectedCanonicalHash;
 }
+
