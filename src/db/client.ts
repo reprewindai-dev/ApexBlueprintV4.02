@@ -15,7 +15,7 @@ export function isDatabaseConfigured(): boolean {
 
 export function assertDbConfiguredInProduction(): void {
   if (!isBrowser() && process.env.NODE_ENV === "production" && !process.env.DATABASE_URL?.trim()) {
-    throw new Error("DATABASE_URL is required in production for ABIDE Postgres persistence.");
+    throw new Error("DATABASE_URL is required in production for APEX Postgres persistence.");
   }
 }
 

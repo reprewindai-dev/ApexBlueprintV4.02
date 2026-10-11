@@ -557,7 +557,7 @@ export const SovereignConstitution: React.FC<SovereignConstitutionProps> = ({
           }`}
         >
           <BookOpen size={15} />
-          <span>ABIDE Enterprise &amp; Security Protocol Manuals (SLSA 3 / ISO 15704)</span>
+          <span>APEX Enterprise &amp; Security Protocol Manuals (SLSA 3 / ISO 15704)</span>
         </button>
       </div>
 
@@ -570,7 +570,7 @@ export const SovereignConstitution: React.FC<SovereignConstitutionProps> = ({
         <div className="p-5 border-2 border-[#222] bg-[#0A0A0A] space-y-2 relative">
           <span className="text-[10px] text-[#00F0FF] font-black block uppercase">[ CORE BACKBONE STANDARDS ]</span>
           <p className="text-gray-400 text-[10px] normal-case leading-relaxed">
-            Abide Blueprint acts as a repeatable, executable architecture-description engine strictly conformant with:
+            Apex Blueprint acts as a repeatable, executable architecture-description engine strictly conformant with:
           </p>
           <ul className="space-y-1 text-white text-[10px] pt-1 uppercase">
             <li>• IEEE/ISO/IEC 42010:2022 (Descriptions)</li>

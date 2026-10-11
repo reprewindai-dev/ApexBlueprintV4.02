@@ -591,7 +591,7 @@ export function VnpAnalyticsCards() {
         outcome: "NOT_FOUND",
         sekedRScore: 0,
         reasoning:
-          "Could not connect to live verification endpoints. Under ABIDE rules, unverified claims default to 0 R-score.",
+          "Could not connect to live verification endpoints. Under APEX rules, unverified claims default to 0 R-score.",
       });
     }
   };
@@ -603,7 +603,7 @@ export function VnpAnalyticsCards() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded bg-[#00F0FF]/10 border border-[#00F0FF]/30 text-[#00F0FF] text-[10px] font-mono font-bold tracking-widest uppercase">
-              VNP Sovereign Telemetry & ABIDE Gating
+              VNP Sovereign Telemetry & APEX Gating
             </span>
             <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-mono bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/50">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -818,7 +818,7 @@ export function VnpAnalyticsCards() {
         </div>
       </div>
 
-      {/* Row 2: Radar Chart & ABIDE Multi-Source Grounding Card */}
+      {/* Row 2: Radar Chart & APEX Multi-Source Grounding Card */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Card 3: Posted vs Accepted SEKED Spec Benchmarks (Radar Chart) */}
         <div className="lg:col-span-6 bg-[#08080c]/95 border border-[#10B981]/30 rounded-xl p-6 shadow-2xl relative overflow-hidden group hover:border-[#10B981]/60 transition-all duration-300 flex flex-col justify-between">
@@ -922,7 +922,7 @@ export function VnpAnalyticsCards() {
             <div className="flex items-center justify-between mb-4">
               <div>
                 <span className="text-[10px] font-mono uppercase tracking-wider text-[#3B82F6] block mb-1">
-                  ABIDE Academic Grounding Layer
+                  APEX Academic Grounding Layer
                 </span>
                 <h3 className="text-base font-bold text-white font-mono flex items-center gap-2">
                   <BookOpen size={18} className="text-[#3B82F6]" />
@@ -1109,7 +1109,7 @@ export function VnpAnalyticsCards() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-neutral-800">
           <div>
             <span className="text-[10px] font-mono uppercase tracking-wider text-[#F59E0B] block mb-1">
-              Fenton-Wilkinson & ABIDE Honesty Layer
+              Fenton-Wilkinson & APEX Honesty Layer
             </span>
             <h3 className="text-lg font-bold text-white font-mono flex items-center gap-2">
               <Sliders size={20} className="text-[#F59E0B]" />

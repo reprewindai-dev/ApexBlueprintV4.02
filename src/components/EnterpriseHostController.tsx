@@ -122,7 +122,7 @@ export default function EnterpriseHostController() {
         body: JSON.stringify({
           workspaceId: "ws-universal-default",
           prompt: promptInput,
-          repositoryContext: "reprewindai-dev/ABIDE @ 745b8ff393b328ddfa160c3e792887c5823ca1e0"
+          repositoryContext: "reprewindai-dev/APEX @ 745b8ff393b328ddfa160c3e792887c5823ca1e0"
         })
       });
       if (res.ok) {
@@ -194,7 +194,7 @@ export default function EnterpriseHostController() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2 py-0.5 bg-[#00F0FF]/15 border border-[#00F0FF]/30 text-[#00F0FF] text-[10px] font-black uppercase tracking-widest">
-              ABIDE Universal Portable Workspace
+              APEX Universal Portable Workspace
             </span>
             <span className="px-2 py-0.5 bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-[10px] font-black uppercase tracking-widest">
               Base SHA: 745b8ff3
@@ -205,7 +205,7 @@ export default function EnterpriseHostController() {
             Enterprise Control Plane &amp; Host Adapter
           </h2>
           <p className="text-xs text-[#888] mt-1 font-sans">
-            Manage STANDALONE, VEKLOM_EMBEDDED, or THIRD_PARTY_EMBEDDED modes. Connect typed adapters without forking ABIDE.
+            Manage STANDALONE, VEKLOM_EMBEDDED, or THIRD_PARTY_EMBEDDED modes. Connect typed adapters without forking APEX.
           </p>
         </div>
 
@@ -252,7 +252,7 @@ export default function EnterpriseHostController() {
               Select Deployment Mode (Section 01 / 07 / 08 / 09)
             </h3>
             <p className="text-xs text-[#888] font-sans mb-4">
-              The same ABIDE experience operates seamlessly across all three deployment modes. Third-party installations replace individual adapters without forking ABIDE.
+              The same APEX experience operates seamlessly across all three deployment modes. Third-party installations replace individual adapters without forking APEX.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -376,7 +376,7 @@ export default function EnterpriseHostController() {
             <div className="flex justify-between items-center text-xs border-b border-[#222] pb-2">
               <span className="text-white font-bold uppercase flex items-center gap-1.5">
                 <GitBranch size={14} className="text-[#00F0FF]" />
-                Connected Repository: reprewindai-dev/ABIDE
+                Connected Repository: reprewindai-dev/APEX
               </span>
               <span className="px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold">
                 BRANCH: MAIN @ 745b8ff3
@@ -488,7 +488,7 @@ export default function EnterpriseHostController() {
         </div>
       )}
 
-      {/* SUB-TAB 4: PORTABLE WORKSPACE (.ABIDE) */}
+      {/* SUB-TAB 4: PORTABLE WORKSPACE (.APEX) */}
       {activeSubTab === "portability" && (
         <div className="space-y-6 animate-fadeIn">
           <div>

@@ -4,7 +4,7 @@ import { DEFAULT_BLUEPRINT } from "../data/defaultBlueprint";
 import { downgradeFallbackClaims, createMetricValue } from "../core/fallback-downgrade";
 import { scoreResourceReputationV1 } from "../compiler/seked";
 
-describe("ABIDE Sovereign Governance: Provenance-Aware Evidence Class & Mode Boundaries", () => {
+describe("APEX Sovereign Governance: Provenance-Aware Evidence Class & Mode Boundaries", () => {
   it("must recursively downgrade inherited demo claims when generating fallback proposals", () => {
     // Clone the default blueprint which contains demo claims ("Verified", real names, "Sovereign Production", etc.)
     const inputBlueprint = JSON.parse(JSON.stringify(DEFAULT_BLUEPRINT));
@@ -163,8 +163,8 @@ describe("ABIDE Sovereign Governance: Provenance-Aware Evidence Class & Mode Bou
 
     // Add verified GitHub repository
     const verifiedRepo = {
-      name: "reprewindai-dev/ABIDE-verified-core",
-      url: "https://github.com/reprewindai-dev/ABIDE-verified-core",
+      name: "reprewindai-dev/APEX-verified-core",
+      url: "https://github.com/reprewindai-dev/APEX-verified-core",
       capabilities: ["compile-human-intent"],
       status: "verified",
       source_kind: "verified_github"
@@ -192,7 +192,7 @@ describe("ABIDE Sovereign Governance: Provenance-Aware Evidence Class & Mode Bou
     const result = downgradeFallbackClaims(inputBlueprint);
 
     // Verify repositories
-    const verifiedRepoRes = result.companyGraph.repositories.find((r) => r.name === "reprewindai-dev/ABIDE-verified-core");
+    const verifiedRepoRes = result.companyGraph.repositories.find((r) => r.name === "reprewindai-dev/APEX-verified-core");
     const generatedRepoRes = result.companyGraph.repositories.find((r) => r.name.includes("custom-generated-service"));
 
     assert.ok(verifiedRepoRes, "Verified GitHub repo must survive");

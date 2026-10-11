@@ -35,7 +35,7 @@ export class GitHubService {
     try {
       // Set up real GitHub API call to fetch recursive tree
       const headers: HeadersInit = {
-        "User-Agent": "ABIDE-Compiler",
+        "User-Agent": "APEX-Compiler",
         Accept: "application/vnd.github.v3+json",
       };
       if (customToken) {
@@ -237,7 +237,7 @@ You must return a valid JSON object matching this schema exactly:
 
     const targetBranch = branchName ? branchName.trim() : "abide-blueprint-alignment";
     const headers: HeadersInit = {
-      "User-Agent": "ABIDE-Compiler",
+      "User-Agent": "APEX-Compiler",
       "Accept": "application/vnd.github.v3+json",
       "Authorization": `token ${token}`,
       "Content-Type": "application/json"
@@ -284,9 +284,9 @@ You must return a valid JSON object matching this schema exactly:
       throw new Error(`Failed to create branch '${targetBranch}': ${createRefResponse.statusText}. ${errorMsg}`);
     }
 
-    // 3. Check if ABIDE_BLUEPRINT.json already exists to get its SHA (required for update)
+    // 3. Check if APEX_BLUEPRINT.json already exists to get its SHA (required for update)
     let existingSha = "";
-    const contentUrl = `https://api.github.com/repos/${owner}/${repo}/contents/ABIDE_BLUEPRINT.json?ref=${targetBranch}`;
+    const contentUrl = `https://api.github.com/repos/${owner}/${repo}/contents/APEX_BLUEPRINT.json?ref=${targetBranch}`;
     const contentResponse = await fetch(contentUrl, { headers });
     if (contentResponse.ok) {
       const contentData = await contentResponse.json();
@@ -294,11 +294,11 @@ You must return a valid JSON object matching this schema exactly:
     }
 
     // 4. Push/write the file
-    const pushFileUrl = `https://api.github.com/repos/${owner}/${repo}/contents/ABIDE_BLUEPRINT.json`;
+    const pushFileUrl = `https://api.github.com/repos/${owner}/${repo}/contents/APEX_BLUEPRINT.json`;
     const blueprintBase64 = Buffer.from(JSON.stringify(blueprint, null, 2)).toString("base64");
     
     const pushBody: any = {
-      message: `Feat: align ABIDE Sovereign Blueprint [skip ci]`,
+      message: `Feat: align APEX Sovereign Blueprint [skip ci]`,
       content: blueprintBase64,
       branch: targetBranch
     };
@@ -314,7 +314,7 @@ You must return a valid JSON object matching this schema exactly:
 
     if (!pushResponse.ok) {
       const errorMsg = await pushResponse.text();
-      throw new Error(`Failed to write ABIDE_BLUEPRINT.json to branch '${targetBranch}': ${pushResponse.statusText}. ${errorMsg}`);
+      throw new Error(`Failed to write APEX_BLUEPRINT.json to branch '${targetBranch}': ${pushResponse.statusText}. ${errorMsg}`);
     }
 
     const pushData = await pushResponse.json();

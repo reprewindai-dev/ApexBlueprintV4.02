@@ -25,7 +25,7 @@ describe("Milestone 1: Real Trust Spine Regression Tests", () => {
 
     it("should produce a different hash when any nested property is changed (tampering)", () => {
       const blueprint1 = {
-        title: "Abide Sovereign",
+        title: "Apex Sovereign",
         tagline: "Uncompromising security",
         timestamp: "2026-07-18T12:00:00Z",
         highLevelGoals: [{ title: "Durable Ledger", description: "Use X402", status: "PENDING" }],
@@ -181,7 +181,7 @@ describe("Milestone 1: Real Trust Spine Regression Tests", () => {
     it("should refuse writing projection files if the plan status is not APPROVED", async () => {
       const blueprint = {
         ...DEFAULT_BLUEPRINT,
-        title: "Sovereign Abide",
+        title: "Sovereign Apex",
         tagline: "Uncompromising ledger",
         timestamp: "2026-07-18T12:00:00Z",
       };

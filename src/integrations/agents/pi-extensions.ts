@@ -130,7 +130,7 @@ export function discoverPiExtensionsConfiguration(
     discoveredAt,
     capabilities: PI_EXTENSION_CAPABILITIES.map((capability) => capabilityRecord(capability, env)),
     limitations: [
-      "Pi Extensions are optional and are not bundled with ABIDE.",
+      "Pi Extensions are optional and are not bundled with APEX.",
       "This adapter performs configuration discovery only; it does not install, invoke, or health-check Pi Extensions.",
       "Configured capabilities remain unverified until a separate runtime probe supplies evidence.",
     ],

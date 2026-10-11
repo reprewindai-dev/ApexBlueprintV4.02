@@ -81,7 +81,7 @@ const defaultWsId = "ws-universal-default";
 workspaceStore.set(defaultWsId, {
   id: defaultWsId,
   tenantId: "tenant-root-001",
-  name: "ABIDE Sovereign Enterprise Workspace",
+  name: "APEX Sovereign Enterprise Workspace",
   version: 1,
   compilationState: "COMPILED",
   integrityState: "INTACT",
@@ -90,10 +90,10 @@ workspaceStore.set(defaultWsId, {
   executionEligibility: "ELIGIBLE",
   canonicalHash: "0x_abide_univ_745b8ff393b328ddfa160c3e792887c5823ca1e0",
   blueprintPayload: {
-    title: "ABIDE Sovereign Enterprise Workspace",
+    title: "APEX Sovereign Enterprise Workspace",
     version: "v4.02",
     baseSha: "745b8ff393b328ddfa160c3e792887c5823ca1e0",
-    repository: "reprewindai-dev/ABIDE",
+    repository: "reprewindai-dev/APEX",
     governance: "CAPPO-SEKED v4.02",
     capabilities: ["WorkspaceService", "ProviderRegistry", "EinsteinEngine", "CognitiveIDE", "Poltergeist", "CommandOps", "AgentWorkforce", "Governance", "Evidence", "Portability"]
   },
@@ -179,7 +179,7 @@ export class CanonicalWorkspaceService {
       },
       architecture: {
         baseSha: "745b8ff393b328ddfa160c3e792887c5823ca1e0",
-        repository: "reprewindai-dev/ABIDE",
+        repository: "reprewindai-dev/APEX",
         nodes: ["Express Gateway", "Workspace Service", "Einstein Engine", "Isolated Workers", "Durable Job Queue"]
       },
       contracts: {
@@ -200,7 +200,7 @@ export class CanonicalWorkspaceService {
         requiredPorts: [3009, 3011, 3000]
       },
       workspaceProjections: {
-        markdown: `# ${ws.name} (ABIDE Portable Package)\nHash: ${ws.canonicalHash}\nVersion: ${ws.version}`,
+        markdown: `# ${ws.name} (APEX Portable Package)\nHash: ${ws.canonicalHash}\nVersion: ${ws.version}`,
         json: JSON.stringify(ws.blueprintPayload)
       }
     };
@@ -449,7 +449,7 @@ const poltergeistStore: PoltergeistEvent[] = [];
 repositoryStore.set("repo-abide-root", {
   repositoryId: "repo-abide-root",
   workspaceId: defaultWsId,
-  remoteUrl: "https://github.com/reprewindai-dev/ABIDE.git",
+  remoteUrl: "https://github.com/reprewindai-dev/APEX.git",
   provider: "github",
   baseSha: "745b8ff393b328ddfa160c3e792887c5823ca1e0",
   activeBranch: "main",
@@ -1078,7 +1078,7 @@ enterpriseRouter.get("/repositories", async (req, res) => {
 });
 enterpriseRouter.post("/repositories", async (req, res) => {
   const { workspaceId, remoteUrl, provider, branch } = req.body;
-  const repo = await RepositoryPoltergeistService.bindRepository(workspaceId || defaultWsId, remoteUrl || "https://github.com/reprewindai-dev/ABIDE.git", provider || "github", branch || "main");
+  const repo = await RepositoryPoltergeistService.bindRepository(workspaceId || defaultWsId, remoteUrl || "https://github.com/reprewindai-dev/APEX.git", provider || "github", branch || "main");
   res.status(201).json({ success: true, repository: repo });
 });
 enterpriseRouter.get("/poltergeist", async (req, res) => {

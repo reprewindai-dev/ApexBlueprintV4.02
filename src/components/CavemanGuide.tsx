@@ -97,7 +97,7 @@ export default function CavemanGuide({
     {
       step: 1,
       title: "1. Intent",
-      description: "Describe what you want to build. ABIDE returns a structured proposal before creating files.",
+      description: "Describe what you want to build. APEX returns a structured proposal before creating files.",
       badge: "SURFACE 1: INTENT",
       badgeColor: "bg-cyan-500/10 text-cyan-400 border-cyan-500/30",
       tabId: "sovereignConstitution",
@@ -472,7 +472,7 @@ export default function CavemanGuide({
                 </span>
               </div>
               <h2 className="text-xl font-black text-white uppercase tracking-tight mt-0.5">
-                Complete the ABIDE build loop
+                Complete the APEX build loop
               </h2>
             </div>
           </div>
@@ -526,12 +526,12 @@ export default function CavemanGuide({
           </div>
         </div>
 
-        {/* Section: The ABIDE workflow */}
+        {/* Section: The APEX workflow */}
         <div className="space-y-3 pt-2 border-t border-[#222]">
           <div className="flex items-center gap-2">
             <BookOpen size={16} className="text-[#00F0FF]" />
             <h3 className="text-sm font-black text-white font-mono uppercase tracking-wide">
-              The ABIDE workflow
+              The APEX workflow
             </h3>
           </div>
           <div className="space-y-2">

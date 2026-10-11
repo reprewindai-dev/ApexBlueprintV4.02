@@ -652,7 +652,7 @@ export default function App() {
         timestamp: new Date(Date.now() - 120000).toISOString(),
         type: "SUCCESS",
         claimState: "SCHEMA_VALIDATED",
-        message: "Gnomeledger schema audit matches stable ABIDE_BLUEPRINT model hashes"
+        message: "Gnomeledger schema audit matches stable APEX_BLUEPRINT model hashes"
       },
       {
         id: "evt-003",
@@ -1145,7 +1145,7 @@ export default function App() {
 
   // Trigger confirmation modal for diagnostics export
   const triggerExportDiagnostics = () => {
-    const reportId = "VEKLOM-ABIDE-DIAG-" + Math.floor(Math.random() * 900000 + 100000);
+    const reportId = "VEKLOM-APEX-DIAG-" + Math.floor(Math.random() * 900000 + 100000);
     setExportConfirmModal({
       isOpen: true,
       type: "diagnostics",
@@ -1160,7 +1160,7 @@ export default function App() {
 
   // Export diagnostic report JSON to trigger download
   const handleExportDiagnostics = (reportId: string) => {
-    const finalReportId = reportId || "VEKLOM-ABIDE-DIAG-" + Math.floor(Math.random() * 900000 + 100000);
+    const finalReportId = reportId || "VEKLOM-APEX-DIAG-" + Math.floor(Math.random() * 900000 + 100000);
     const reportData = {
       report_timestamp: new Date().toISOString(),
       report_id: finalReportId,
@@ -1176,7 +1176,7 @@ export default function App() {
       interlink_cAPI_integration: {
         interlink_capi_repo: "https://github.com/reprewindai-dev/interlink-cAPI",
         capi_repo: "https://github.com/reprewindai-dev/cAPI",
-        binding_status: "CONVERGED_ABIDE_BLUEPRINT",
+        binding_status: "CONVERGED_APEX_BLUEPRINT",
         unified_call_interface: "connection.call({ capability, input, planId, idempotencyKey })",
         negotiation_mode: "MUTUAL_TRUST_HANDSHAKE_v2.0"
       },
@@ -1730,7 +1730,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
       // Replace "locked, publishable, and agent-executable specification authority" with appropriate unverified planning specification text
       content = content.replace(
         /locked,\s*publishable,\s*and\s*agent-executable\s*specification\s*authority/g,
-        "unverified planning specification (ABIDE PLANNING EXPORT, NOT CRYPTOGRAPHICALLY SIGNED, NOT HUMAN APPROVED, NOT REPOSITORY VERIFIED, NOT BUILDABLE, NOT EXECUTABLE, NOT PRODUCTION ELIGIBLE)"
+        "unverified planning specification (APEX PLANNING EXPORT, NOT CRYPTOGRAPHICALLY SIGNED, NOT HUMAN APPROVED, NOT REPOSITORY VERIFIED, NOT BUILDABLE, NOT EXECUTABLE, NOT PRODUCTION ELIGIBLE)"
       );
 
       // Replace "Sovereign Production" with "UNVERIFIED_DESIGN_INTENT"
@@ -1756,7 +1756,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 
       // Replace any manufactured timestamp/approval mentions in manifest.md
       if (f.path === "00_workspace_manifest/manifest.md") {
-        content = `# ABIDE PLANNING EXPORT
+        content = `# APEX PLANNING EXPORT
 **STATUS**: NOT CRYPTOGRAPHICALLY SIGNED
 **GOVERNANCE**: NOT HUMAN APPROVED
 **REPOSITORY**: NOT REPOSITORY VERIFIED
@@ -2272,7 +2272,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
           <div>
             <div className="flex items-center gap-3">
               <span className="font-black tracking-tighter text-white text-xl uppercase">
-                ABIDE BLUEPRINT v4.02
+                APEX BLUEPRINT v4.02
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 bg-[#1A1A1A] text-[#00F0FF] border border-[#333] font-black uppercase">
                 HRM-MODULAR
@@ -3507,7 +3507,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         />
                         <div className="flex flex-wrap gap-1.5">
                           {[
-                            { name: "ABIDE (Proposer)", url: "https://github.com/reprewindai-dev/ABIDE" },
+                            { name: "APEX (Proposer)", url: "https://github.com/reprewindai-dev/APEX" },
                             { name: "cappo-backend (Disposer)", url: "https://github.com/reprewindai-dev/cappo-backend" },
                             { name: "veklom-byos-backend", url: "https://github.com/reprewindai-dev/veklom-byos-backend" },
                             { name: "lockerphycer (Security Layer)", url: "https://github.com/reprewindai-dev/lockerphycer" },
@@ -3611,7 +3611,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     </div>
 
                     <p className="text-[10px] text-gray-400 normal-case leading-relaxed">
-                      This will push the active compiled sovereign blueprint as <code className="text-[#00F0FF]">ABIDE_BLUEPRINT.json</code> directly to a specified branch in your repository. Note: A GitHub Personal Access Token (PAT) with <code className="text-[#00F0FF]">repo</code> permissions is required for this action.
+                      This will push the active compiled sovereign blueprint as <code className="text-[#00F0FF]">APEX_BLUEPRINT.json</code> directly to a specified branch in your repository. Note: A GitHub Personal Access Token (PAT) with <code className="text-[#00F0FF]">repo</code> permissions is required for this action.
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono uppercase">
@@ -3651,7 +3651,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         ) : (
                           <>
                             <Send size={14} />
-                            <span>Commit & Push ABIDE_BLUEPRINT.json</span>
+                            <span>Commit & Push APEX_BLUEPRINT.json</span>
                           </>
                         )}
                       </button>
@@ -5135,7 +5135,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         </div>
                         
                         <p className="text-[10px] text-gray-400 leading-relaxed normal-case">
-                          The <code className="text-[#00F0FF]">interlink-cAPI</code> serves as the discovery, negotiation, and composition layer between the <code className="text-[#00F0FF]">ABIDE_BLUEPRINT</code> intent specification and the underlying persistent <code className="text-white">BYOS</code> workspace nodes.
+                          The <code className="text-[#00F0FF]">interlink-cAPI</code> serves as the discovery, negotiation, and composition layer between the <code className="text-[#00F0FF]">APEX_BLUEPRINT</code> intent specification and the underlying persistent <code className="text-white">BYOS</code> workspace nodes.
                         </p>
 
                         <div className="p-3 bg-[#050505] border border-[#222] rounded-none space-y-2.5 font-mono text-[9px] uppercase">
@@ -5154,8 +5154,8 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                                 <span>[ UACPV5-TERMINAL (Sovereign Command Console) ]</span>
                                 <ExternalLink size={10} />
                               </a>
-                              <a href="https://github.com/reprewindai-dev/ABIDE" target="_blank" rel="noreferrer" className="text-[#00F0FF] hover:underline hover:text-white flex items-center gap-1">
-                                <span>[ ABIDE (Planning &amp; Intent Compiler Layer) ]</span>
+                              <a href="https://github.com/reprewindai-dev/APEX" target="_blank" rel="noreferrer" className="text-[#00F0FF] hover:underline hover:text-white flex items-center gap-1">
+                                <span>[ APEX (Planning &amp; Intent Compiler Layer) ]</span>
                                 <ExternalLink size={10} />
                               </a>
                             </div>
@@ -5416,7 +5416,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         dModel = "gpt-4o";
                         dUrl = "";
                       } else if (prov === "anthropic") {
-                        dModel = "claude-3-5-sonnet-20241022";
+                        dModel = "claude-opus-5-5";
                         dUrl = "";
                       } else if (prov === "deepseek") {
                         dModel = "deepseek-chat";
@@ -5754,7 +5754,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
       <footer className="border-t-2 border-[#222] bg-[#050505] py-8 mt-16 print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
           <p className="text-xs font-mono uppercase text-[#666] tracking-wider">
-            Abide Blueprint Compiler. Created on high-contrast obsidian dark patterns. Verified for cross-device responsiveness.
+            Apex Blueprint Compiler. Created on high-contrast obsidian dark patterns. Verified for cross-device responsiveness.
           </p>
           <div className="flex justify-center gap-6 text-[10px] font-mono text-[#444] uppercase tracking-widest">
             <span>PLATFORM: CLOUD CONTAINER</span>
@@ -5773,7 +5773,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
             <h1 className="text-4xl font-extrabold tracking-tight uppercase">{result.title}</h1>
             <p className="text-lg italic text-gray-700">{result.tagline}</p>
             <div className="text-xs font-mono space-y-1 text-gray-600 pt-4">
-              <p>COMPILED BY: ABIDE BLUEPRINT HIERARCHICAL REASONING CORE</p>
+              <p>COMPILED BY: APEX BLUEPRINT HIERARCHICAL REASONING CORE</p>
               <p>MINT DATE: {new Date(result.timestamp).toLocaleString()}</p>
               <p>REGISTRANT INTELLECTUAL OWNER: {userEmail}</p>
               <p>CRYPTOGRAPHIC PROOF OF CREATION HASH: {result.hash}</p>
@@ -5840,7 +5840,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
           <div className="pt-12 text-center border-t-2 border-black space-y-2">
             <p className="font-bold text-base uppercase">Certificate of Verification & Intellectual Protection</p>
             <p className="text-xs text-gray-600 max-w-lg mx-auto">
-              This system blueprint has been compiled utilizing the elite ABIDE BLUEPRINT Hierarchical Reasoning Engine. All assets compiled herewith are mathematically backed, academically grounded, and cryptographically signed to protect concept authorship.
+              This system blueprint has been compiled utilizing the elite APEX BLUEPRINT Hierarchical Reasoning Engine. All assets compiled herewith are mathematically backed, academically grounded, and cryptographically signed to protect concept authorship.
             </p>
             <p className="font-mono text-xs font-bold pt-4">MINT SEAL AUTHENTICATION: {result.hash.substring(0, 32).toUpperCase()}</p>
           </div>

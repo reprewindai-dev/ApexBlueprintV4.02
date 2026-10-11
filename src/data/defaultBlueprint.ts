@@ -10,7 +10,7 @@ import { BlueprintResult } from "../types";
  * verified academic grounding citations like Lamport and Nakamoto, SEKED triage
  * scores, capability mappings, and specification packs).
  * 
- * When the user inputs their own messy intent and presses 'Abide Generate',
+ * When the user inputs their own messy intent and presses 'Apex Generate',
  * all this demo data is completely replaced and gone! The compiled blueprint
  * strictly focuses on what the user ingested.
  * ============================================================================
@@ -109,8 +109,8 @@ export const DEFAULT_BLUEPRINT: BlueprintResult = {
     ],
     repositories: [
       {
-        name: "ABIDE",
-        url: "https://github.com/reprewindai-dev/ABIDE",
+        name: "APEX",
+        url: "https://github.com/reprewindai-dev/APEX",
         capabilities: ["compile-human-intent", "synthesize-execution-graph", "evaluate-smt-constraints"],
         status: "Active"
       },
@@ -597,8 +597,8 @@ export const DEFAULT_BLUEPRINT: BlueprintResult = {
   files: [
     {
       path: "README.md",
-      content: `# [DEMO PREVIEW SAMPLE] Abide Blueprint Compiler Showcase Workspace
-> **⚡ NOTICE TO BUYER / USER**: This workspace is literally for **DEMO PURPOSES ONLY**. It is a pre-compiled showcase demonstrating the Gold Standard 12-Pack Folder Layout, verified citations (e.g., Lamport & Nakamoto reference samples), and capability architecture you receive out of this tool when you use it. **When you input your own messy intent and click 'Abide Generate', all this demo stuff is completely gone and replaced strictly by what you ingested!**
+      content: `# [DEMO PREVIEW SAMPLE] Apex Blueprint Compiler Showcase Workspace
+> **⚡ NOTICE TO BUYER / USER**: This workspace is literally for **DEMO PURPOSES ONLY**. It is a pre-compiled showcase demonstrating the Gold Standard 12-Pack Folder Layout, verified citations (e.g., Lamport & Nakamoto reference samples), and capability architecture you receive out of this tool when you use it. **When you input your own messy intent and click 'Apex Generate', all this demo stuff is completely gone and replaced strictly by what you ingested!**
 
 Welcome to the compiled enterprise constitution for the **Veklom Capability OS (DEMO REFERENCE SAMPLE)**.
 

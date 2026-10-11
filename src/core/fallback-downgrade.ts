@@ -1,7 +1,7 @@
 import { BlueprintResult, Capability, AcademicPaper, MetricEvidenceState, MetricValue } from "../types";
 
 /**
- * Helper to create an explicit MetricValue object enforcing ABIDE governance rules:
+ * Helper to create an explicit MetricValue object enforcing APEX governance rules:
  * Rule 1: Never convert missing values to 0. Use value: null and evidence_state: "UNMEASURED".
  * Rule 4: Mark computed but empirically uncalibrated outputs as "COMPUTED_UNCALIBRATED".
  */
@@ -56,10 +56,10 @@ export function citationHasIndependentRetrievalEvidence(citation: any): boolean 
 }
 
 /**
- * ABIDE Sovereign Governance — Provenance-Aware Evidence Class & Mode Boundaries
+ * APEX Sovereign Governance — Provenance-Aware Evidence Class & Mode Boundaries
  * 
  * Selectively downgrades inherited demo/sample claims when generating fallback proposals.
- * PRESERVES real ABIDE computations (SEKED/Fenton-Wilkinson, risk/effort/complexity, feasibility/TRL,
+ * PRESERVES real APEX computations (SEKED/Fenton-Wilkinson, risk/effort/complexity, feasibility/TRL,
  * Einstein probability, deterministic hashes, budget/cost, telemetry, user requirements, and retrieved data).
  * Never converts missing values to 0.
  */
@@ -356,7 +356,7 @@ export function downgradeFallbackClaims(blueprint: BlueprintResult): BlueprintRe
     const isDemoSample = ep.evidence_state === "DEMO_SAMPLE" || ep.source_kind === "demo" || (ep.modelName && ep.modelName.includes("DEMO"));
 
     if (isMeasured || isComputed || isRetrieved || isUserDeclared) {
-      // PRESERVE values produced by real ABIDE computations, measurements, or user declarations!
+      // PRESERVE values produced by real APEX computations, measurements, or user declarations!
       if (!ep.evidence_state) {
         ep.evidence_state = isMeasured ? "MEASURED" : isComputed ? "COMPUTED" : isRetrieved ? "RETRIEVED" : "USER_DECLARED";
       }

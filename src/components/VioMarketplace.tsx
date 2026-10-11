@@ -69,7 +69,7 @@ const PLUGINS_CATALOG: VioPlugin[] = [
   },
   {
     id: "abide-cappo-guard",
-    name: "ABIDE VIO Policy Engine & CAPPO Guard",
+    name: "APEX VIO Policy Engine & CAPPO Guard",
     version: "v3.8.5",
     category: "Governance",
     description: "Sits 'on top' of your IDE to intercept execution commands (run, test, deploy). Prevents Lane 3 financial/external mutations without a cryptographically signed HMAC Approval Token.",
@@ -126,7 +126,7 @@ const PLUGINS_CATALOG: VioPlugin[] = [
 
 export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
   // Licensing & Subscription State
-  const [licenseKey, setLicenseKey] = useState<string>("ABIDE-VIO-SOVEREIGN-8849-PRO");
+  const [licenseKey, setLicenseKey] = useState<string>("APEX-VIO-SOVEREIGN-8849-PRO");
   const [showKey, setShowKey] = useState<boolean>(false);
   const [selectedTier, setSelectedTier] = useState<"Developer Pro ($99/mo)" | "Sovereign Architect ($499/mo)" | "Enterprise GaaS ($2,499/mo)">("Sovereign Architect ($499/mo)");
   const [isLicensed, setIsLicensed] = useState<boolean>(true);
@@ -329,7 +329,7 @@ export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
                 <strong className="text-[#00F0FF]">1. The Strategic Mandate of Invisible Governance:</strong> In the current technological landscape, we witness fundamental friction between the probabilistic nature of Generative AI and the deterministic requirements of enterprise software. While Large Language Models (LLMs) excel at generating creative solutions, they lack inherent accountability for mission-critical execution. To bridge this gap, <strong className="text-white">Verifiable Intent Orchestration (VIO)</strong> emerges as the strategic infrastructure layer moving beyond simple code generation into guaranteed execution.
               </p>
               <p>
-                <strong className="text-emerald-400">2. Sitting "On Top" of the IDE:</strong> Abide is architected as a "Build-to-Execution Accountability Infrastructure." It decouples code editing (the IDE domain) from plan governance. While the IDE focuses on local iteration, Abide provides the deterministic framework that governs what is allowed to be built and how it must behave via M2M enforceable contracts (PlanIR).
+                <strong className="text-emerald-400">2. Sitting "On Top" of the IDE:</strong> Apex is architected as a "Build-to-Execution Accountability Infrastructure." It decouples code editing (the IDE domain) from plan governance. While the IDE focuses on local iteration, Apex provides the deterministic framework that governs what is allowed to be built and how it must behave via M2M enforceable contracts (PlanIR).
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
                 <div className="bg-[#040404] p-2.5 border border-[#1E1E1E]">
@@ -393,7 +393,7 @@ export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
                       type={showKey ? "text" : "password"}
                       value={licenseKey}
                       onChange={(e) => setLicenseKey(e.target.value)}
-                      placeholder="Enter API Key (e.g., ABIDE-VIO-PRO-2026)..."
+                      placeholder="Enter API Key (e.g., APEX-VIO-PRO-2026)..."
                       className="w-full bg-[#111] border border-[#333] text-white text-xs p-2 pr-9 focus:outline-none focus:border-[#00F0FF] font-mono"
                     />
                     <button
@@ -728,7 +728,7 @@ export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
                     Command Interception & Annotation (CAPPO Guard)
                   </span>
                   <p className="text-[11px] text-gray-400">
-                    When installed, the ABIDE Policy Engine intercepts IDE CLI commands. Lane 3 financial/external actions are halted until an HMAC Approval Token is verified.
+                    When installed, the APEX Policy Engine intercepts IDE CLI commands. Lane 3 financial/external actions are halted until an HMAC Approval Token is verified.
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -772,7 +772,7 @@ export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
                       </span>
                     </div>
                     <p className="text-[11px] text-gray-300 leading-relaxed">
-                      Attempted state transition (<code className="text-white bg-black px-1.5 py-0.5 border border-[#333]">{simCommand}</code>) violates the passive inner loop. ABIDE VIO Policy Engine requires an explicit HMAC Approval Token or matching Canonical Hash before authorizing execution.
+                      Attempted state transition (<code className="text-white bg-black px-1.5 py-0.5 border border-[#333]">{simCommand}</code>) violates the passive inner loop. APEX VIO Policy Engine requires an explicit HMAC Approval Token or matching Canonical Hash before authorizing execution.
                     </p>
                   </div>
                 </div>
@@ -813,7 +813,7 @@ export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
                   <CheckCircle2 size={20} className="text-emerald-400 shrink-0" />
                   <div>
                     <span className="text-xs font-black uppercase text-emerald-400 block">
-                      ✅ EXECUTION AUTHORIZED BY ABIDE VIO GOVERNOR
+                      ✅ EXECUTION AUTHORIZED BY APEX VIO GOVERNOR
                     </span>
                     <span className="text-[10px] text-gray-400">
                       Canonical Hash aligned. Receipt sealed to Gnomledger PGL (SLSA Level 3 Attestation).
@@ -838,7 +838,7 @@ export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
                     SonarLint Compliance Decorators & GitLens Provenance
                   </span>
                   <p className="text-[11px] text-gray-400">
-                    When code drifts from the sealed PlanIR contract, ABIDE highlights the exact lines in your editor with real-time Z3 SAT/UNSAT contradiction models.
+                    When code drifts from the sealed PlanIR contract, APEX highlights the exact lines in your editor with real-time Z3 SAT/UNSAT contradiction models.
                   </p>
                 </div>
                 <button
@@ -859,12 +859,12 @@ export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
                   <span>src/services/StripePayoutAdapter.ts</span>
                   <span className="flex items-center gap-1.5 text-[#00F0FF]">
                     <Sparkles size={11} />
-                    <span>ABIDE PROVENANCE: Canonical Hash 99f312d1 (Signed by Sovereign Architect)</span>
+                    <span>APEX PROVENANCE: Canonical Hash 99f312d1 (Signed by Sovereign Architect)</span>
                   </span>
                 </div>
 
                 <div className="text-gray-400">12 | <span className="text-indigo-400">export async function</span> <span className="text-amber-300">executeContractorPayout</span>(walletId: <span className="text-teal-300">string</span>, amount: <span className="text-teal-300">number</span>) &#123;</div>
-                <div className="text-gray-400">13 |   <span className="text-gray-500">// Check invariant against ABIDE PlanIR Contract</span></div>
+                <div className="text-gray-400">13 |   <span className="text-gray-500">// Check invariant against APEX PlanIR Contract</span></div>
                 
                 {/* The highlighted drifted line */}
                 <div className={`p-1.5 transition-all ${ideTrustState === "DRIFT_DETECTED" ? "bg-red-950/40 border-l-4 border-red-500 text-red-200" : "text-gray-300"}`}>
@@ -875,7 +875,7 @@ export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
                   <div className="ml-8 bg-red-950/80 border border-red-500/60 p-3 text-[10px] text-red-300 space-y-1 animate-fadeIn shadow-lg">
                     <div className="flex items-center gap-1.5 font-bold text-red-400">
                       <AlertTriangle size={13} />
-                      <span>ABIDE SONARLINT DECORATOR: Out-of-Plan Deviation Detected</span>
+                      <span>APEX SONARLINT DECORATOR: Out-of-Plan Deviation Detected</span>
                     </div>
                     <p>
                       <strong>Z3 SMT Contradiction:</strong> Assigned value (<code className="bg-black px-1">2500</code>) violates sealed PlanIR invariant (<code className="bg-black px-1">maxPayoutCeiling &lt;= 500</code>).
@@ -892,7 +892,7 @@ export default function VioMarketplace({ blueprint }: VioMarketplaceProps) {
                   </div>
                 )}
 
-                <div className="text-gray-400">15 |   <span className="text-indigo-400">if</span> (amount &gt; maxPayoutCeiling) <span className="text-indigo-400">throw new</span> <span className="text-amber-300">Error</span>(<span className="text-green-300">"Exceeds ABIDE ceiling"</span>);</div>
+                <div className="text-gray-400">15 |   <span className="text-indigo-400">if</span> (amount &gt; maxPayoutCeiling) <span className="text-indigo-400">throw new</span> <span className="text-amber-300">Error</span>(<span className="text-green-300">"Exceeds APEX ceiling"</span>);</div>
                 <div className="text-gray-400">16 |   <span className="text-indigo-400">return await</span> stripe.payouts.<span className="text-amber-300">create</span>(&#123; amount, destination: walletId &#125;);</div>
                 <div className="text-gray-400">17 | &#125;</div>
               </div>

@@ -390,7 +390,7 @@ export default function CognitiveIde({
     "factory" | "workspace" | "flow" | "ontology" | "solver" | "academic" | "compiler" | "plugins"
   >("factory");
 
-  // ABIDE BOUNDED PROJECT FACTORY STATE (The 5 Surfaces)
+  // APEX BOUNDED PROJECT FACTORY STATE (The 5 Surfaces)
   const [workbenchSurface, setWorkbenchSurface] = useState<"intent" | "build" | "changes" | "run" | "evidence">("intent");
   const [projectsList, setProjectsList] = useState<any[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string>("proj-ollama-proof");
@@ -431,10 +431,10 @@ export default function CognitiveIde({
           }
         }
       })
-      .catch(err => console.error("Failed to load ABIDE projects:", err));
+      .catch(err => console.error("Failed to load APEX projects:", err));
   }, []);
 
-  // Redirect legacy panel states to unified ABIDE Workbench canonical views
+  // Redirect legacy panel states to unified APEX Workbench canonical views
   useEffect(() => {
     if (activePanel === "workspace") {
       setActivePanel("factory");
@@ -1050,7 +1050,7 @@ export async function executeCapability(payload: any) {
     setTlaOutput(null);
     addTerminalLog("Invoking TLA+ PlusCal state machine verifier...", "seked");
     try {
-      const plusCalCode = moduleContent || activeProject?.files?.["src/server.ts"] || "--algorithm ABIDE_State_Check { begin skip; }";
+      const plusCalCode = moduleContent || activeProject?.files?.["src/server.ts"] || "--algorithm APEX_State_Check { begin skip; }";
       const response = await fetch("/api/realworld/verify/tla", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1356,7 +1356,7 @@ export async function executeCapability(payload: any) {
         </div>
       </div>
 
-      {/* TABS CONTROLLER (ABIDE WORKBENCH SURFACES) */}
+      {/* TABS CONTROLLER (APEX WORKBENCH SURFACES) */}
       <div className="flex border-b border-[#222] mb-4 overflow-x-auto whitespace-nowrap bg-[#080808]">
         <button
           onClick={() => setActivePanel("factory")}
@@ -1367,7 +1367,7 @@ export async function executeCapability(payload: any) {
           }`}
         >
           <Sparkles size={14} className="text-[#00F0FF]" />
-          <span>🚀 ABIDE Workbench (6 Canonical Views)</span>
+          <span>🚀 APEX Workbench (6 Canonical Views)</span>
         </button>
         <button
           onClick={() => { setActivePanel("factory"); setWorkbenchSurface("code" as any); }}
@@ -1448,7 +1448,7 @@ export async function executeCapability(payload: any) {
         <div className="xl:col-span-9 bg-[#080808] border border-[#151515] p-3 flex flex-col justify-between min-h-[400px]">
           <AnimatePresence mode="wait">
             
-            {/* PANEL 0: ABIDE BOUNDED PROJECT FACTORY WORKBENCH (5 SURFACES) */}
+            {/* PANEL 0: APEX BOUNDED PROJECT FACTORY WORKBENCH (5 SURFACES) */}
             {activePanel === "factory" && (
               <motion.div
                 key="factory-panel"
@@ -1505,7 +1505,7 @@ export async function executeCapability(payload: any) {
                 {newProjectModal && (
                   <div className="bg-[#181818] border-2 border-[#00F0FF] p-4 space-y-3 animate-fadeIn">
                     <div className="flex justify-between items-center border-b border-[#282828] pb-2">
-                      <span className="text-xs font-mono font-bold text-[#00F0FF] uppercase">Create New Bounded ABIDE Project</span>
+                      <span className="text-xs font-mono font-bold text-[#00F0FF] uppercase">Create New Bounded APEX Project</span>
                       <button onClick={() => setNewProjectModal(false)} className="text-gray-500 hover:text-white text-xs">✕</button>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -1540,7 +1540,7 @@ export async function executeCapability(payload: any) {
                   </div>
                 )}
 
-                {/* THE 6 CANONICAL ABIDE WORKBENCH SURFACES */}
+                {/* THE 6 CANONICAL APEX WORKBENCH SURFACES */}
                 <div className="flex border-b border-[#222] gap-1 overflow-x-auto pb-1">
                   {[
                     { id: "intent", label: "1. Blueprint View", icon: Sparkles, desc: "Messy intent -> architecture & production plan" },
@@ -1582,7 +1582,7 @@ export async function executeCapability(payload: any) {
                           <span>Surface 1: Intent &gt; Proposed Build Plan</span>
                         </h3>
                         <p className="text-xs text-gray-400 font-sans mt-0.5">
-                          In ABIDE, you don't edit unstructured text directly. Explain what you need in plain language, and ABIDE will propose a bounded Build Plan before any files are modified.
+                          In APEX, you don't edit unstructured text directly. Explain what you need in plain language, and APEX will propose a bounded Build Plan before any files are modified.
                         </p>
                       </div>
                     </div>
@@ -1668,7 +1668,7 @@ export async function executeCapability(payload: any) {
                           <span>Surface 2: Project View — Real Sandbox Files &amp; 4 Canonical Types</span>
                         </h3>
                         <p className="text-xs text-gray-400 font-sans mt-0.5">
-                          Unlike browser-only prototypes with React virtual files, ABIDE writes real projects to a durable sandbox directory: <code className="text-[#00F0FF] font-mono bg-[#111] px-1.5 py-0.5 border border-[#333]">./workspace-sandbox/projects/{activeProject.id}</code>.
+                          Unlike browser-only prototypes with React virtual files, APEX writes real projects to a durable sandbox directory: <code className="text-[#00F0FF] font-mono bg-[#111] px-1.5 py-0.5 border border-[#333]">./workspace-sandbox/projects/{activeProject.id}</code>.
                         </p>
                       </div>
                       <div className="flex gap-2">
@@ -1683,7 +1683,7 @@ export async function executeCapability(payload: any) {
 
                     {/* The 4 Project Types Explanation Grid */}
                     <div className="space-y-2">
-                      <span className="text-[10px] font-mono font-bold text-gray-400 uppercase block">The 4 Canonical ABIDE Project Types:</span>
+                      <span className="text-[10px] font-mono font-bold text-gray-400 uppercase block">The 4 Canonical APEX Project Types:</span>
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-2.5 font-mono text-xs">
                         <div className={`p-3 border ${activeProject.type === "application-service" ? "bg-[#0E1B22] border-[#00F0FF]" : "bg-[#0E0E0E] border-[#222]"}`}>
                           <span className="text-[10px] text-[#00F0FF] font-black uppercase block">1. Application / Service</span>
@@ -2206,9 +2206,9 @@ export async function executeCapability(payload: any) {
                       
                       {!zkFlowMode && (
                         <div className="p-3.5 bg-[#111] border border-[#282828] font-mono text-xs text-gray-300 space-y-1">
-                          <div className="text-[#00F0FF] font-bold uppercase text-[11px]">Why this matters for ABIDE:</div>
+                          <div className="text-[#00F0FF] font-bold uppercase text-[11px]">Why this matters for APEX:</div>
                           <p className="font-sans text-xs text-gray-300">
-                            Someone might use ABIDE to build a small API, an MCP server, an agent skill, or a data transformer—not just pipelines. When a pipeline IS needed, ABIDE represents it in this shared IR so it can execute locally via BYOK runner or compile into Veklom GPC &gt; CAPPO!
+                            Someone might use APEX to build a small API, an MCP server, an agent skill, or a data transformer—not just pipelines. When a pipeline IS needed, APEX represents it in this shared IR so it can execute locally via BYOK runner or compile into Veklom GPC &gt; CAPPO!
                           </p>
                         </div>
                       )}
@@ -2226,7 +2226,7 @@ export async function executeCapability(payload: any) {
                           <span>Surface 5: Build View — Real Install, Typecheck, Test &amp; Preview Output</span>
                         </h3>
                         <p className="text-xs text-gray-400 font-sans mt-0.5">
-                          ABIDE creates an isolated sandbox and runs real language tooling. This is real terminal process output over your durable files, not animation-generated status!
+                          APEX creates an isolated sandbox and runs real language tooling. This is real terminal process output over your durable files, not animation-generated status!
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -2308,7 +2308,7 @@ export async function executeCapability(payload: any) {
                           <span>Surface 6: Handoff View — Canonical cAPI Delegation &amp; Evidence Ledger</span>
                         </h3>
                         <p className="text-xs text-gray-400 font-sans mt-0.5">
-                          ABIDE is NOT the control surface for all of Veklom. Once a project is verified, ABIDE hands off the artifact into the canonical backend mesh for governed execution!
+                          APEX is NOT the control surface for all of Veklom. Once a project is verified, APEX hands off the artifact into the canonical backend mesh for governed execution!
                         </p>
                       </div>
                       <div className="flex gap-2">
@@ -2338,7 +2338,7 @@ export async function executeCapability(payload: any) {
                       </div>
                       <div className="p-3 bg-black border border-[#222] flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-300">
                         <div className="p-2 bg-[#141414] border border-[#00F0FF] text-[#00F0FF] font-bold">
-                          ABIDE Workbench (3009)
+                          APEX Workbench (3009)
                         </div>
                         <span className="text-gray-500 font-bold">&gt;&gt;</span>
                         <div className="p-2 bg-[#141414] border border-emerald-500 text-emerald-400 font-bold">

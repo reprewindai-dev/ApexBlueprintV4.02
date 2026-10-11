@@ -57,7 +57,7 @@ export default function GovernanceSimulator({ capabilities }: GovernanceSimulato
           c: cVal,
           d: dVal,
           s: sVal,
-          systemName: "ABIDE-SIMULATED-GATEWAY",
+          systemName: "APEX-SIMULATED-GATEWAY",
           description: "Interactive SEKED telemetry valuation sweep."
         })
       });
@@ -571,7 +571,7 @@ export default function GovernanceSimulator({ capabilities }: GovernanceSimulato
               <div className="flex items-center gap-2">
                 <CheckCircle2 size={18} className="text-[#00F0FF]" />
                 <h4 className="text-sm font-black text-white uppercase tracking-tight font-sans">
-                  ABIDE First-Class M2M Production Enforcement Architecture
+                  APEX First-Class M2M Production Enforcement Architecture
                 </h4>
               </div>
               <span className="text-[10px] font-mono text-black font-black bg-[#00F0FF] px-2 py-0.5">
@@ -579,7 +579,7 @@ export default function GovernanceSimulator({ capabilities }: GovernanceSimulato
               </span>
             </div>
             <p className="text-xs text-gray-300 leading-relaxed font-sans">
-              To make ABIDE's M2M execution engine a first-class production system, all remaining simulated verification layers have been replaced with fully enforced production adapters. Every step is cryptographically verified before external mutation is permitted:
+              To make APEX's M2M execution engine a first-class production system, all remaining simulated verification layers have been replaced with fully enforced production adapters. Every step is cryptographically verified before external mutation is permitted:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2 text-[10.5px]">
               <div className="p-2.5 bg-black/60 border border-[#222]">

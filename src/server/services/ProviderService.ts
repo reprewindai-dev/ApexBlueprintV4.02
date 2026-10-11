@@ -346,7 +346,7 @@ export function generateFallbackBlueprint(
     blueprint.jurisdictionProfileName = selectedJurisdiction;
   }
   
-  // Rule 3: When ABIDE cannot ground a citation for real (as in quota fallback), it MUST say "no citation available"
+  // Rule 3: When APEX cannot ground a citation for real (as in quota fallback), it MUST say "no citation available"
   // and NEVER synthesize a plausible-looking fake one or inherit unverified mock IDs.
   blueprint.academicGrounding = [
     {
@@ -361,7 +361,7 @@ export function generateFallbackBlueprint(
 
   // ============================================================================
   // [UNIVERSAL DEMO PURGE ENGINE]
-  // When the user inputs their own messy intent and presses 'ABIDE Generate',
+  // When the user inputs their own messy intent and presses 'APEX Generate',
   // ALL DEMO REFERENCE STUFF MUST BE GONE! It strictly focuses on what the user ingested.
   // ============================================================================
   const jurisdictionPolicy = selectedJurisdiction || "Global Standard";
@@ -744,7 +744,7 @@ export function generateFallbackBlueprint(
     },
     {
       path: "07_evidence_validation_pack/grounding_and_gaps.md",
-      content: `# Evidence & Validation Pack\n\n## Academic Grounding & Citations\n- **Status**: Offline Quota Fallback Active.\n- **Citations**: No citation available. Per strict ABIDE governance rules, when offline fallback occurs, no mock or demo citations (such as Lamport or Nakamoto reference samples) are inherited. Live verification will resume upon API reconnection.\n\n## Identified System Gaps\n${blueprint.gapsReport.map((g: any) => `- **${g.gapType}**: ${g.description} (Severity: ${g.severity})`).join("\n")}`
+      content: `# Evidence & Validation Pack\n\n## Academic Grounding & Citations\n- **Status**: Offline Quota Fallback Active.\n- **Citations**: No citation available. Per strict APEX governance rules, when offline fallback occurs, no mock or demo citations (such as Lamport or Nakamoto reference samples) are inherited. Live verification will resume upon API reconnection.\n\n## Identified System Gaps\n${blueprint.gapsReport.map((g: any) => `- **${g.gapType}**: ${g.description} (Severity: ${g.severity})`).join("\n")}`
     },
     {
       path: "08_github_alignment_pack/repo_sync.md",
@@ -764,7 +764,7 @@ export function generateFallbackBlueprint(
     }
   ];
 
-  blueprint.fallback_message = "Free-tier Gemini API token count limit exceeded (250K/min limit). ABIDE locally generated an offline fallback blueprint. NOTE: Human-readable exports and verified packs are mechanically blocked until live API compilation is restored.";
+  blueprint.fallback_message = "Free-tier Gemini API token count limit exceeded (250K/min limit). APEX locally generated an offline fallback blueprint. NOTE: Human-readable exports and verified packs are mechanically blocked until live API compilation is restored.";
 
   // Run formal SEKED triage heuristic engine on fallback blueprint
   try {

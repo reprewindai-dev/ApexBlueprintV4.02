@@ -91,7 +91,7 @@ export default function GovernedViewContainer({
     e.preventDefault();
     if (!approverName) return;
     const entropy = Math.random().toString(36).substring(2, 12).toUpperCase();
-    setSealHash(`SEAL-ABIDE-${tabId.toUpperCase()}-${entropy}`);
+    setSealHash(`SEAL-APEX-${tabId.toUpperCase()}-${entropy}`);
     setIsApproved(true);
   };
 
@@ -349,7 +349,7 @@ export default function GovernedViewContainer({
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[#222] pb-4 gap-3">
             <div className="flex items-center gap-2 text-rose-400 font-bold text-sm">
               <Activity size={18} className="animate-pulse text-[#00F0FF]" />
-              <span>ABIDE V4.02 BLUEPRINT REVISION COMPARISON &amp; DIFF ENGINE</span>
+              <span>APEX V4.02 BLUEPRINT REVISION COMPARISON &amp; DIFF ENGINE</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="px-2 py-0.5 bg-[#00F0FF]/10 border border-[#00F0FF]/40 text-[#00F0FF] text-[9px] font-black">
@@ -452,15 +452,15 @@ export default function GovernedViewContainer({
                   <div className="flex items-center justify-between border-b border-[#222] pb-2">
                     <span className="text-[#00F0FF] font-black text-xs flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-[#00F0FF] inline-block animate-ping"></span>
-                      <span>CURRENT LIVE: {result.version || "v4.02.1-ABIDE"}</span>
+                      <span>CURRENT LIVE: {result.version || "v4.02.1-APEX"}</span>
                     </span>
                     <span className="text-[9px] text-emerald-400 font-mono font-bold">ACTIVE CONVERGED</span>
                   </div>
                   <div className="text-[10px] text-gray-300 font-mono space-y-1 bg-black p-2.5 border border-[#1A1A1A]">
                     <div><span className="text-gray-500">COMPILED AT:</span> {new Date().toISOString()}</div>
-                    <div><span className="text-gray-500">COMPILER:</span> ABIDE Z3-TS SMT &amp; SEKED Math Engine</div>
+                    <div><span className="text-gray-500">COMPILER:</span> APEX Z3-TS SMT &amp; SEKED Math Engine</div>
                     <div className="truncate"><span className="text-gray-500">HASH:</span> <span className="text-[#00F0FF] font-bold">{result.hash || "e50c9782ea38d8d3fcd066929cf39be50f81a1a479efcb1d06371f652cb9287a"}</span></div>
-                    <div><span className="text-gray-500">INVARIANT:</span> ABIDE Proposes, CAPPO Disposes</div>
+                    <div><span className="text-gray-500">INVARIANT:</span> APEX Proposes, CAPPO Disposes</div>
                   </div>
                   <div className="p-2 bg-[#0A1212] border border-[#00F0FF]/30 text-[9.5px] text-cyan-300 font-sans leading-normal">
                     <strong className="text-[#00F0FF] font-mono uppercase block text-[9px] mb-0.5">Sovereign Compiled Posture:</strong>
@@ -487,7 +487,7 @@ export default function GovernedViewContainer({
               <div className="font-mono text-[10px] space-y-1 bg-[#050505] p-3 border border-[#181818] leading-relaxed select-text">
                 <div className="text-gray-500">// --- METADATA &amp; COMPILER DIRECTIVES ---</div>
                 <div className="text-rose-400 bg-rose-950/20 px-2 py-0.5">- "compilerVersion": "{selectedRev.version}"</div>
-                <div className="text-emerald-400 bg-emerald-950/20 px-2 py-0.5">+ "compilerVersion": "{result.version || "v4.02.1-ABIDE"}"</div>
+                <div className="text-emerald-400 bg-emerald-950/20 px-2 py-0.5">+ "compilerVersion": "{result.version || "v4.02.1-APEX"}"</div>
                 <div className="text-rose-400 bg-rose-950/20 px-2 py-0.5">- "stateSpace": "probabilistic-natural-language-chat"</div>
                 <div className="text-emerald-400 bg-emerald-950/20 px-2 py-0.5">+ "stateSpace": "100,000-element-discrete-seked-ratio-array"</div>
                 <div className="text-rose-400 bg-rose-950/20 px-2 py-0.5">- "toolExecution": "unverified-rest-webhook-100ms-latency"</div>
@@ -518,7 +518,7 @@ export default function GovernedViewContainer({
                   <span>The Digital Seked: Multi-Builder Convergence Geometry (MBCG)</span>
                 </div>
                 <p>
-                  In ancient Egyptian masonry, the <strong>seked</strong> (horizontal run per royal cubit rise) guaranteed that thousands of independent builders converged at a single pyramid apex without centralized micromanagement. In ABIDE V4.02, the <strong>Capability Geometry Invariant (CGI)</strong> enforces identical convergence across autonomous LLM coding agents by bounding Implementation Degrees of Freedom (<strong className="text-white font-mono">Ic</strong>), Governance Constraint Density (<strong className="text-white font-mono">Gc</strong>), and Evidence Strength (<strong className="text-white font-mono">Ec</strong>).
+                  In ancient Egyptian masonry, the <strong>seked</strong> (horizontal run per royal cubit rise) guaranteed that thousands of independent builders converged at a single pyramid apex without centralized micromanagement. In APEX V4.02, the <strong>Capability Geometry Invariant (CGI)</strong> enforces identical convergence across autonomous LLM coding agents by bounding Implementation Degrees of Freedom (<strong className="text-white font-mono">Ic</strong>), Governance Constraint Density (<strong className="text-white font-mono">Gc</strong>), and Evidence Strength (<strong className="text-white font-mono">Ec</strong>).
                 </p>
               </div>
 
@@ -572,12 +572,12 @@ export default function GovernedViewContainer({
                 <div className="flex items-center justify-between border-b border-[#1A2530] pb-2">
                   <span className="text-[#00F0FF] font-black uppercase flex items-center gap-1.5">
                     <Shield size={16} />
-                    <span>The Zero-Knowledge Intent Gateway (reprewindai-dev/ABIDE)</span>
+                    <span>The Zero-Knowledge Intent Gateway (reprewindai-dev/APEX)</span>
                   </span>
                   <span className="text-emerald-400 text-[10px] font-bold">O(1) VERIFICATION TIME</span>
                 </div>
                 <p className="font-sans text-[11px] leading-relaxed">
-                  Instead of sending raw payloads or sensitive private data over the network, external agents pass Groth16/PLONK zero-knowledge proofs to the ABIDE Gateway. The Z3 SMT solver verifies mathematical intent in under <strong className="text-white">5ms</strong> without ever exposing underlying secrets.
+                  Instead of sending raw payloads or sensitive private data over the network, external agents pass Groth16/PLONK zero-knowledge proofs to the APEX Gateway. The Z3 SMT solver verifies mathematical intent in under <strong className="text-white">5ms</strong> without ever exposing underlying secrets.
                 </p>
               </div>
 
@@ -628,7 +628,7 @@ export default function GovernedViewContainer({
                   <div>[Z3-TS SMT Solver: Verifying R1CS Plonkish Arithmetization in Enclave...]</div>
                   <div>[RESULT: SAT — Verification Completed in 4.12ms]</div>
                   <div>[COVENANT: ZK-SMT Verified — Data Sovereignty Preserved (0 Bytes Leaked)]</div>
-                  <div className="text-[#00F0FF] font-bold">&gt;&gt; EXECUTION UNLOCKED UNDER INVARIANT: ABIDE PROPOSES, CAPPO DISPOSES</div>
+                  <div className="text-[#00F0FF] font-bold">&gt;&gt; EXECUTION UNLOCKED UNDER INVARIANT: APEX PROPOSES, CAPPO DISPOSES</div>
                 </div>
               </div>
             </div>

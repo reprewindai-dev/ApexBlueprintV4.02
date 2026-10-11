@@ -84,10 +84,10 @@ export default function EnterpriseProtocolManuals() {
             <span className="text-[11px] font-black tracking-widest uppercase">[ CANONICAL SPECIFICATION MANUALS ]</span>
           </div>
           <h2 className="text-2xl font-black text-white tracking-tight uppercase">
-            ABIDE Enterprise Infrastructure &amp; Security Protocol Manuals
+            APEX Enterprise Infrastructure &amp; Security Protocol Manuals
           </h2>
           <p className="text-xs text-gray-400 leading-relaxed font-sans normal-case">
-            This authoritative documentation defines ABIDE&apos;s three-layer accountability paradigm, pluggable mock-to-production connectors, Fenton-Wilkinson mathematical triage, covenant execution, and formal Z3/TLA+ verification stack.
+            This authoritative documentation defines APEX&apos;s three-layer accountability paradigm, pluggable mock-to-production connectors, Fenton-Wilkinson mathematical triage, covenant execution, and formal Z3/TLA+ verification stack.
           </p>
         </div>
         <div className="flex flex-col gap-2 shrink-0 w-full md:w-auto">
@@ -159,7 +159,7 @@ export default function EnterpriseProtocolManuals() {
           <div className="flex flex-wrap gap-2 border-b border-[#222] pb-4">
             {[
               { id: "core_surface", label: "1. Core Product & 3 Artifacts", icon: Layers },
-              { id: "m2m_loop", label: "2. Abide M2M Contract Loop v1", icon: Terminal },
+              { id: "m2m_loop", label: "2. Apex M2M Contract Loop v1", icon: Terminal },
               { id: "seked_ercds", label: "3. Decoding SEKED & Hoverboard Rule", icon: Sliders },
               { id: "roadmap", label: "4. Verification Hardening Roadmap", icon: ShieldCheck }
             ].map((tab) => {
@@ -193,14 +193,14 @@ export default function EnterpriseProtocolManuals() {
                 <div className="max-w-3xl space-y-3">
                   <div className="text-xs font-mono text-[#00F0FF] uppercase tracking-wider flex items-center gap-2">
                     <Zap size={14} className="animate-pulse" />
-                    <span>Abide ApexBlueprint / Integrated Development Environment</span>
+                    <span>Apex ApexBlueprint / Integrated Development Environment</span>
                   </div>
                   <h3 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-none">
                     &quot;Humans describe goals. <span className="text-[#00F0FF]">Machines receive enforceable contracts.</span>&quot;
                   </h3>
                   <p className="text-gray-300 text-xs md:text-sm leading-relaxed font-sans normal-case">
                     Everything else — IDE integration, agent orchestration, and governance — hangs off that core product surface.
-                    Abide is not a probabilistic planner; it is a deterministic <span className="text-white font-bold">compiler and verifier for plans</span>, with <span className="text-[#00F0FF] font-mono">PlanIR</span> as the machine-readable Intermediate Representation.
+                    Apex is not a probabilistic planner; it is a deterministic <span className="text-white font-bold">compiler and verifier for plans</span>, with <span className="text-[#00F0FF] font-mono">PlanIR</span> as the machine-readable Intermediate Representation.
                   </p>
                   <div className="pt-2 border-t border-[#222] flex flex-wrap items-center gap-4 text-[11px] font-mono text-gray-400">
                     <div className="flex items-center gap-1.5 text-emerald-400">
@@ -229,7 +229,7 @@ export default function EnterpriseProtocolManuals() {
                   <span className="text-gray-500">Submit intent</span> &rarr; <span className="text-white font-bold">receive PlanIR</span> + <span className="text-amber-400">SMT constraints</span> + <span className="text-emerald-400">capability contracts</span> + <span className="text-purple-400">approval policy</span> + <span className="text-cyan-400">canonical hashes</span>.
                 </div>
                 <p className="text-xs text-gray-400 font-sans normal-case leading-relaxed">
-                  Machines and agents do not have to parse unstructured prose or guess human intent. By bridging probabilistic human ideas and deterministic execution with machine-readable contracts and cryptographic verification, Abide eliminates silent drift and unverified execution.
+                  Machines and agents do not have to parse unstructured prose or guess human intent. By bridging probabilistic human ideas and deterministic execution with machine-readable contracts and cryptographic verification, Apex eliminates silent drift and unverified execution.
                 </p>
               </div>
 
@@ -289,14 +289,14 @@ export default function EnterpriseProtocolManuals() {
             </div>
           )}
 
-          {/* SUB-TAB 2: ABIDE M2M CONTRACT LOOP v1 */}
+          {/* SUB-TAB 2: APEX M2M CONTRACT LOOP v1 */}
           {activeM2mTab === "m2m_loop" && (
             <div className="space-y-6">
               <div className="p-5 border border-[#222] bg-[#0A0A0A] space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 font-black text-white text-sm uppercase">
                     <Terminal className="text-[#00F0FF]" size={16} />
-                    <span>Abide M2M Contract Loop v1 (Named Protocol Steps)</span>
+                    <span>Apex M2M Contract Loop v1 (Named Protocol Steps)</span>
                   </div>
                   <span className="px-2 py-0.5 bg-[#00F0FF]/10 text-[#00F0FF] text-[10px] uppercase font-mono">
                     REST / gRPC M2M Protocol
@@ -465,7 +465,7 @@ export default function EnterpriseProtocolManuals() {
                       </span>
                     </div>
                     <p className="text-gray-300 font-sans normal-case text-xs">
-                      Delegates execution to Abide cAPI or Bring-Your-Own-Sandbox (BYOS). Validates that the plan is verified and CAPPO approval token is unexpired before mutating state.
+                      Delegates execution to Apex cAPI or Bring-Your-Own-Sandbox (BYOS). Validates that the plan is verified and CAPPO approval token is unexpired before mutating state.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="p-3 bg-[#030303] border border-[#1A1A1A] space-y-1">
@@ -683,7 +683,7 @@ export default function EnterpriseProtocolManuals() {
                 <div>
                   <div className="text-xs font-black text-white uppercase flex items-center gap-2">
                     <ShieldCheck className="text-[#00F0FF]" size={16} />
-                    <span>Abide Verification Hardening Roadmap (Real vs. Unfinished)</span>
+                    <span>Apex Verification Hardening Roadmap (Real vs. Unfinished)</span>
                   </div>
                   <p className="text-xs text-gray-400 font-sans normal-case mt-1">
                     Separating operational reality from aspirational capabilities. Maintaining absolute architectural honesty by tracking what is real today versus the hardening checklist.
@@ -763,7 +763,7 @@ export default function EnterpriseProtocolManuals() {
               <div className="p-4 bg-[#050505] border border-[#222] flex items-center gap-3 text-xs text-gray-400">
                 <BookOpen className="text-[#00F0FF] shrink-0" size={18} />
                 <span className="font-sans normal-case">
-                  All previously tracked hardening requirements (Issues #204–#211) have been fully executed, verified, and integrated into the ABIDE Gold Standard runtime. By eliminating aspirational placeholders and enforcing real mathematical verification, CAPPO multi-agent governance, and persistent PGL root anchors, we deliver 100% architectural integrity for enterprise auditors.
+                  All previously tracked hardening requirements (Issues #204–#211) have been fully executed, verified, and integrated into the APEX Gold Standard runtime. By eliminating aspirational placeholders and enforcing real mathematical verification, CAPPO multi-agent governance, and persistent PGL root anchors, we deliver 100% architectural integrity for enterprise auditors.
                 </span>
               </div>
             </div>
@@ -810,10 +810,10 @@ export default function EnterpriseProtocolManuals() {
                   [ SECTION 1 OF PRODUCTION GUIDE ]
                 </span>
                 <h3 className="text-xl font-black text-white uppercase tracking-tight mt-1">
-                  The ABIDE Three-Layer Architectural Paradigm
+                  The APEX Three-Layer Architectural Paradigm
                 </h3>
                 <p className="text-xs text-gray-400 mt-2 font-sans leading-relaxed normal-case">
-                  This architecture is the primary defense against the inherent non-determinism of LLM outputs. In the enterprise, <strong>&quot;probabilistic&quot; is a synonym for &quot;unreliable.&quot;</strong> The ABIDE three-layer paradigm (Ingestion, SEKED Compiler, and API) serves as a Build-to-Execution Accountability Infrastructure, ensuring that natural language intent is strictly converted into verifiable, deterministic software.
+                  This architecture is the primary defense against the inherent non-determinism of LLM outputs. In the enterprise, <strong>&quot;probabilistic&quot; is a synonym for &quot;unreliable.&quot;</strong> The APEX three-layer paradigm (Ingestion, SEKED Compiler, and API) serves as a Build-to-Execution Accountability Infrastructure, ensuring that natural language intent is strictly converted into verifiable, deterministic software.
                 </p>
               </div>
 
@@ -895,7 +895,7 @@ export default function EnterpriseProtocolManuals() {
                   Pluggable Infrastructure: Transitioning from Mock to Production
                 </h3>
                 <p className="text-xs text-gray-400 mt-2 font-sans leading-relaxed normal-case">
-                  Promoting a system from a sandbox to an enterprise environment must be a <strong>configuration event, not a refactoring project</strong>. ABIDE utilizes a &quot;Mock-to-Production&quot; swap pattern via conditional initialization in <code className="text-[#00F0FF]">src/core/connectors.ts</code>.
+                  Promoting a system from a sandbox to an enterprise environment must be a <strong>configuration event, not a refactoring project</strong>. APEX utilizes a &quot;Mock-to-Production&quot; swap pattern via conditional initialization in <code className="text-[#00F0FF]">src/core/connectors.ts</code>.
                 </p>
               </div>
 
@@ -1073,7 +1073,7 @@ export default function EnterpriseProtocolManuals() {
                   Formal Verification Stack &amp; Policy-as-Code
                 </h3>
                 <p className="text-xs text-gray-400 mt-2 font-sans leading-relaxed normal-case">
-                  Standard unit testing cannot prove the absence of safety violations in high-stakes systems. ABIDE mandates the use of a formal verification stack (Z3 and TLA+) to prove system safety and logical consistency.
+                  Standard unit testing cannot prove the absence of safety violations in high-stakes systems. APEX mandates the use of a formal verification stack (Z3 and TLA+) to prove system safety and logical consistency.
                 </p>
               </div>
 
@@ -1126,7 +1126,7 @@ export default function EnterpriseProtocolManuals() {
                   The Enterprise Runtime &amp; &quot;12-Pack&quot; Deployment
                 </h3>
                 <p className="text-xs text-gray-400 mt-2 font-sans leading-relaxed normal-case">
-                  Portability of ABIDE capabilities is achieved through the Enterprise Runtime and Host Manifests. Successful compilation yields the standardized &quot;12-pack&quot; package.
+                  Portability of APEX capabilities is achieved through the Enterprise Runtime and Host Manifests. Successful compilation yields the standardized &quot;12-pack&quot; package.
                 </p>
               </div>
 
@@ -1145,7 +1145,7 @@ export default function EnterpriseProtocolManuals() {
                 <div className="p-4 border border-[#333] bg-[#050505] space-y-2">
                   <span className="text-[10px] text-purple-400 font-bold block">MODE 3: THIRD_PARTY_EMBEDDED</span>
                   <h4 className="text-xs font-black text-white uppercase">Standardized Wrapper</h4>
-                  <p className="text-[10px] text-gray-400 font-sans">Allows ABIDE blueprints to be executed within external ecosystems (Kubernetes, AWS ECS) via standardized wrappers.</p>
+                  <p className="text-[10px] text-gray-400 font-sans">Allows APEX blueprints to be executed within external ecosystems (Kubernetes, AWS ECS) via standardized wrappers.</p>
                 </div>
               </div>
 
@@ -1218,7 +1218,7 @@ export default function EnterpriseProtocolManuals() {
                   The Governance Lifecycle: From Intent to Sealed Execution
                 </h3>
                 <p className="text-xs text-gray-400 mt-2 font-sans leading-relaxed normal-case">
-                  ABIDE shifts the paradigm from passive code generation to active software governance by transforming high-level natural language intent into a series of cryptographically sealed, immutable receipts. Our <strong>&quot;Capability as the Product&quot;</strong> philosophy dictates that software modules are never standalone scripts; they are self-describing, unit-tested entities governed by formal invariants.
+                  APEX shifts the paradigm from passive code generation to active software governance by transforming high-level natural language intent into a series of cryptographically sealed, immutable receipts. Our <strong>&quot;Capability as the Product&quot;</strong> philosophy dictates that software modules are never standalone scripts; they are self-describing, unit-tested entities governed by formal invariants.
                 </p>
               </div>
 
@@ -1400,7 +1400,7 @@ export default function EnterpriseProtocolManuals() {
                   Formal Verification: Logical Consistency &amp; Safety
                 </h3>
                 <p className="text-xs text-gray-400 mt-2 font-sans leading-relaxed normal-case">
-                  ABIDE moves beyond simple signatures to prove system safety through industrial-grade formal methods: Z3 SMT solving, TLA+ temporal model checking, and ZK-proofs over BN254 / BLS12-381 curves.
+                  APEX moves beyond simple signatures to prove system safety through industrial-grade formal methods: Z3 SMT solving, TLA+ temporal model checking, and ZK-proofs over BN254 / BLS12-381 curves.
                 </p>
               </div>
 
@@ -1485,7 +1485,7 @@ export default function EnterpriseProtocolManuals() {
               Fenton-Wilkinson Heuristic Simulator &amp; Production Readiness
             </h3>
             <p className="text-xs text-gray-400 mt-2 font-sans leading-relaxed normal-case">
-              Test how ABIDE&apos;s SEKED v4.02 compiler evaluates risk moments across the 5 dimensions, and verify your active environment against the production deployment checklist.
+              Test how APEX&apos;s SEKED v4.02 compiler evaluates risk moments across the 5 dimensions, and verify your active environment against the production deployment checklist.
             </p>
           </div>
 

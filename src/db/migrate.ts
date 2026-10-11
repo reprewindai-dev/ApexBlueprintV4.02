@@ -7,4 +7,4 @@ if (!isDatabaseConfigured()) {
 }
 
 await migrate(getDb(), { migrationsFolder: "drizzle" });
-console.log("ABIDE Postgres migrations applied.");
+console.log("APEX Postgres migrations applied.");

@@ -37,13 +37,13 @@ const REPOSITORIES = [
   {
     name: "cappo-backend",
     url: "https://github.com/reprewindai-dev/cappo-backend",
-    description: "CAPPO Core API & Capability Verification Gateway. Directs orchestration, verifies access, and registers compliance credentials (The Disposer under ABIDE Proposes, CAPPO Disposes).",
+    description: "CAPPO Core API & Capability Verification Gateway. Directs orchestration, verifies access, and registers compliance credentials (The Disposer under APEX Proposes, CAPPO Disposes).",
     stack: "Node.js / Express + TypeScript / Open Policy Agent",
     pglBirthCert: "PGL-BIRTH-CERT-72c6",
     lineageChain: "15 anchor blocks",
     pricingType: "Value",
     priceText: "$0.05 per active verification",
-    microNodes: "Abide Micro-Node B",
+    microNodes: "Apex Micro-Node B",
     capabilities: ["govern-agent-session", "score-api-eligibility", "evaluate-policy"]
   },
   {
@@ -55,7 +55,7 @@ const REPOSITORIES = [
     lineageChain: "32 anchor blocks",
     pricingType: "Value",
     priceText: "$0.12 per container boot",
-    microNodes: "Abide Micro-Node B",
+    microNodes: "Apex Micro-Node B",
     capabilities: ["resolve-capability-plan", "govern-agent-session", "byos-postgres-store"]
   },
   {
@@ -67,7 +67,7 @@ const REPOSITORIES = [
     lineageChain: "8 anchor blocks",
     pricingType: "Rare / Critical",
     priceText: "$2.50 per secure key-gen",
-    microNodes: "Abide Micro-Node A",
+    microNodes: "Apex Micro-Node A",
     capabilities: ["verify-provider-ownership", "zk-groth16-verify", "enclave-seal-issue"]
   },
   {
@@ -79,7 +79,7 @@ const REPOSITORIES = [
     lineageChain: "1,248 anchor blocks",
     pricingType: "Meaningless / Cheap",
     priceText: "$0.0001 per anchor block write",
-    microNodes: "Abide Micro-Node C",
+    microNodes: "Apex Micro-Node C",
     capabilities: ["mint-settlement-evidence", "issue-verification-badge", "anchor-merkle-root"]
   },
   {
@@ -91,31 +91,31 @@ const REPOSITORIES = [
     lineageChain: "44 anchor blocks",
     pricingType: "Value",
     priceText: "$0.01 per routing request",
-    microNodes: "Abide Micro-Node B",
+    microNodes: "Apex Micro-Node B",
     capabilities: ["discover-local-capabilities", "route-mcp-tool", "verify-signed-snapshot"]
   },
   {
     name: "UACPV5-TERMINAL",
     url: "https://github.com/reprewindai-dev/UACPV5-TERMINAL/",
-    description: "THE TERMINAL. Sovereign command execution interface, real-time process streaming, and interactive telemetry console for ABIDE & CAPPO.",
+    description: "THE TERMINAL. Sovereign command execution interface, real-time process streaming, and interactive telemetry console for APEX & CAPPO.",
     stack: "React / Node.js / WebSockets / xterm.js",
     pglBirthCert: "PGL-BIRTH-CERT-33a1",
     lineageChain: "19 anchor blocks",
     pricingType: "Value",
     priceText: "$0.02 per interactive session",
-    microNodes: "Abide Micro-Node B",
+    microNodes: "Apex Micro-Node B",
     capabilities: ["execute-terminal-process", "stream-telemetry-logs", "interactive-console"]
   },
   {
-    name: "ABIDE",
-    url: "https://github.com/reprewindai-dev/ABIDE",
-    description: "The Planning & Intent Compilation Layer. Core Invariant: ABIDE Proposes, CAPPO Disposes. Mathematically decoupled from authorization; compiles human intent into proposed execution graphs.",
+    name: "APEX",
+    url: "https://github.com/reprewindai-dev/APEX",
+    description: "The Planning & Intent Compilation Layer. Core Invariant: APEX Proposes, CAPPO Disposes. Mathematically decoupled from authorization; compiles human intent into proposed execution graphs.",
     stack: "TypeScript / Z3-TS SMT Solver / Node.js",
     pglBirthCert: "PGL-BIRTH-CERT-ab01",
     lineageChain: "56 anchor blocks",
     pricingType: "Value",
     priceText: "$0.05 per intent compilation",
-    microNodes: "Abide Micro-Node B",
+    microNodes: "Apex Micro-Node B",
     capabilities: ["compile-human-intent", "synthesize-execution-graph", "evaluate-smt-constraints"]
   },
   {
@@ -127,7 +127,7 @@ const REPOSITORIES = [
     lineageChain: "24 anchor blocks",
     pricingType: "Value",
     priceText: "$0.08 per cognitive trace",
-    microNodes: "Abide Micro-Node B",
+    microNodes: "Apex Micro-Node B",
     capabilities: ["cognitive-reasoning-trace", "neurosymbolic-eval", "agent-skill-synthesize"]
   }
 ];
@@ -139,18 +139,18 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
   const [scannedRepos, setScannedRepos] = useState<Record<string, boolean>>({});
   const [checkedLegacy, setCheckedLegacy] = useState<Record<string, boolean>>({});
 
-  // Abide micro-nodes configuration
+  // Apex micro-nodes configuration
   const [rateLimitCaps, setRateLimitCaps] = useState<Record<string, number>>({
-    "Abide-Node-A": 10,
-    "Abide-Node-B": 100,
-    "Abide-Node-C": 1000
+    "Apex-Node-A": 10,
+    "Apex-Node-B": 100,
+    "Apex-Node-C": 1000
   });
 
   const [paymentMode, setPaymentMode] = useState<"human" | "m2m">("m2m");
   const [selectedRequestType, setSelectedRequestType] = useState<"cheap" | "value" | "rare">("value");
   const [isProcessingM2M, setIsProcessingM2M] = useState(false);
   const [m2mConsoleLogs, setM2MConsoleLogs] = useState<string[]>([
-    "[gateway] Abide M2M network initialized. Listening on socket 3000.",
+    "[gateway] Apex M2M network initialized. Listening on socket 3000.",
     "[X402] Escrow balance locked: 25.0000 USD."
   ]);
 
@@ -231,18 +231,18 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
     setIsProcessingM2M(true);
     const timeStr = new Date().toISOString().split("T")[1].substring(0, 8);
     
-    let targetNode = "Abide-Node-B";
+    let targetNode = "Apex-Node-B";
     let cost = 0.05;
     let description = "Active capability verification";
     let actionStr = "VERIFY_CAPABILITY";
 
     if (selectedRequestType === "cheap") {
-      targetNode = "Abide-Node-C";
+      targetNode = "Apex-Node-C";
       cost = 0.0001;
       description = "Logging and metadata query";
       actionStr = "ANCHOR_BLOCK_WRITE";
     } else if (selectedRequestType === "rare") {
-      targetNode = "Abide-Node-A";
+      targetNode = "Apex-Node-A";
       cost = 2.50;
       description = "Secure HSM enclave keygen signature";
       actionStr = "HSM_ENCLAVE_SIGN";
@@ -269,7 +269,7 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
 
       setM2MConsoleLogs(prev => [
         `[${timeStr}] [X402_SETTLED] Debit: $${cost.toFixed(4)} USD settled instantly via micro-payment stream.`,
-        `[${timeStr}] [ABIDE_GATEWAY] Frictionless access granted. Action: ${actionStr} (${description}).`,
+        `[${timeStr}] [APEX_GATEWAY] Frictionless access granted. Action: ${actionStr} (${description}).`,
         `[${timeStr}] [GNOMLEDGER_ANCHOR] Birth certificate registered! ID: ${birthCertId}. Lineage state: STABLE.`,
         `[${timeStr}] [ARBITRUM_L2] Broadcasted event to Arbitrum. Tx: ${txHash}.`,
         ...prev
@@ -331,7 +331,7 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
         {[
           { id: "gaps", label: "Structural Gaps", count: gapsReport.length },
           { id: "repos", label: "Repositories Map", count: REPOSITORIES.length },
-          { id: "abide", label: "Abide & X402 M2M Gateway", count: 3 },
+          { id: "abide", label: "Apex & X402 M2M Gateway", count: 3 },
           { id: "duplicates", label: "Duplicates Detected", count: duplicates.length },
           { id: "retirement", label: "Retirement Queue", count: retirementTasks.length },
           { id: "report", label: "Truthful Backend Alignment Report", count: 8 }
@@ -472,7 +472,7 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
         </div>
       )}
 
-      {/* Abide & X402 M2M Gateway */}
+      {/* Apex & X402 M2M Gateway */}
       {activeTab === "abide" && (
         <div className="space-y-6 font-mono uppercase">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -547,21 +547,21 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
               )}
             </div>
 
-            {/* Abide Micro-Nodes Deployed */}
+            {/* Apex Micro-Nodes Deployed */}
             <div className="p-5 border-2 border-[#222] bg-[#050505] space-y-4 lg:col-span-2">
               <div className="border-b border-[#111] pb-2">
-                <span className="text-[9px] text-[#00F0FF] font-bold tracking-widest block">[ ABIDE MICRO-NODES NETWORK ]</span>
+                <span className="text-[9px] text-[#00F0FF] font-bold tracking-widest block">[ APEX MICRO-NODES NETWORK ]</span>
                 <h4 className="text-white font-black text-sm tracking-tight">Active Micro-Nodes & Rate-Limit Controllers</h4>
               </div>
               <p className="text-[10px] text-gray-400 normal-case leading-relaxed">
-                Abide deploys frictionless rate-limited micro-nodes across physical and ledger boundaries. Adjust rate limits to safeguard enclaves against Drained-Wallet exhaustion attacks.
+                Apex deploys frictionless rate-limited micro-nodes across physical and ledger boundaries. Adjust rate limits to safeguard enclaves against Drained-Wallet exhaustion attacks.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
                 {[
                   {
-                    id: "Abide-Node-A",
-                    name: "Abide Micro-Node A (Secure Enclave)",
+                    id: "Apex-Node-A",
+                    name: "Apex Micro-Node A (Secure Enclave)",
                     repo: "lockerphycer",
                     status: "Enforced",
                     col: "text-red-400",
@@ -570,8 +570,8 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
                     max: 20
                   },
                   {
-                    id: "Abide-Node-B",
-                    name: "Abide Micro-Node B (API Gateway)",
+                    id: "Apex-Node-B",
+                    name: "Apex Micro-Node B (API Gateway)",
                     repo: "cappo / BYOS",
                     status: "Active",
                     col: "text-amber-400",
@@ -580,8 +580,8 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
                     max: 200
                   },
                   {
-                    id: "Abide-Node-C",
-                    name: "Abide Micro-Node C (Ledger Anchoring)",
+                    id: "Apex-Node-C",
+                    name: "Apex Micro-Node C (Ledger Anchoring)",
                     repo: "gnomledger",
                     status: "Idle",
                     col: "text-[#00F0FF]",
@@ -628,7 +628,7 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
           <div className="p-5 border-2 border-[#222] bg-[#050505] grid grid-cols-1 lg:grid-cols-12 gap-6">
             <div className="lg:col-span-4 space-y-4">
               <div>
-                <span className="text-[9px] text-[#00F0FF] font-bold tracking-widest block">[ ABIDE INGRESS CONTROLLER ]</span>
+                <span className="text-[9px] text-[#00F0FF] font-bold tracking-widest block">[ APEX INGRESS CONTROLLER ]</span>
                 <h4 className="text-white font-black text-xs tracking-wider">Execute M2M Call Sandbox</h4>
               </div>
 
@@ -637,9 +637,9 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
                   <label className="text-[9px] text-gray-500">SELECT CALL CLASSIFICATION:</label>
                   <div className="flex flex-col gap-1.5">
                     {[
-                      { id: "cheap", label: "Meaningless Cheap stuff ($0.0001 / write)", node: "Abide Micro-Node C" },
-                      { id: "value", label: "Value operation ($0.05 / call)", node: "Abide Micro-Node B" },
-                      { id: "rare", label: "Rare / Critical HSM ($2.50 / keygen)", node: "Abide Micro-Node A" }
+                      { id: "cheap", label: "Meaningless Cheap stuff ($0.0001 / write)", node: "Apex Micro-Node C" },
+                      { id: "value", label: "Value operation ($0.05 / call)", node: "Apex Micro-Node B" },
+                      { id: "rare", label: "Rare / Critical HSM ($2.50 / keygen)", node: "Apex Micro-Node A" }
                     ].map((item) => (
                       <button
                         key={item.id}
@@ -811,12 +811,12 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
               </span>
             </div>
             <p className="text-xs text-gray-300 font-sans leading-relaxed">
-              This report details the exact architectural requirements, endpoints, and database bindings needed across all 8 canonical backend repositories to eliminate simulated fallbacks and establish live, unsimulated execution under the invariant: <strong className="text-white">ABIDE Proposes, CAPPO Disposes</strong>.
+              This report details the exact architectural requirements, endpoints, and database bindings needed across all 8 canonical backend repositories to eliminate simulated fallbacks and establish live, unsimulated execution under the invariant: <strong className="text-white">APEX Proposes, CAPPO Disposes</strong>.
             </p>
             <div className="p-3 bg-black/80 border border-[#222] text-[11px] text-gray-400 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <span className="text-[#00F0FF] font-bold uppercase block">Core Governance Invariant:</span>
-                <span>To prevent autonomous agentic drift, the planning layer (<strong className="text-white">ABIDE</strong>) is mathematically decoupled from authorization (<strong className="text-white">CAPPO</strong>). ABIDE compiles human intent into a proposed execution graph, which CAPPO evaluates against deterministic policies before any state-changing action executes.</span>
+                <span>To prevent autonomous agentic drift, the planning layer (<strong className="text-white">APEX</strong>) is mathematically decoupled from authorization (<strong className="text-white">CAPPO</strong>). APEX compiles human intent into a proposed execution graph, which CAPPO evaluates against deterministic policies before any state-changing action executes.</span>
               </div>
             </div>
           </div>
@@ -841,15 +841,15 @@ export const GapsDuplicates: React.FC<GapsDuplicatesProps> = ({ gapsReport, capa
                 role: "CAPPO Core Authorization & Policy Gate (THE DISPOSER)",
                 db: "Open Policy Agent (OPA) / Rego Rules Engine",
                 endpoints: [
-                  "POST /api/v1/evaluate — Takes ABIDE proposed execution graph, evaluates Rego rules, returns ALLOW/DENY with Ed25519 signature",
+                  "POST /api/v1/evaluate — Takes APEX proposed execution graph, evaluates Rego rules, returns ALLOW/DENY with Ed25519 signature",
                   "POST /api/v1/covenants/register — Registers organizational compliance covenants and SLA boundaries",
                   "GET /api/v1/policies/active — Lists verified active governance policies"
                 ],
-                requirements: "Must strictly enforce LAW 0 (No state-changing execution without cryptographic signature). Must independently verify ABIDE graph proposals against local covenants."
+                requirements: "Must strictly enforce LAW 0 (No state-changing execution without cryptographic signature). Must independently verify APEX graph proposals against local covenants."
               },
               {
-                repo: "ABIDE",
-                url: "https://github.com/reprewindai-dev/ABIDE",
+                repo: "APEX",
+                url: "https://github.com/reprewindai-dev/APEX",
                 role: "Planning & Intent Compilation Layer (THE PROPOSER)",
                 db: "Z3-TS SMT Constraint Solver / AST Validator",
                 endpoints: [

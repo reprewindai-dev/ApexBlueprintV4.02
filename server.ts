@@ -24,29 +24,30 @@ import { CovenantService } from "./src/server/services/CovenantService";
 import { executeZkAttestationPipeline, verifyGroth16Pairing, verifyPlonkOrStarkCommitments, ZkAttestationRequest } from "./src/core/zk-gateway";
 import { enterpriseRouter } from "./src/services/enterprise-runtime";
 import { DurableJobQueueService } from "./src/services/durable-job-queue";
+import { buildBlueprintPrompts, callBlueprintModel, parseBlueprintText } from "./src/server/blueprint-core";
 
 dotenv.config();
 
 export const app = express();
-// Canonical ABIDE Sovereign Port is 3009 (Port 3000 retired per canonical reconciliation).
+// Canonical APEX Sovereign Port is 3009 (Port 3000 retired per canonical reconciliation).
 // In AI Studio cloud preview (GOOGLE_RUNTIME), port 3000 is required by the ingress proxy.
 const PORT = Number(process.env.ABIDE_PORT || process.env.VEKLOM_PORT || process.env.PORT || (process.env.GOOGLE_RUNTIME ? 3000 : 3009));
 
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
-// Mount VNP User Authentication & Identity Management API (Optional / Decoupled per Canonical ABIDE spec)
+// Mount VNP User Authentication & Identity Management API (Optional / Decoupled per Canonical APEX spec)
 if (process.env.ENABLE_VNP_AUTH === "true") {
   app.use("/api/auth", vnpAuthRouter);
   app.use("/api/vnp/auth", vnpAuthRouter);
 } else {
-  // Canonical ABIDE runs without VNP authentication inside the workspace per reconciliation specification
+  // Canonical APEX runs without VNP authentication inside the workspace per reconciliation specification
   app.use(["/api/auth", "/api/vnp/auth"], (req, res) => {
-    res.status(200).json({ status: "DECOUPLED_FROM_ABIDE", message: "VNP authentication is decoupled from canonical ABIDE workspace per reconciliation specification." });
+    res.status(200).json({ status: "DECOUPLED_FROM_ABIDE", message: "VNP authentication is decoupled from canonical APEX workspace per reconciliation specification." });
   });
 }
 
-// Mount ABIDE Universal Portable Workspace Enterprise API (11 Capability Groups)
+// Mount APEX Universal Portable Workspace Enterprise API (11 Capability Groups)
 app.use("/api/v1", enterpriseRouter);
 app.use("/api/v1/enterprise", enterpriseRouter);
 
@@ -268,59 +269,6 @@ function cappoBlueprintGuard(plan: PlanIR): void {
   console.log(`[CAPPO] Plan ${plan.planId} cleared. Hash: ${plan.canonicalHash}`);
 }
 
-async function callVeklom(params: {
-  systemPrompt: string;
-  userPrompt: string;
-  model?: string;
-  apiKey?: string;
-}): Promise<string> {
-  const baseUrl =
-    process.env.VEKLOM_BASE_URL?.replace(/\/+$/, "") ||
-    "https://api.veklom.com";
-
-  const apiKey = process.env.VEKLOM_API_KEY || params.apiKey;
-
-  if (!apiKey) {
-    throw new Error("VEKLOM_API_KEY is not configured.");
-  }
-
-  const response = await fetch(`${baseUrl}/v1/exec`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-API-Key": apiKey,
-    },
-    body: JSON.stringify({
-      prompt: [
-        "SYSTEM INSTRUCTIONS:",
-        params.systemPrompt,
-        "",
-        "USER REQUEST:",
-        params.userPrompt,
-      ].join("\n"),
-      model: params.model || process.env.VEKLOM_MODEL || "qwen2.5:3b",
-      use_memory: false,
-      max_tokens: 8192,
-      temperature: 0.2,
-    }),
-  });
-
-  const responseText = await response.text();
-
-  if (!response.ok) {
-    throw new Error(
-      `Veklom request failed with HTTP ${response.status}: ${responseText}`
-    );
-  }
-
-  const data = JSON.parse(responseText);
-
-  if (typeof data.response !== "string" || !data.response.trim()) {
-    throw new Error("Veklom returned no inference response.");
-  }
-
-  return data.response;
-}
 
 // ==========================================
 // API ROUTES
@@ -378,665 +326,11 @@ async function executeBlueprintGenerationWorker(data: any, updateProgress?: (pct
       }
     }
 
-    // Full JSON Schema representing BlueprintResult interface
-    const blueprintJsonSchema = {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "type": "object",
-      "properties": {
-        "title": { "type": "string", "description": "A highly premium, precise business name" },
-        "tagline": { "type": "string", "description": "A punchy, capability-oriented value statement" },
-        "timestamp": { "type": "string" },
-        "hash": { "type": "string" },
-        "highLevelGoals": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "title": { "type": "string" },
-              "description": { "type": "string" },
-              "status": { "type": "string" }
-            },
-            "required": ["title", "description", "status"]
-          }
-        },
-        "competitiveMoat": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "capabilityName": { "type": "string" },
-              "description": { "type": "string" },
-              "advantageScore": { "type": "number" }
-            },
-            "required": ["capabilityName", "description", "advantageScore"]
-          }
-        },
-        "einsteinProbability": {
-          "type": "object",
-          "properties": {
-            "modelName": { "type": "string" },
-            "successRate": { "type": "number" },
-            "latencyMs": { "type": "number" },
-            "variables": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "impact": { "type": "string" }
-                },
-                "required": ["name", "impact"]
-              }
-            }
-          },
-          "required": ["modelName", "successRate", "latencyMs", "variables"]
-        },
-        "academicGrounding": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "title": { "type": "string" },
-              "author": { "type": "string" },
-              "source": { "type": "string" },
-              "summary": { "type": "string" },
-              "relevance": { "type": "string" }
-            },
-            "required": ["title", "author", "source", "summary", "relevance"]
-          }
-        },
-        "companyGraph": {
-          "type": "object",
-          "properties": {
-            "domains": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "description": { "type": "string" },
-                  "products": { "type": "array", "items": { "type": "string" } }
-                },
-                "required": ["name", "description", "products"]
-              }
-            },
-            "products": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "domain": { "type": "string" },
-                  "businessValue": { "type": "string" },
-                  "owner": { "type": "string" }
-                },
-                "required": ["name", "domain", "businessValue", "owner"]
-              }
-            },
-            "canonicalSystems": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "techStack": { "type": "string" },
-                  "purpose": { "type": "string" }
-                },
-                "required": ["name", "techStack", "purpose"]
-              }
-            },
-            "repositories": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "url": { "type": "string" },
-                  "capabilities": { "type": "array", "items": { "type": "string" } },
-                  "status": { "type": "string" }
-                },
-                "required": ["name", "url", "capabilities", "status"]
-              }
-            },
-            "environments": { "type": "array", "items": { "type": "string" } },
-            "owners": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "role": { "type": "string" },
-                  "team": { "type": "string" }
-                },
-                "required": ["name", "role", "team"]
-              }
-            },
-            "revenueStreams": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "description": { "type": "string" },
-                  "model": { "type": "string" }
-                },
-                "required": ["name", "description", "model"]
-              }
-            },
-            "policies": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "rule": { "type": "string" },
-                  "scope": { "type": "string" }
-                },
-                "required": ["name", "rule", "scope"]
-              }
-            },
-            "externalProviders": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string" },
-                  "service": { "type": "string" },
-                  "sla": { "type": "string" }
-                },
-                "required": ["name", "service", "sla"]
-              }
-            }
-          },
-          "required": ["domains", "products", "canonicalSystems", "repositories", "environments", "owners", "revenueStreams", "policies", "externalProviders"]
-        },
-        "capabilities": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": { "type": "string" },
-              "name": { "type": "string" },
-              "purpose": { "type": "string" },
-              "businessOutcome": { "type": "string" },
-              "machineOutcome": { "type": "string" },
-              "inputs": { "type": "array", "items": { "type": "string" } },
-              "outputs": { "type": "array", "items": { "type": "string" } },
-              "preconditions": { "type": "array", "items": { "type": "string" } },
-              "postconditions": { "type": "array", "items": { "type": "string" } },
-              "owner": { "type": "string" },
-              "primaryOwner": { "type": "string" },
-              "technicalOwner": { "type": "string" },
-              "dataOwner": { "type": "string" },
-              "complianceOwner": { "type": "string" },
-              "canonicalSystem": { "type": "string" },
-              "canonicalDataDomain": { "type": "string" },
-              "canonicalServiceSystem": { "type": "string" },
-              "canonicalRepoImplementation": { "type": "string" },
-              "nonCanonicalMirrors": { "type": "array", "items": { "type": "string" } },
-              "supportingServices": { "type": "array", "items": { "type": "string" } },
-              "exposedInterfaces": {
-                "type": "object",
-                "properties": {
-                  "rest": { "type": "array", "items": { "type": "string" } },
-                  "mcp": { "type": "array", "items": { "type": "string" } },
-                  "sdk": { "type": "array", "items": { "type": "string" } },
-                  "cli": { "type": "array", "items": { "type": "string" } },
-                  "ui": { "type": "array", "items": { "type": "string" } },
-                  "webhooks": { "type": "array", "items": { "type": "string" } }
-                },
-                "required": ["rest", "mcp", "sdk", "cli", "ui", "webhooks"]
-              },
-              "exposureSurfaces": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "type": { "type": "string" },
-                    "identifier": { "type": "string" },
-                    "description": { "type": "string" },
-                    "status": { "type": "string" },
-                    "stableId": { "type": "string" },
-                    "semanticVersion": { "type": "string" },
-                    "priorVersionPointer": { "type": "string" },
-                    "deprecationFlag": { "type": "boolean" },
-                    "replacementPointer": { "type": "string" }
-                  },
-                  "required": ["type", "identifier", "description", "status"]
-                }
-              },
-              "pricingModel": {
-                "type": "object",
-                "properties": {
-                  "billingUnit": { "type": "string" },
-                  "priceFloor": { "type": "number" },
-                  "includedQuota": { "type": "string" },
-                  "overage": { "type": "string" },
-                  "settlementCompat": { "type": "string" },
-                  "costToServe": { "type": "string" },
-                  "marginEstimate": { "type": "number" }
-                },
-                "required": ["billingUnit", "priceFloor", "includedQuota", "overage", "settlementCompat", "costToServe", "marginEstimate"]
-              },
-              "governance": {
-                "type": "object",
-                "properties": {
-                  "requiredApprovals": { "type": "array", "items": { "type": "string" } },
-                  "budgetRules": { "type": "string" },
-                  "dataBoundaries": { "type": "string" },
-                  "delegations": { "type": "string" },
-                  "auditReqs": { "type": "string" },
-                  "killSwitchRules": { "type": "string" },
-                  "limits": { "type": "string" }
-                },
-                "required": ["requiredApprovals", "budgetRules", "dataBoundaries", "delegations", "auditReqs", "killSwitchRules", "limits"]
-              },
-              "evidence": {
-                "type": "object",
-                "properties": {
-                  "evidenceProduced": { "type": "string" },
-                  "hashAlgorithm": { "type": "string" },
-                  "ledgerStorage": { "type": "string" },
-                  "verifiable": { "type": "boolean" },
-                  "privateDetails": { "type": "string" },
-                  "completedProof": { "type": "string" },
-                  "classification": { "type": "string" },
-                  "evidenceTimestamp": { "type": "string" },
-                  "freshnessWindowDays": { "type": "number" },
-                  "nextRevalidationDue": { "type": "string" },
-                  "trustDecayFactor": { "type": "number" }
-                },
-                "required": ["evidenceProduced", "hashAlgorithm", "ledgerStorage", "verifiable", "privateDetails", "completedProof", "classification"]
-              },
-              "verification": {
-                "type": "object",
-                "properties": {
-                  "unitTests": { "type": "array", "items": { "type": "string" } },
-                  "contractTests": { "type": "array", "items": { "type": "string" } },
-                  "fixtureTests": { "type": "array", "items": { "type": "string" } },
-                  "mcpTests": { "type": "array", "items": { "type": "string" } },
-                  "securityTests": { "type": "array", "items": { "type": "string" } },
-                  "latencySlo": { "type": "string" },
-                  "driftChecks": { "type": "string" }
-                },
-                "required": ["unitTests", "contractTests", "fixtureTests", "mcpTests", "securityTests", "latencySlo", "driftChecks"]
-              },
-              "dependencies": { "type": "array", "items": { "type": "string" } },
-              "lifecycleState": { "type": "string" },
-              "maturityState": { "type": "string" },
-              "verificationState": { "type": "string" },
-              "pricingState": { "type": "string" },
-              "deprecationState": { "type": "string" },
-              "jurisdictionPolicy": {
-                "type": "object",
-                "properties": {
-                  "dataBoundaryProfile": { "type": "string" },
-                  "jurisdictionConstraints": { "type": "array", "items": { "type": "string" } },
-                  "paymentRailConstraints": { "type": "array", "items": { "type": "string" } },
-                  "auditRetentionProfile": { "type": "string" },
-                  "allowedRegions": { "type": "array", "items": { "type": "string" } },
-                  "blockedRegions": { "type": "array", "items": { "type": "string" } }
-                },
-                "required": ["dataBoundaryProfile", "jurisdictionConstraints", "paymentRailConstraints", "auditRetentionProfile"]
-              }
-            },
-            "required": ["id", "name", "purpose", "businessOutcome", "machineOutcome", "inputs", "outputs", "preconditions", "postconditions", "owner", "canonicalSystem", "exposedInterfaces", "exposureSurfaces", "pricingModel", "governance", "evidence", "verification", "dependencies", "lifecycleState", "maturityState", "verificationState", "pricingState", "deprecationState", "jurisdictionPolicy"]
-          }
-        },
-        "productOfferings": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": { "type": "string" },
-              "description": { "type": "string" },
-              "capabilities": { "type": "array", "items": { "type": "string" } },
-              "priceModel": { "type": "string" },
-              "entitlements": { "type": "array", "items": { "type": "string" } }
-            },
-            "required": ["name", "description", "capabilities", "priceModel", "entitlements"]
-          }
-        },
-        "gapsReport": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "system": { "type": "string" },
-              "missing": { "type": "string" },
-              "severity": { "type": "string" },
-              "impact": { "type": "string" }
-            },
-            "required": ["system", "missing", "severity", "impact"]
-          }
-        },
-        "files": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "path": { "type": "string" },
-              "content": { "type": "string" }
-            },
-            "required": ["path", "content"]
-          }
-        },
-        "agentPackets": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": { "type": "string" },
-              "title": { "type": "string" },
-              "targetRole": { "type": "string" },
-              "summary": { "type": "string" },
-              "objective": { "type": "string" },
-              "scope": { "type": "string" },
-              "files": { "type": "array", "items": { "type": "string" } },
-              "contracts": { "type": "string" },
-              "dependencies": { "type": "array", "items": { "type": "string" } },
-              "tests": { "type": "array", "items": { "type": "string" } },
-              "migrations": { "type": "string" },
-              "performanceTargets": { "type": "string" },
-              "securityConstraints": { "type": "string" },
-              "docsToUpdate": { "type": "array", "items": { "type": "string" } },
-              "definitionOfDone": { "type": "array", "items": { "type": "string" } },
-              "rollbackNotes": { "type": "string" }
-            },
-            "required": ["id", "title", "targetRole", "summary", "objective", "scope", "files", "contracts", "dependencies", "tests", "migrations", "performanceTargets", "securityConstraints", "docsToUpdate", "definitionOfDone", "rollbackNotes"]
-          }
-        }
-      },
-      "required": ["title", "tagline", "timestamp", "hash", "highLevelGoals", "competitiveMoat", "einsteinProbability", "academicGrounding", "companyGraph", "capabilities", "productOfferings", "gapsReport", "files", "agentPackets"]
-    };
+    const { systemPrompt, userPrompt } = buildBlueprintPrompts({ notes, codebaseContext, audioTranscript, targetPlatform, emailToUse, constVersion, constState, jurisdictionProfileName });
 
-    // Dynamic, comprehensive system prompt that enforces all capability-based operating system structures
-    const systemPrompt = `You are the world's most advanced Hierarchical Reasoning Model (HRM) Software & Business Architect.
-Your mission is to compile messy ideas, text, and optional codebase structures into an elite, production-grade Software Blueprint and COMPLETE BUSINESS PLAN structured around Capability-Based Product Architecture.
+    const textResult = await callBlueprintModel({ selectedProvider, apiKey, modelName, customUrl, authMode, customHeaderName, systemPrompt, userPrompt }, process.env);
 
-Philosophy: "API is not the product; Capability is the product."
-Treat APIs, models, pricing, governance, evidence, and UX as downstream implementation surfaces of underlying core Capability Products.
-Integrate X402 payment protocol standards (machine-to-machine global automated payment settlements, smart contract decentralized liquidity execution) into the business models.
-Incorporate Einstein's approach on probability for dynamic task prioritization based on complex data trend frequencies.
-
-CONSTITUTION & COMPLIANCE ENGINE CONSTRAINTS:
-- Current Constitution Version: ${constVersion}
-- Current Constitution Lock Status: ${constState}
-- Active Jurisdiction Profile: ${jurisdictionProfileName}
-
-You MUST ensure that:
-1. Every generated capability includes exact compliance state fields: 'lifecycleState', 'maturityState' ('Conceptual', 'Partially Simulated', or 'Sovereign Production'), 'verificationState' ('Unverified', 'Verified', or 'Drift Detected'), 'pricingState' ('Unpriced', 'Draft Price', 'Active Pricing', or 'Deprecated Pricing'), 'deprecationState' ('None', 'Deprecation Warning Issued', 'Sunset Scheduled', or 'Retired'), and 'jurisdictionPolicy' matching the active jurisdiction profile constraints.
-2. The generated files (especially README.md, manifest.md, registry.md, and work_orders.md) are strictly updated and constrained based on this active jurisdiction's profile, baseline standards (e.g. Canada ISED 'AI for All' pins enclaves strictly to AWS ca-central-1 and local Canadian hosts and biometric export limits) and are locked under this constitution version.
-
-CRITICAL STRUCTURAL OUTPUT CONSTRAINTS:
-1. The output MUST contain a minimum of 4 capabilities inferred from the input.
-2. The output MUST contain exactly or at least 2 agentPackets inside the "agentPackets" array (e.g., pkt-1 and pkt-2).
-3. The companyGraph MUST be populated with valid nodes (domains, products, canonicalSystems, repositories, environments, owners, revenueStreams, policies, externalProviders).
-4. Each capability MUST contain a fully populated governance block (budgetRules, requiredApprovals, etc.) and pricingModel block (billingUnit, priceFloor, etc. where pricing contains at least 2 line items or parameters).
-5. DO NOT output any introductory text, explanatory notes, markdown formatting, code fences or wrappers outside the raw JSON object itself. Respond with ONLY the pure, valid JSON object.
-
-Below is the exact JSON Schema that your output MUST match:
-${JSON.stringify(blueprintJsonSchema, null, 2)}
-
-Make sure your output is mathematically rigorous, fully detailed, and matches this schema letter for letter. Do not include placeholders like "..." or list items without completing them.`;
-
-    const userPrompt = `Messy notes/intent:
-${notes}
-
-Optional codebase context:
-${codebaseContext || "None provided"}
-
-Optional audio transcripts:
-${audioTranscript || "None provided"}
-
-Target platform:
-${targetPlatform || "Multi-platform Web/Mobile"}
-
-User Email for validation:
-${emailToUse}`;
-
-    // Use the already declared selectedProvider
-    let textResult = "";
-
-    if (selectedProvider === "veklom") {
-      textResult = await callVeklom({
-        systemPrompt,
-        userPrompt,
-        model: modelName,
-        apiKey: apiKey,
-      });
-    } else if (selectedProvider === "gemini") {
-      const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-      if (!activeApiKey) {
-        throw new Error("Gemini API key is not configured. Please supply a key or configure it in secrets.");
-      }
-
-      // Check if custom URL or environment base URL is provided
-      const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
-      const aiOptions: any = {
-        apiKey: activeApiKey,
-        httpOptions: {
-          headers: {
-            "User-Agent": "aistudio-build",
-          },
-        },
-      };
-      if (geminiBaseUrl) {
-        aiOptions.baseUrl = geminiBaseUrl;
-      }
-
-      const ai = new GoogleGenAI(aiOptions);
-
-      const response = await ai.models.generateContent({
-        model: modelName || "gemini-3.5-flash",
-        contents: userPrompt,
-        config: {
-          systemInstruction: systemPrompt,
-          responseMimeType: "application/json",
-          temperature: 0.2,
-        },
-      });
-
-      textResult = response.text || "";
-    } else if (selectedProvider === "openai" || selectedProvider === "llama" || selectedProvider === "ollama" || selectedProvider === "deepseek" || selectedProvider === "custom") {
-      // Determine base URL to use
-      let openAiBaseUrl = "https://api.openai.com/v1";
-      if (customUrl) {
-        openAiBaseUrl = customUrl;
-      } else if (selectedProvider === "llama" || selectedProvider === "ollama") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OLLAMA_BASE_URL || process.env.OLLAMA_BASE_URL || "http://167.233.202.195:11434/v1";
-      } else if (selectedProvider === "deepseek") {
-        openAiBaseUrl = "https://api.deepseek.com/v1";
-      } else if (selectedProvider === "openai") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "http://localhost:1106/modelfarm/openai";
-      }
-
-      // Clean the endpoint: strip trailing slashes, make sure it has /chat/completions
-      let cleanUrl = openAiBaseUrl.replace(/\/+$/, "");
-      if (!cleanUrl.endsWith("/chat/completions")) {
-        cleanUrl = `${cleanUrl}/chat/completions`;
-      }
-
-      // Configure headers
-      const headers: any = {
-        "Content-Type": "application/json",
-      };
-      
-      // Dynamic auth mode application
-      if (apiKey) {
-        if (authMode === "bearer") {
-          headers.Authorization = `Bearer ${apiKey}`;
-        } else if (authMode === "apiKeyHeader") {
-          headers["x-api-key"] = apiKey;
-        } else if (authMode === "customHeader" && customHeaderName) {
-          headers[customHeaderName] = apiKey;
-        } else if (authMode === "none") {
-          // No authentication headers
-        } else {
-          // Default fallback
-          headers.Authorization = `Bearer ${apiKey}`;
-        }
-      } else if (selectedProvider === "openai" && !process.env.AI_INTEGRATIONS_OPENAI_BASE_URL) {
-        // Only require API key if using real OpenAI without a local modelfarm/proxy override
-        throw new Error("OpenAI API key is required for this model provider.");
-      }
-
-      // Build payload
-      const payload: any = {
-        model: modelName || (selectedProvider === "deepseek" ? "deepseek-chat" : selectedProvider === "openai" ? (openAiBaseUrl.includes("11434") || openAiBaseUrl.includes("167.233.202.195") ? "llama3.2:1b" : "gpt-4o") : "llama3.2:latest"),
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
-        temperature: 0.2,
-      };
-
-      // Only pass JSON response format if using a provider known to support it natively
-      if (selectedProvider === "openai" || selectedProvider === "deepseek" || selectedProvider === "llama" || selectedProvider === "ollama") {
-        payload.response_format = { type: "json_object" };
-      }
-
-      console.log(`Routing ${selectedProvider} request to: ${cleanUrl} with model: ${payload.model}`);
-
-      const response = await fetch(cleanUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`${selectedProvider.toUpperCase()} API failed: ${errorText}`);
-      }
-      const data = await response.json();
-      textResult = data.choices[0].message.content;
-    } else if (selectedProvider === "anthropic") {
-      const activeApiKey = apiKey;
-      if (!activeApiKey) {
-        throw new Error("Anthropic API key is required.");
-      }
-
-      const anthropicUrl = customUrl || "https://api.anthropic.com/v1/messages";
-
-      const headers = {
-        "Content-Type": "application/json",
-        "x-api-key": activeApiKey,
-        "anthropic-version": "2023-06-01",
-      };
-
-      const payload = {
-        model: modelName || "claude-3-5-sonnet-20241022",
-        max_tokens: 8192,
-        system: systemPrompt,
-        messages: [
-          { role: "user", content: userPrompt }
-        ],
-        temperature: 0.2,
-      };
-
-      const response = await fetch(anthropicUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Anthropic API failed: ${errorText}`);
-      }
-
-      const data = await response.json();
-      textResult = data.content[0].text;
-    } else {
-      // General fallback using server key to compile with Gemini
-      const activeApiKey = process.env.GEMINI_API_KEY;
-      if (!activeApiKey) {
-        throw new Error("Free server compilation key is currently exhausted. Please provide your own LLM Key under settings.");
-      }
-
-      const geminiBaseUrl = process.env.AI_INTEGRATIONS_GEMINI_BASE_URL || "http://localhost:1106/modelfarm/gemini";
-      const aiOptions: any = {
-        apiKey: activeApiKey,
-        httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-      };
-      if (geminiBaseUrl) {
-        aiOptions.baseUrl = geminiBaseUrl;
-      }
-
-      const ai = new GoogleGenAI(aiOptions);
-      const response = await ai.models.generateContent({
-        model: "gemini-3.5-flash",
-        contents: userPrompt,
-        config: {
-          systemInstruction: systemPrompt,
-          responseMimeType: "application/json",
-          temperature: 0.2,
-        },
-      });
-      textResult = response.text || "";
-    }
-
-    let parsedData: any;
-    try {
-      parsedData = JSON.parse(textResult);
-    } catch (parseError) {
-      const jsonMatch = textResult.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        try {
-          parsedData = JSON.parse(jsonMatch[0]);
-        } catch (matchError) {
-          console.error("Match parse failure, trying fallback slice. Original raw:", textResult);
-          const startIdx = textResult.indexOf('{');
-          const endIdx = textResult.lastIndexOf('}');
-          if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
-            try {
-              parsedData = JSON.parse(textResult.slice(startIdx, endIdx + 1));
-            } catch (sliceError) {
-              throw new Error("parse_failed: " + textResult.slice(0, 200));
-            }
-          } else {
-            throw new Error("parse_failed: " + textResult.slice(0, 200));
-          }
-        }
-      } else {
-        const startIdx = textResult.indexOf('{');
-        const endIdx = textResult.lastIndexOf('}');
-        if (startIdx !== -1 && endIdx !== -1 && endIdx > startIdx) {
-          try {
-            parsedData = JSON.parse(textResult.slice(startIdx, endIdx + 1));
-          } catch (sliceError) {
-            throw new Error("parse_failed: " + textResult.slice(0, 200));
-          }
-        } else {
-          throw new Error("parse_failed: " + textResult.slice(0, 200));
-        }
-      }
-    }
-
-    // Do not merge or fall back to defaultBlueprint data. If the compile output is incomplete, return the partial result with a partial: true flag and let the frontend render what was produced.
-    let isPartial = false;
-    const requiredFields = ["title", "tagline", "highLevelGoals", "competitiveMoat", "einsteinProbability", "academicGrounding", "companyGraph", "capabilities", "productOfferings", "gapsReport", "files", "agentPackets"];
-    for (const field of requiredFields) {
-      if (!parsedData[field]) {
-        if (field === "title" || field === "tagline") {
-          parsedData[field] = "";
-        } else if (field === "timestamp") {
-          parsedData[field] = new Date().toISOString();
-        } else if (field === "hash") {
-          parsedData[field] = ipHash;
-        } else if (field === "einsteinProbability") {
-          parsedData[field] = { modelName: "", successRate: 0, latencyMs: 0, variables: [] };
-        } else if (field === "companyGraph") {
-          parsedData[field] = { domains: [], products: [], canonicalSystems: [], repositories: [], environments: [], owners: [], revenueStreams: [], policies: [], externalProviders: [] };
-        } else {
-          parsedData[field] = [];
-        }
-        isPartial = true;
-      }
-    }
-    if (isPartial) {
-      parsedData.partial = true;
-    }
+    const parsedData = parseBlueprintText(textResult);
 
     // Assign canonical, deterministic content-addressed hash
     parsedData.hash = calculateCanonicalHash(parsedData, notes);
@@ -1344,7 +638,7 @@ function generateFallbackBlueprint(
     blueprint.jurisdictionProfileName = selectedJurisdiction;
   }
   
-  // Rule 3: When ABIDE cannot ground a citation for real (as in quota fallback), it MUST say "no citation available"
+  // Rule 3: When APEX cannot ground a citation for real (as in quota fallback), it MUST say "no citation available"
   // and NEVER synthesize a plausible-looking fake one or inherit unverified mock IDs.
   blueprint.academicGrounding = [
     {
@@ -1359,7 +653,7 @@ function generateFallbackBlueprint(
 
   // ============================================================================
   // [UNIVERSAL DEMO PURGE ENGINE]
-  // When the user inputs their own messy intent and presses 'ABIDE Generate',
+  // When the user inputs their own messy intent and presses 'APEX Generate',
   // ALL DEMO REFERENCE STUFF MUST BE GONE! It strictly focuses on what the user ingested.
   // ============================================================================
   const jurisdictionPolicy = selectedJurisdiction || "Global Standard";
@@ -1742,7 +1036,7 @@ function generateFallbackBlueprint(
     },
     {
       path: "07_evidence_validation_pack/grounding_and_gaps.md",
-      content: `# Evidence & Validation Pack\n\n## Academic Grounding & Citations\n- **Status**: Offline Quota Fallback Active.\n- **Citations**: No citation available. Per strict ABIDE governance rules, when offline fallback occurs, no mock or demo citations (such as Lamport or Nakamoto reference samples) are inherited. Live verification will resume upon API reconnection.\n\n## Identified System Gaps\n${blueprint.gapsReport.map((g: any) => `- **${g.gapType}**: ${g.description} (Severity: ${g.severity})`).join("\n")}`
+      content: `# Evidence & Validation Pack\n\n## Academic Grounding & Citations\n- **Status**: Offline Quota Fallback Active.\n- **Citations**: No citation available. Per strict APEX governance rules, when offline fallback occurs, no mock or demo citations (such as Lamport or Nakamoto reference samples) are inherited. Live verification will resume upon API reconnection.\n\n## Identified System Gaps\n${blueprint.gapsReport.map((g: any) => `- **${g.gapType}**: ${g.description} (Severity: ${g.severity})`).join("\n")}`
     },
     {
       path: "08_github_alignment_pack/repo_sync.md",
@@ -1762,7 +1056,7 @@ function generateFallbackBlueprint(
     }
   ];
 
-  blueprint.fallback_message = "Free-tier Gemini API token count limit exceeded (250K/min limit). ABIDE locally generated an offline fallback blueprint. NOTE: Human-readable exports and verified packs are mechanically blocked until live API compilation is restored.";
+  blueprint.fallback_message = "Free-tier Gemini API token count limit exceeded (250K/min limit). APEX locally generated an offline fallback blueprint. NOTE: Human-readable exports and verified packs are mechanically blocked until live API compilation is restored.";
 
   // Run formal SEKED triage heuristic engine on fallback blueprint
   try {
@@ -2350,7 +1644,7 @@ app.post("/api/github/analyze", async (req, res) => {
     try {
       // Set up real GitHub API call to fetch recursive tree
       const headers: HeadersInit = {
-        "User-Agent": "ABIDE-Compiler",
+        "User-Agent": "APEX-Compiler",
         Accept: "application/vnd.github.v3+json",
       };
       if (customToken) {
@@ -2551,7 +1845,7 @@ app.post("/api/github/push-blueprint", async (req, res) => {
 
     const targetBranch = branchName ? branchName.trim() : "abide-blueprint-alignment";
     const headers: HeadersInit = {
-      "User-Agent": "ABIDE-Compiler",
+      "User-Agent": "APEX-Compiler",
       "Accept": "application/vnd.github.v3+json",
       "Authorization": `token ${token}`,
       "Content-Type": "application/json"
@@ -2598,9 +1892,9 @@ app.post("/api/github/push-blueprint", async (req, res) => {
       throw new Error(`Failed to create branch '${targetBranch}': ${createRefResponse.statusText}. ${errorMsg}`);
     }
 
-    // 3. Check if ABIDE_BLUEPRINT.json already exists to get its SHA (required for update)
+    // 3. Check if APEX_BLUEPRINT.json already exists to get its SHA (required for update)
     let existingSha = "";
-    const contentUrl = `https://api.github.com/repos/${owner}/${repo}/contents/ABIDE_BLUEPRINT.json?ref=${targetBranch}`;
+    const contentUrl = `https://api.github.com/repos/${owner}/${repo}/contents/APEX_BLUEPRINT.json?ref=${targetBranch}`;
     const contentResponse = await fetch(contentUrl, { headers });
     if (contentResponse.ok) {
       const contentData = await contentResponse.json();
@@ -2608,11 +1902,11 @@ app.post("/api/github/push-blueprint", async (req, res) => {
     }
 
     // 4. Push/write the file
-    const pushFileUrl = `https://api.github.com/repos/${owner}/${repo}/contents/ABIDE_BLUEPRINT.json`;
+    const pushFileUrl = `https://api.github.com/repos/${owner}/${repo}/contents/APEX_BLUEPRINT.json`;
     const blueprintBase64 = Buffer.from(JSON.stringify(blueprint, null, 2)).toString("base64");
     
     const pushBody: any = {
-      message: `Feat: align ABIDE Sovereign Blueprint [skip ci]`,
+      message: `Feat: align APEX Sovereign Blueprint [skip ci]`,
       content: blueprintBase64,
       branch: targetBranch
     };
@@ -2628,7 +1922,7 @@ app.post("/api/github/push-blueprint", async (req, res) => {
 
     if (!pushResponse.ok) {
       const errorMsg = await pushResponse.text();
-      throw new Error(`Failed to write ABIDE_BLUEPRINT.json to branch '${targetBranch}': ${pushResponse.statusText}. ${errorMsg}`);
+      throw new Error(`Failed to write APEX_BLUEPRINT.json to branch '${targetBranch}': ${pushResponse.statusText}. ${errorMsg}`);
     }
 
     const pushData = await pushResponse.json();
@@ -2732,9 +2026,9 @@ app.get("/api/backends/status", async (req, res) => {
     },
     {
       id: "abide-compiler",
-      name: "ABIDE Planning & Intent Compiler",
-      role: "Planning & Intent Compilation Layer (ABIDE Proposes, CAPPO Disposes)",
-      owner: "reprewindai-dev/ABIDE",
+      name: "APEX Planning & Intent Compiler",
+      role: "Planning & Intent Compilation Layer (APEX Proposes, CAPPO Disposes)",
+      owner: "reprewindai-dev/APEX",
       url: process.env.ABIDE_URL || "https://abide.veklom.com",
       status: "Configured",
       latencyMs: null,
@@ -2939,7 +2233,7 @@ app.post("/api/test-harness/generate", async (req, res) => {
   const selectedSpecName = targetSpec || "Unified Call Client & Lane Router";
 
   // System prompt to generate realistic test suites based on the provided PDF blueprints
-  const testHarnessSystemPrompt = `You are the ABIDE test-generation agent. Your goal is to produce 100% production-ready, highly technical, syntactic, non-mock Jest or Vitest test suites that align perfectly with the Veklom Canonical Architecture (v2.0).
+  const testHarnessSystemPrompt = `You are the APEX test-generation agent. Your goal is to produce 100% production-ready, highly technical, syntactic, non-mock Jest or Vitest test suites that align perfectly with the Veklom Canonical Architecture (v2.0).
 The user is writing tests for the: "${selectedSpecName}" component.
 
 RELEVANT ARCHITECTURAL PARAMS:
@@ -3182,7 +2476,7 @@ app.post("/api/covenant/project", async (req, res) => {
       return res.status(400).json({ error: "Missing target projection type" });
     }
 
-    let title = "ABIDE Sovereign Platform";
+    let title = "APEX Sovereign Platform";
     let hash = "unknown_canonical_hash";
     let validatedPlan: any = null;
     let validatedBlueprint: any = null;
@@ -3248,11 +2542,11 @@ app.post("/api/covenant/project", async (req, res) => {
         });
       }
 
-      title = validatedBlueprint.title || "ABIDE Sovereign Platform";
+      title = validatedBlueprint.title || "APEX Sovereign Platform";
       hash = validatedBlueprint.hash;
     } else {
       // Relaxed preview path: allow partial objects from client-side simulator
-      title = blueprint?.title || plan?.title || "ABIDE Sovereign Platform";
+      title = blueprint?.title || plan?.title || "APEX Sovereign Platform";
       hash = blueprint?.hash || plan?.canonicalHash || "preview_hash_placeholder";
     }
     const activeJurisdiction = (selectedJurisdiction || "global").toUpperCase();
@@ -3303,7 +2597,7 @@ ${Array.isArray(pkt.definitionOfDone) ? pkt.definitionOfDone.map((d: string) => 
 - **Execution Safeguard**: All Lane 3 (external integrations) require certified CAPPO approval tokens prior to commit.
 
 ## 🎯 BLUEPRINT OVERVIEW
-This repository is governed by **ABIDE Blueprint**. The underlying directory is structured as a typed capability model. 
+This repository is governed by **APEX Blueprint**. The underlying directory is structured as a typed capability model. 
 Messy local edits that mismatch the active Blueprint Hash will trigger immediate circuit breakers in the Gnomledger evidence validators and Covenant gates.
 
 ## 🧩 COMPILED SYSTEM CAPABILITIES
@@ -3318,7 +2612,7 @@ ${packetsSection}
 3. **Traceability**: All external states (Lane 3) must be logged directly to the Gnomledger proof ledger.
 
 ---
-*Generated by ABIDE Trust Layer Compiler at ${new Date().toISOString()}*
+*Generated by APEX Trust Layer Compiler at ${new Date().toISOString()}*
 `;
     } else if (target === "claude-md") {
       filename = "CLAUDE.md";
@@ -3355,12 +2649,12 @@ ${capSummary}
 
 ## 🏁 Handover Checkpoint & Workflow Continuation
 If switching tools or resuming a suspended session:
-- Locate the active work order ID in the ABIDE agentPackets.
+- Locate the active work order ID in the APEX agentPackets.
 - Fetch the latest approved \`PlanIR\` to assert compliance with hash \`${hash}\`.
 - Ensure all required unit tests pass successfully prior to pushing to main.
 
 ---
-*Sealed by ABIDE Blueprint Governance Compiler at ${new Date().toISOString()}*
+*Sealed by APEX Blueprint Governance Compiler at ${new Date().toISOString()}*
 `;
     } else if (target === "spec-kit-json") {
       filename = "spec-plan-task.json";
@@ -3439,7 +2733,7 @@ If switching tools or resuming a suspended session:
   }
 });
 
-// Canonical Abide M2M Contract Endpoints (API v4)
+// Canonical Apex M2M Contract Endpoints (API v4)
 app.post("/api/v4/m2m/intent/compile", CovenantService.compileM2MIntent);
 app.post("/api/v4/m2m/plan/verify", CovenantService.verifyM2MPlan);
 app.post("/api/v4/m2m/plan/authorize", CovenantService.authorizeM2MPlan);
@@ -3562,7 +2856,7 @@ describe("Veklom Canonical System Integration & Authority Boundaries", () => {
 }
 
 // ==========================================================
-// ADDITIONAL HIGH-FIDELITY CORE ABIDE ENGINE ENDPOINTS
+// ADDITIONAL HIGH-FIDELITY CORE APEX ENGINE ENDPOINTS
 // ==========================================================
 
 // 1. SEKED COMPILER INTEGRATION ENDPOINT
@@ -3597,7 +2891,7 @@ app.post("/api/seked/compile", (req, res) => {
     // Cryptographically sign the envelope
     const signedPayload = {
       timestamp: new Date().toISOString(),
-      systemName: systemName || "ABIDE-SOVEREIGN-COVENANT",
+      systemName: systemName || "APEX-SOVEREIGN-COVENANT",
       description: description || "Routine autonomous telemetry sweep and settlement audit.",
       metrics: { e, r, c, d, s },
       normalized,
@@ -3818,7 +3112,7 @@ app.get("/api/cache/stats", (req, res) => {
 app.post("/api/cache/clear", (req, res) => {
   try {
     cacheManager.clear();
-    return res.json({ success: true, message: "ABIDE Blueprint compilation cache cleared successfully." });
+    return res.json({ success: true, message: "APEX Blueprint compilation cache cleared successfully." });
   } catch (error: any) {
     return res.status(500).json({ error: error.message || "Failed to clear cache." });
   }
@@ -3952,7 +3246,7 @@ app.post("/api/realworld/verify/z3", async (req, res) => {
 });
 
 // ==========================================
-// ABIDE BOUNDED PROJECT FACTORY & IDE API
+// APEX BOUNDED PROJECT FACTORY & IDE API
 // ==========================================
 
 app.get("/api/ide/projects", (req, res) => {
@@ -4045,7 +3339,7 @@ app.post("/api/ide/run-stage", async (req, res) => {
 // ==========================================
 
 async function startServer() {
-  // Fail closed: ABIDE requires Postgres persistence in production (JSON fallbacks are forbidden).
+  // Fail closed: APEX requires Postgres persistence in production (JSON fallbacks are forbidden).
   try {
     assertDbConfiguredInProduction();
   } catch (err: any) {
@@ -4068,7 +3362,7 @@ async function startServer() {
 
   // Register with cAPI on boot as the secondary edge gateway
   try {
-    console.log("[Abide] Registering presence and telemetry with cAPI...");
+    console.log("[Apex] Registering presence and telemetry with cAPI...");
     const capiUrl = process.env.CAPI_INTERNAL_URL || "http://10.77.0.1:3003";
     await fetch(`${capiUrl}/api/registry/register`, {
       method: "POST",
@@ -4083,9 +3377,9 @@ async function startServer() {
         timestamp: new Date().toISOString()
       })
     });
-    console.log("[Abide] Successfully registered with cAPI.");
+    console.log("[Apex] Successfully registered with cAPI.");
   } catch (err) {
-    console.warn("[Abide] Failed to register with cAPI. Ensure capi-container is running.", err);
+    console.warn("[Apex] Failed to register with cAPI. Ensure capi-container is running.", err);
   }
 
   if (process.env.NODE_ENV !== "production") {
@@ -4103,7 +3397,7 @@ async function startServer() {
   }
 
   app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[ABIDE Server] Running at http://localhost:${PORT}`);
+    console.log(`[APEX Server] Running at http://localhost:${PORT}`);
   });
 }
 

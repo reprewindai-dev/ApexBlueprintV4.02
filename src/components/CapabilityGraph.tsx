@@ -276,12 +276,12 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities, k
     };
   });
 
-  // 5. Abide Micro-Nodes (Y: 390)
+  // 5. Apex Micro-Nodes (Y: 390)
   const abideNodes = [
     {
       id: "abide-node-a",
-      rawId: "Abide-Node-A",
-      label: "Abide Node A",
+      rawId: "Apex-Node-A",
+      label: "Apex Node A",
       type: "abide",
       x: 100,
       y: 390,
@@ -290,8 +290,8 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities, k
     },
     {
       id: "abide-node-b",
-      rawId: "Abide-Node-B",
-      label: "Abide Node B",
+      rawId: "Apex-Node-B",
+      label: "Apex Node B",
       type: "abide",
       x: 250,
       y: 390,
@@ -300,8 +300,8 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities, k
     },
     {
       id: "abide-node-c",
-      rawId: "Abide-Node-C",
-      label: "Abide Node C",
+      rawId: "Apex-Node-C",
+      label: "Apex Node C",
       type: "abide",
       x: 400,
       y: 390,
@@ -411,7 +411,7 @@ export default function CapabilityGraphComponent({ companyGraph, capabilities, k
     }
   });
 
-  // E. Link System -> Abide Micro-Nodes
+  // E. Link System -> Apex Micro-Nodes
   systemNodes.forEach(sn => {
     if (sn.rawId.includes("Router")) {
       links.push({ source: sn.id, target: "abide-node-b" });

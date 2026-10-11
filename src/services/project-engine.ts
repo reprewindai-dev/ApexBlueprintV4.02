@@ -192,7 +192,7 @@ export class WorkspaceService {
       id: "proj-ollama-proof",
       name: "Ollama HTTP Classification Pipeline",
       type: "automation-pipeline",
-      description: "An HTTP pipeline that receives text, sends it to Ollama and returns the model response. The undeniable 10-step ABIDE proof build.",
+      description: "An HTTP pipeline that receives text, sends it to Ollama and returns the model response. The undeniable 10-step APEX proof build.",
       createdAt: now,
       updatedAt: now,
       status: "VERIFIED",
@@ -310,7 +310,7 @@ describe("Ollama HTTP Classification Pipeline Verification", () => {
 });`,
         "README.md": `# Ollama HTTP Classification Pipeline
 
-An ABIDE Project proving the complete 10-step bounded build loop:
+An APEX Project proving the complete 10-step bounded build loop:
 \`Instruction -> create project files -> install approved dependencies -> compile -> test -> execute -> display working result -> persist project\`.
 
 ### Commands
@@ -323,7 +323,7 @@ An ABIDE Project proving the complete 10-step bounded build loop:
           id: "proj-ollama-proof",
           name: "Ollama HTTP Classification Pipeline",
           type: "automation-pipeline",
-          description: "An HTTP pipeline that receives text, sends it to Ollama and returns the model response. The undeniable 10-step ABIDE proof build.",
+          description: "An HTTP pipeline that receives text, sends it to Ollama and returns the model response. The undeniable 10-step APEX proof build.",
           status: "VERIFIED",
           executionMode: "standalone"
         }, null, 2)
@@ -334,7 +334,7 @@ An ABIDE Project proving the complete 10-step bounded build loop:
           timestamp: now,
           action: "PERSIST",
           status: "SUCCESS",
-          output: "Scaffolding durable ABIDE project workspace initialized.",
+          output: "Scaffolding durable APEX project workspace initialized.",
           durationMs: 14,
           hash: computeHash("proj-ollama-proof")
         }
@@ -409,7 +409,7 @@ When triggered before deployment, execute the following inspection checklist:
 `,
         "src/scanner.ts": `export function scanForSecrets(code: string): string[] { const findings = []; if (code.includes("sk_live_")) findings.push("Exposed Stripe live secret"); return findings; }`,
         "tests/scanner.test.ts": `import { test, expect } from "vitest";\nimport { scanForSecrets } from "../src/scanner";\ntest("detects exposed secrets", () => { expect(scanForSecrets("const k = 'sk_live_123';").length).toBe(1); });`,
-        "README.md": `# Security Review Skill\nAn ABIDE skill project ready for inclusion in Veklom or Claude Code agent environments.`
+        "README.md": `# Security Review Skill\nAn APEX skill project ready for inclusion in Veklom or Claude Code agent environments.`
       },
       evidenceHistory: []
     };
@@ -462,7 +462,7 @@ When triggered before deployment, execute the following inspection checklist:
       files: {
         "abide.project.json": JSON.stringify({ id, name, type, description, version: "1.0.0" }, null, 2),
         "package.json": JSON.stringify({ name: id, version: "1.0.0", scripts: { build: "tsc --noEmit", test: "vitest run", start: "node dist/index.js" }, dependencies: {} }, null, 2),
-        "README.md": `# ${name}\n\n${description}\n\nAn ABIDE Project created by the bounded project factory.`
+        "README.md": `# ${name}\n\n${description}\n\nAn APEX Project created by the bounded project factory.`
       },
       evidenceHistory: [
         {
@@ -660,7 +660,7 @@ export class SandboxExecutionService {
 
         // If executing our undeniable proof build (Ollama pipeline), run a real live test invocation!
         if (project.id === "proj-ollama-proof" || project.pipelineFlow?.flowId === "flow_ollama_http_pipeline") {
-          const inputPrompt = testPayload?.text || "Hello from ABIDE undeniable proof test!";
+          const inputPrompt = testPayload?.text || "Hello from APEX undeniable proof test!";
           output += `\n--- LIVE TEST INVOCATION (POST /api/classify) ---\n`;
           output += `Payload: ${JSON.stringify({ text: inputPrompt })}\n`;
           output += `[Step 1] Trigger HTTP: Received payload at ingress gateway.\n`;
