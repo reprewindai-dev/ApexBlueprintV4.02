@@ -2559,7 +2559,7 @@ app.post("/api/cache/clear", (req, res) => {
 // 7. OLLAMA REAL-TIME LOCAL MODEL DISCOVERY
 app.post("/api/ollama/models", async (req, res) => {
   const { customUrl } = req.body;
-  const rawUrl = customUrl || process.env.OLLAMA_BASE_URL || "http://167.233.202.195:11434";
+  const rawUrl = customUrl || process.env.OLLAMA_BASE_URL || "http://localhost:11434";
   const baseUrl = rawUrl.replace(/\/+$/, "").replace(/\/v1$/, "");
   const startTime = Date.now();
   try {

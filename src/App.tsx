@@ -51,6 +51,7 @@ import {
 import JSZip from "jszip";
 import { TEMPLATES } from "./data/templates";
 import { DEFAULT_BLUEPRINT } from "./data/defaultBlueprint";
+import { shouldUseBrowserOllama } from "./core/ollama-url";
 import { BlueprintResult, ModelConfig, VirtualFile, Capability, GapReport, ProductOffering } from "./types";
 import CapabilityGraphComponent from "./components/CapabilityGraph";
 import BundleConstructor from "./components/BundleConstructor";
@@ -1371,6 +1372,11 @@ export default function App() {
     setIsQueryingOllama(true);
     setOllamaResult(null);
     try {
+      if (shouldUseBrowserOllama(config.provider, config.customUrl)) {
+        const { listBrowserOllamaModels } = await import("./core/browser-ollama");
+        setOllamaResult(await listBrowserOllamaModels(config.customUrl!));
+        return;
+      }
       const response = await fetch("/api/ollama/models", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1393,6 +1399,40 @@ export default function App() {
   };
 
   // Secure API Compiler Call with Validation Checker
+  // Shows a compiled blueprint and records it in the revision history.
+  const applyCompiledBlueprint = (blueprintData: BlueprintResult) => {
+    setResult(blueprintData);
+
+    // Record this compile in the revision history (not a signature or approval)
+    let nextVersion = "v4.02.2";
+    if (revisions && revisions.length > 0) {
+      const latestVersion = revisions[0].version;
+      const parts = latestVersion.replace(/^v/, "").split(".");
+      if (parts.length === 3) {
+        const patch = parseInt(parts[2], 10);
+        if (!isNaN(patch)) {
+          nextVersion = `v${parts[0]}.${parts[1]}.${patch + 1}`;
+        }
+      }
+    }
+    const addedRevision = {
+      version: nextVersion,
+      timestamp: blueprintData.timestamp || new Date().toISOString(),
+      approvedBy: "Not reviewed",
+      scopeChanges: `Compiled by ${config.provider} (${config.modelName || "default model"}) with the ${selectedJurisdiction.toUpperCase()} profile. Not reviewed.`,
+      hash: blueprintData.hash
+    };
+    setRevisions(prev => [addedRevision, ...prev]);
+    setConstitutionVersion(nextVersion);
+    setConstitutionState("LOCKED");
+
+    // Auto-select first compiled file
+    if (blueprintData.files && blueprintData.files.length > 0) {
+      setSelectedFilePath(blueprintData.files[0].path);
+    }
+    setActiveTab("overview");
+  };
+
   const executeCompilation = async () => {
     setIsCompiling(true);
     setCompileError(null);
@@ -1401,6 +1441,17 @@ export default function App() {
     setCompilationStep(0);
 
     try {
+      if (shouldUseBrowserOllama(config.provider, config.customUrl)) {
+        // Hosted site + Ollama on this computer: call Ollama from the browser (see core/browser-ollama.ts).
+        const { compileWithBrowserOllama } = await import("./core/browser-ollama");
+        const blueprintData = await compileWithBrowserOllama({
+          notes, codebaseContext, targetPlatform, userEmail,
+          modelName: config.modelName, customUrl: config.customUrl!,
+          constitutionVersion, constitutionState, selectedJurisdiction,
+        });
+        applyCompiledBlueprint(blueprintData);
+        return;
+      }
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
@@ -1429,37 +1480,7 @@ export default function App() {
         throw new Error(errData.error || "Server compiled failed. Verify model configurations and try again.");
       }
 
-      const blueprintData: BlueprintResult = await response.json();
-      setResult(blueprintData);
-
-      // Automatically sign and append a new revision for this successful compilation
-      let nextVersion = "v4.02.2";
-      if (revisions && revisions.length > 0) {
-        const latestVersion = revisions[0].version;
-        const parts = latestVersion.replace(/^v/, "").split(".");
-        if (parts.length === 3) {
-          const patch = parseInt(parts[2], 10);
-          if (!isNaN(patch)) {
-            nextVersion = `v${parts[0]}.${parts[1]}.${patch + 1}`;
-          }
-        }
-      }
-      const addedRevision = {
-        version: nextVersion,
-        timestamp: blueprintData.timestamp || new Date().toISOString(),
-        approvedBy: userEmail || "Sovereign Audit Board",
-        scopeChanges: `Automated compilation under active ${selectedJurisdiction.toUpperCase()} compliance guidelines. Sealed under Constitution ${nextVersion}.`,
-        hash: blueprintData.hash
-      };
-      setRevisions(prev => [addedRevision, ...prev]);
-      setConstitutionVersion(nextVersion);
-      setConstitutionState("LOCKED");
-
-      // Auto-select first compiled file
-      if (blueprintData.files && blueprintData.files.length > 0) {
-        setSelectedFilePath(blueprintData.files[0].path);
-      }
-      setActiveTab("overview");
+      applyCompiledBlueprint(await response.json());
     } catch (err: any) {
       setCompileError(err.message || "An unexpected error occurred during hierarchical reasoning compilation.");
     } finally {
@@ -5275,7 +5296,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         dUrl = "";
                       } else if (prov === "llama") {
                         dModel = "llama3.2:latest";
-                        dUrl = "http://167.233.202.195:11434/v1";
+                        dUrl = "http://localhost:11434/v1";
                       } else if (prov === "custom") {
                         dModel = "custom-model";
                         dUrl = "http://localhost:1234/v1";
@@ -5326,12 +5347,12 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         : config.provider === "openai"
                         ? "e.g. http://localhost:1106/modelfarm/openai (or leave blank)"
                         : config.provider === "llama"
-                        ? "e.g. http://167.233.202.195:11434/v1"
+                        ? "e.g. http://localhost:11434/v1"
                         : config.provider === "deepseek"
                         ? "e.g. https://api.deepseek.com/v1 (or leave blank)"
                         : config.provider === "custom"
                         ? "e.g. http://localhost:1234/v1"
-                        : "Enter connection URL (e.g. http://167.233.202.195:11434/v1)"
+                        : "Enter connection URL (e.g. http://localhost:11434/v1)"
                     }
                     className="w-full bg-[#0A0A0A] border border-[#222] p-2.5 text-xs text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none font-mono"
                   />
@@ -5508,7 +5529,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                   {/* Ollama Probe Center */}
                   <div className="p-3 bg-[#050505] border border-[#222] space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-mono text-gray-400 uppercase font-bold">Ollama Fleet Node (167.233.202.195)</span>
+                      <span className="text-[10px] font-mono text-gray-400 uppercase font-bold">Ollama ({config.customUrl || "http://localhost:11434"})</span>
                       <button
                         type="button"
                         disabled={isQueryingOllama}

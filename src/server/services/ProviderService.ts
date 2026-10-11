@@ -1299,7 +1299,7 @@ ${emailToUse}`;
       if (customUrl) {
         openAiBaseUrl = customUrl;
       } else if (selectedProvider === "llama" || selectedProvider === "ollama") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OLLAMA_BASE_URL || process.env.OLLAMA_BASE_URL || "http://167.233.202.195:11434/v1";
+        openAiBaseUrl = process.env.AI_INTEGRATIONS_OLLAMA_BASE_URL || process.env.OLLAMA_BASE_URL || "http://localhost:11434/v1";
       } else if (selectedProvider === "deepseek") {
         openAiBaseUrl = "https://api.deepseek.com/v1";
       } else if (selectedProvider === "openai") {
@@ -1589,7 +1589,7 @@ export class ProviderService {
       if (customUrl) {
         openAiBaseUrl = customUrl;
       } else if (selectedProvider === "llama" || selectedProvider === "ollama") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OLLAMA_BASE_URL || process.env.OLLAMA_BASE_URL || "http://167.233.202.195:11434/v1";
+        openAiBaseUrl = process.env.AI_INTEGRATIONS_OLLAMA_BASE_URL || process.env.OLLAMA_BASE_URL || "http://localhost:11434/v1";
       } else if (selectedProvider === "deepseek") {
         openAiBaseUrl = "https://api.deepseek.com/v1";
       } else if (selectedProvider === "openai") {
@@ -1696,7 +1696,7 @@ export class ProviderService {
 
   public static async listOllamaModels(req: any, res: any): Promise<any> {
   const { customUrl } = req.body;
-  const rawUrl = customUrl || process.env.OLLAMA_BASE_URL || "http://167.233.202.195:11434";
+  const rawUrl = customUrl || process.env.OLLAMA_BASE_URL || "http://localhost:11434";
   const baseUrl = rawUrl.replace(/\/+$/, "").replace(/\/v1$/, "");
   const startTime = Date.now();
   try {
