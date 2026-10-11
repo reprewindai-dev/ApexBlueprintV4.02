@@ -25,6 +25,8 @@ export interface BlueprintModelOptions {
   customHeaderName?: string;
   systemPrompt: string;
   userPrompt: string;
+  // "json" (default) asks providers that support it for a JSON-only reply; "text" for free text such as code.
+  responseFormat?: "json" | "text";
 }
 
 async function callVeklom(env: LlmEnv, params: {
@@ -505,6 +507,7 @@ ${emailToUse}`;
 
 export async function callBlueprintModel(opts: BlueprintModelOptions, env: LlmEnv): Promise<string> {
   const { selectedProvider, apiKey, modelName, customUrl, authMode, customHeaderName, systemPrompt, userPrompt } = opts;
+  const wantJson = opts.responseFormat !== "text";
     // Use the already declared selectedProvider
     let textResult = "";
 
@@ -542,7 +545,7 @@ export async function callBlueprintModel(opts: BlueprintModelOptions, env: LlmEn
         contents: userPrompt,
         config: {
           systemInstruction: systemPrompt,
-          responseMimeType: "application/json",
+          ...(wantJson ? { responseMimeType: "application/json" } : {}),
           temperature: 0.2,
         },
       });
@@ -602,7 +605,7 @@ export async function callBlueprintModel(opts: BlueprintModelOptions, env: LlmEn
       };
 
       // Only pass JSON response format if using a provider known to support it natively
-      if (selectedProvider === "openai" || selectedProvider === "deepseek" || selectedProvider === "llama" || selectedProvider === "ollama") {
+      if (wantJson && (selectedProvider === "openai" || selectedProvider === "deepseek" || selectedProvider === "llama" || selectedProvider === "ollama")) {
         payload.response_format = { type: "json_object" };
       }
 
@@ -681,7 +684,7 @@ export async function callBlueprintModel(opts: BlueprintModelOptions, env: LlmEn
         contents: userPrompt,
         config: {
           systemInstruction: systemPrompt,
-          responseMimeType: "application/json",
+          ...(wantJson ? { responseMimeType: "application/json" } : {}),
           temperature: 0.2,
         },
       });

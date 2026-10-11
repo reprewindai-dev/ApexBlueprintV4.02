@@ -71,7 +71,8 @@ export class AcademicService {
         claimedTitle,
         claimedAuthorsList,
         claimedArxivId,
-        doi
+        doi || (typeof resolvableIdentifier === "string" && /doi\.org\//i.test(resolvableIdentifier) ? resolvableIdentifier : undefined),
+        { semanticScholarApiKey: process.env.SEMANTIC_SCHOLAR_API_KEY, openAlexApiKey: process.env.OPENALEX_API_KEY, contactEmail: process.env.CITATION_CONTACT_EMAIL }
       );
 
       const isMatch = verification.status === VerificationStatus.VERIFIED_MATCH;

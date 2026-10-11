@@ -672,7 +672,7 @@ export default function App() {
     return backendStatuses.filter(b => b.status === "Offline" || b.status !== "Active");
   }, [backendStatuses]);
   
-  const [selectedTargetSpec, setSelectedTargetSpec] = useState("Unified Call Client & Lane Router");
+  const [selectedTargetSpec, setSelectedTargetSpec] = useState("All capabilities");
   const [selectedTestFramework, setSelectedTestFramework] = useState("jest");
   const [isGeneratingTests, setIsGeneratingTests] = useState(false);
   const [generatedTestSuiteCode, setGeneratedTestSuiteCode] = useState("");
@@ -821,7 +821,12 @@ export default function App() {
           repoUrl: githubRepoUrl,
           notes: notes,
           businessPlanText: bizPlanText,
+          provider: config.provider,
           apiKey: config.apiKey,
+          modelName: config.modelName,
+          customUrl: config.customUrl,
+          authMode: config.authMode,
+          customHeaderName: config.customHeaderName,
           customToken: githubToken
         })
       });
@@ -3834,11 +3839,11 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                       <div className="p-6 bg-[#060A14] border-2 border-[#00F0FF]/30 space-y-4 rounded-none">
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-[#222] pb-3">
                           <div>
-                            <span className="text-[9px] font-mono text-[#00F0FF] font-black tracking-widest uppercase block">[ CODE CROSS-REFERENCE SIGNED ]</span>
+                            <span className="text-[9px] font-mono text-[#00F0FF] font-black tracking-widest uppercase block">[ REPOSITORY READ FROM GITHUB · ANALYSIS BY AI ]</span>
                             <h4 className="text-lg font-black text-white uppercase tracking-tight">{githubAnalysisResult.repoName}</h4>
                           </div>
                           <span className="text-[10px] font-mono px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold uppercase">
-                            {githubAnalysisResult.isRealConnection ? "REAL CONNECTION VERIFIED" : "AI ALIGNMENT SIMULATION"}
+                            {githubAnalysisResult.isRealConnection ? `${githubAnalysisResult.totalFilesCount} files read` : "NOT READ"}
                           </span>
                         </div>
 
@@ -4399,7 +4404,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                                     </div>
                                   )}
                                   <span className="px-2 py-0.5 bg-[#00F0FF]/10 border border-[#00F0FF]/20 text-[#00F0FF] font-bold">
-                                    Score: {typeof paper.score === "number" ? paper.score.toFixed(4) : paper.score}
+                                    {paper.scoreType === "keyword" ? `Keyword match: ${Math.round(paper.score * 100)}%` : `Score: ${typeof paper.score === "number" ? paper.score.toFixed(4) : paper.score}`}
                                   </span>
                                 </div>
                               </div>
@@ -5075,11 +5080,10 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                               onChange={(e) => setSelectedTargetSpec(e.target.value)}
                               className="w-full bg-[#111] border border-[#222] p-2.5 text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none font-mono uppercase"
                             >
-                              <option value="Unified Call Client & Lane Router">Unified Call Client &amp; Lane Router</option>
-                              <option value="TrustConnection Sagas & RLS Gates">TrustConnection Sagas &amp; RLS Gates</option>
-                              <option value="CAPPO Core Authorization & LAW 0">CAPPO Core Authorization &amp; LAW 0</option>
-                              <option value="PGL Genome Certificate Lineage">PGL Genome Certificate Lineage</option>
-                              <option value="veklom-vnp Physical Node Telemetry">veklom-vnp Physical Node Telemetry</option>
+                              <option value="All capabilities">All capabilities</option>
+                              {(result?.capabilities || []).map((cap: any) => (
+                                <option key={cap.id || cap.name} value={cap.name}>{cap.name}</option>
+                              ))}
                             </select>
                           </div>
                           <div>
