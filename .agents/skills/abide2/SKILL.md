@@ -1,4 +1,8 @@
-```markdown
+---
+name: abide2
+description: Coding conventions for this repo (file naming, import/export style, commit messages, test file layout). Use when adding or changing code here.
+---
+
 # abide2 Development Patterns
 
 > Auto-generated skill from repository analysis
@@ -62,4 +66,3 @@ _No explicit workflows detected in the repository._
 | /test   | Run all test files matching `*.test.*` |
 | /lint   | Lint the codebase according to project rules |
 | /build  | Build the project for production |
-```
