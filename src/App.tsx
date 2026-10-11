@@ -343,7 +343,7 @@ export default function App() {
   const [notes, setNotes] = useState("");
   const [codebaseContext, setCodebaseContext] = useState("");
   const [targetPlatform, setTargetPlatform] = useState("Multi-platform Mobile & Web");
-  const [userEmail, setUserEmail] = useState("pluggedfinds41@gmail.com");
+  const [userEmail, setUserEmail] = useState("");
 
   // Model selection configurations
   const [config, setConfig] = useState<ModelConfig>({
@@ -455,13 +455,7 @@ export default function App() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Assumption & Grounding Ledger State
-  const [assumptions, setAssumptions] = useState([
-    { id: "asm-1", claim: "M2M Stable Settlements will perform under high latency network environments", status: "VERIFIED", confidence: 92, reference: "Dr. Evelyn Vance (SSRN)" },
-    { id: "asm-2", claim: "Sub-15ms local latency in decentralized liquidity pool handshakes", status: "VERIFIED", confidence: 95, reference: "Nakagawa (arXiv:2403)" },
-    { id: "asm-3", claim: "Hardware enclaves (TPM / SGX) can isolate decryption keys inside browser sandboxes", status: "ASSUMED", confidence: 45, reference: "Local simulation trials" },
-    { id: "asm-4", claim: "Layer-2 mainnet gas-optimized batched rollups can reduce fees to under $0.001", status: "PROJECTED", confidence: 72, reference: "Rollup contract assumptions" },
-    { id: "asm-5", claim: "High-frequency task routing Einstein algorithms can forecast node packet drop clusters", status: "VERIFIED", confidence: 88, reference: "Albert Chen (SSRN)" }
-  ]);
+  const [assumptions, setAssumptions] = useState<{ id: string; claim: string; status: string; confidence: number; reference: string }[]>([]);
 
   // GitHub Integration States
   const [githubRepoUrl, setGithubRepoUrl] = useState("");
@@ -729,14 +723,14 @@ export default function App() {
   // References for printing / rendering certificate PDF
   const printAreaRef = useRef<HTMLDivElement>(null);
 
-  // Loading indicator logs/steps mimicking Hierarchical Reasoning layers
+  // Sections the model is asked to write in a single request (shown while waiting; not live progress)
   const HRM_STEPS = [
-    { label: "High-Level Controller Activated", desc: "Evaluating abstract vision, scope constraints, and decomposing target capabilities." },
-    { label: "Academic Grounding Search", desc: "Simulating validation checks across open repositories (arXiv, SSRN, OpenAI) for peer-reviewed alignment." },
-    { label: "Einstein Probability Weighting", desc: "Calculating priority indices and success trend coefficients for resource routing." },
-    { label: "X402 Sovereign Ledger Modeling", desc: "Drafting decentralized payment topologies and micro-settlement latency boundaries." },
-    { label: "Lower-Level Execution Compiler", desc: "Compiling file-and-folder tree templates and full-scale markdown assets." },
-    { label: "Assembling Final Verified Blueprint", desc: "Attaching SHA-256 validation proof and minting owner certificate." }
+    { label: "Goals, moat and capability map", desc: "" },
+    { label: "Suggested academic references (unverified)", desc: "" },
+    { label: "Probability-weighted priorities (model estimate)", desc: "" },
+    { label: "Business model and offerings", desc: "" },
+    { label: "Project files and agent work packets", desc: "" },
+    { label: "Content hash of the result", desc: "" }
   ];
 
   // Search the Vector Database with actual text embeddings via the backend API
@@ -977,7 +971,7 @@ export default function App() {
       );
     } else {
       setSyncLogs(prev => [
-        `[${new Date().toLocaleTimeString()}] [DISCOVERY SUCCESS] All local Veklom services on standard ports (8081-8084) detected and verified!`,
+        `[${new Date().toLocaleTimeString()}] [DISCOVERY] Probe requests sent to ports 8081-8084 (no-cors: a response only means something answered; service health is not verified).`,
         ...prev
       ]);
     }
@@ -1099,7 +1093,9 @@ export default function App() {
       }
 
       const data = await response.json();
-      setGeneratedTestSuiteCode(data.code);
+      // The server returns a canned template when the model call fails; label it instead of presenting it as generated.
+      const warning = data.fallbackWarning || (data.source && data.source !== "llm" ? `Source: ${data.source}` : "");
+      setGeneratedTestSuiteCode(warning ? `// NOTE: ${warning}. This is a template, not generated from your blueprint.\n${data.code}` : data.code);
     } catch (err: any) {
       setTestGenerationError(err.message || "An unexpected error occurred while generating test suites.");
     } finally {
@@ -1109,38 +1105,13 @@ export default function App() {
 
   // Run the test runner console simulation
   const handleRunTestsLocally = () => {
-    setIsTestConsoleRunning(true);
+    // Tests cannot be executed from the browser; say so instead of printing a simulated run.
+    setIsTestConsoleRunning(false);
     setTestPassState(null);
     setTestConsoleLogs([
-      `$ npm run test -- --selectSpec="${selectedTargetSpec}"`,
-      `[INFO] Locating local ${selectedTestFramework} test suites...`,
-      `[INFO] Target spec matched: ${selectedTargetSpec}`,
-      `[RUN] Executing Veklom Canonical Alignment validations...`
+      `[NOT RUN] Tests cannot be executed inside the browser.`,
+      `Download the generated test file, add it to your project, and run your test command locally (e.g. npm test).`
     ]);
-
-    setTimeout(() => {
-      setTestConsoleLogs(prev => [
-        ...prev,
-        `RUNS  src/__tests__/${selectedTargetSpec.replace(/[^a-zA-Z0-9]/g, "")}.spec.ts`,
-        `  ✓ Milestone 1: Hardened Persistent PGL Agent Identity authentication (34ms)`,
-        `  ✓ Milestone 2: TrustConnection Lifecycle Sagas & RLS Gates (22ms)`,
-        `  ✓ Milestone 3: Unified Call Contract & CAPPO Final Authority constraints (45ms)`,
-        `  ✓ Milestone 7: Execution-Bound X402 micro-settlements integration with Gnome Ledger (15ms)`,
-      ]);
-    }, 1000);
-
-    setTimeout(() => {
-      setTestConsoleLogs(prev => [
-        ...prev,
-        `\nTest Suites: 1 passed, 1 total`,
-        `Tests:       4 passed, 4 total`,
-        `Snapshots:   0 total`,
-        `Time:        1.42s, estimated cpu usage 12%`,
-        `Ran all unit tests for target spec matching alignment specifications.`
-      ]);
-      setTestPassState("PASSED");
-      setIsTestConsoleRunning(false);
-    }, 2500);
   };
 
   // Trigger confirmation modal for diagnostics export
@@ -1314,15 +1285,10 @@ export default function App() {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isCompiling) {
+      // Elapsed seconds while waiting for the model; the request is a single call with no partial progress.
       interval = setInterval(() => {
-        setCompilationStep((prev) => {
-          if (prev >= HRM_STEPS.length - 1) {
-            clearInterval(interval);
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, 3500);
+        setCompilationStep((prev) => prev + 1);
+      }, 1000);
     } else {
       setCompilationStep(0);
     }
@@ -1564,23 +1530,7 @@ export default function App() {
         "Global Sovereign Standards Core",
         "M2M Cryptographic Evidence Standard"
       ],
-      verificationClaims: [
-        {
-          claim: "All model enclaves pin databases to regional hosts (e.g. AWS ca-central-1 for Canada).",
-          status: "UNVERIFIED_DESIGN_INTENT",
-          evidence: "None (No active enclaves or source code present in export)"
-        },
-        {
-          claim: "Sub-millisecond payment settlement latency below 15ms limit.",
-          status: "PROJECTED_BUSINESS_ASSUMPTION",
-          evidence: "X402 Ledger design parameters"
-        },
-        {
-          claim: "Hardware enclaves verify local key storage.",
-          status: "UNVERIFIED_DESIGN_INTENT",
-          evidence: "Pending local TPM sandbox runs"
-        }
-      ]
+      verificationClaims: []
     }, null, 2);
 
     // Dynamic Exported Governance Manifests (User Requested Refinements)
@@ -1682,10 +1632,10 @@ export default function App() {
         name: cap.name,
         downstreamImpact: cap.downstreamImpact || {
           affectedInterfaces: cap.exposedInterfaces ? [...(cap.exposedInterfaces.rest || []), ...(cap.exposedInterfaces.mcp || [])].slice(0, 3) : [],
-          staleAgentPackets: [`Packet 01: Systems Alignment for ${cap.name}`],
-          reposNeedingMigration: [cap.canonicalRepoImplementation || "main-repo"],
-          affectedPricingBundles: ["Sovereign Edge Standard Pack"],
-          affectedJurisdictionPolicies: ["EU GDPR Overlay Thresholds"]
+          staleAgentPackets: [],
+          reposNeedingMigration: cap.canonicalRepoImplementation ? [cap.canonicalRepoImplementation] : [],
+          affectedPricingBundles: [],
+          affectedJurisdictionPolicies: []
         }
       }))
     }, null, 2);
@@ -1695,7 +1645,8 @@ export default function App() {
 
     if (selectedJurisdiction === "canada") {
       policyPath = "00_workspace_manifest/canada_ised_compliance_profile.yaml";
-      policyContent = `profile: "Canada Sovereign 'AI for All' Compliance Pack"
+      policyContent = `# GENERIC TEMPLATE for the selected jurisdiction. Not generated from your notes and not a compliance assessment.
+profile: "Canada Sovereign 'AI for All' Compliance Pack"
 jurisdiction: "CA / Federal ISED"
 data_residency: "AWS ca-central-1"
 export_restrictions: "Biometric and neural weights export capped without manual override"
@@ -1703,21 +1654,24 @@ cryptography_standard: "FIPS 140-3 Levels 3+"
 sovereign_control: "Mandates real-time capability verification logs anchored to local sovereign nodes"`;
     } else if (selectedJurisdiction === "eu") {
       policyPath = "00_workspace_manifest/eu_ai_act_compliance_profile.yaml";
-      policyContent = `profile: "EU AI Act Compliance Pack"
+      policyContent = `# GENERIC TEMPLATE for the selected jurisdiction. Not generated from your notes and not a compliance assessment.
+profile: "EU AI Act Compliance Pack"
 jurisdiction: "EU / High-Risk Systems Regulation"
 transparency_obligations: "Mandates explicit generative model output labels and continuous drift tracking"
 data_residency: "Strict compliance with GDPR Article 44 cross-border transfers"
 risk_mitigation: "Continuous Einstein scheduler limits to prevent loop cascade congestion"`;
     } else if (selectedJurisdiction === "us") {
       policyPath = "00_workspace_manifest/us_sec_compliance_profile.yaml";
-      policyContent = `profile: "US Enterprise & SEC Security Pack"
+      policyContent = `# GENERIC TEMPLATE for the selected jurisdiction. Not generated from your notes and not a compliance assessment.
+profile: "US Enterprise & SEC Security Pack"
 jurisdiction: "US / Federal SEC + NIST AI Baseline"
 financial_compliance: "Micropayments require instant anti-arbitrage circuit breakers and daily caps"
 sovereign_control: "Federal FIPS enclaves with strict tenant isolation"
 audit_standards: "NIST SP 800-218 Secure Software Development Framework validation logs"`;
     } else {
       policyPath = "00_workspace_manifest/global_baseline_profile.yaml";
-      policyContent = `profile: "Global Sovereign Standards Core"
+      policyContent = `# GENERIC TEMPLATE for the selected jurisdiction. Not generated from your notes and not a compliance assessment.
+profile: "Global Sovereign Standards Core"
 jurisdiction: "Global Decentralized Edge Networks"
 compliance: "Standard X402 microtransaction ledger validation schemas and public auditable Merkle proofs"`;
     }
@@ -1775,24 +1729,6 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 - Execution eligible: NO (BLOCKED)
 
 ` + content;
-      }
-
-      // Sanitize repo_sync.md of generic filler and populate with active inspected files
-      if (f.path === "08_github_alignment_pack/repo_sync.md") {
-        content = `# Repository Sync & Codebase Alignment
-        
-## Inspected Repository Profile
-- **Repository Directory**: Active Local Workspace Container
-- **Inspected Files**: \`package.json\`, \`server.ts\`, \`src/App.tsx\`, \`src/types.ts\`
-- **Discovered Source Code Tree**: Node/Express fullstack platform on Port 3000
-- **Framework**: React 18 with Vite and Express
-- **Identified Routes**: 
-  - \`POST /api/generate\` (Blueprint Hierarchical Reasoning compilation)
-  - \`POST /api/covenant/execute\` (Secure plan execution)
-  - \`POST /api/covenant/approve\` (PlanIR signing)
-  - \`POST /api/covenant/project\` (IDE context projection)
-- **Inspected Gaps**: This is a planning-phase workspace. It contains no native rust-node binary (\`einstein.rs\`) or Solidity escrow contract implementations (\`X402Escrow.sol\`) yet.
-        `;
       }
 
       return { path: f.path, content };
@@ -1956,46 +1892,20 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
     };
 
     const claimClassification = {
-      "system": "Veklom Capability OS",
+      "system": result.title,
       "blueprintHash": result.hash,
       "classifications": [
         {
-          "claim": "X402 sub-millisecond settlement protocol and Escrow contracts",
-          "classification": "UNVERIFIED_DESIGN_INTENT",
-          "description": "Contracts do not exist on disk and have not been deployed to Arbitrum or any testnet."
-        },
-        {
-          "claim": "Einstein priority trend scheduling (reputation routing)",
-          "classification": "PROJECTED_BUSINESS_ASSUMPTION",
-          "description": "Theoretical prioritization model based on probability formulas, no live scheduling active."
-        },
-        {
-          "claim": "50,000 requests per second with sub-15ms latency",
-          "classification": "PROJECTED_BUSINESS_ASSUMPTION",
-          "description": "Design target under ideal edge topologies; not verified by benchmark experiments."
-        },
-        {
-          "claim": "Gnomledger blockchain receipt artifacts (GRAs)",
-          "classification": "UNVERIFIED_DESIGN_INTENT",
-          "description": "Proof indexing blockchain layers are conceptual design drafts only."
-        },
-        {
-          "claim": "Active Owners (Dr. Evelyn Vance, Albert Chen, Satoshi Nakagawa)",
-          "classification": "PROJECTED_BUSINESS_ASSUMPTION",
-          "description": "Fictional actors assigned to role templates inside the documentation."
-        },
-        {
-          "claim": "Workspace Manifest and Capability Registry schemas",
-          "classification": "VERIFIED_EXISTING",
-          "description": "The specification schemas are fully defined and validated using the Zod validation engine."
-        },
-        {
-          "claim": "Express routes and frontend control panel in active repo",
-          "classification": "INFERRED_FROM_REPOSITORY",
-          "description": "Discovered from live container environment static inspection."
+          "claim": "All sections of this blueprint (goals, capabilities, citations, probabilities, files, agent packets)",
+          "classification": isDemoMode ? "BUILT_IN_DEMO_SAMPLE" : "AI_GENERATED_UNVERIFIED",
+          "description": isDemoMode
+            ? "Bundled sample content shipped with the app; not generated from your notes."
+            : `Generated by ${config.provider} (${config.modelName || "default model"}) from the submitted notes. Not independently verified.`
         }
       ]
     };
+
+    const resultPackets: any[] = Array.isArray(result.agentPackets) ? result.agentPackets : [];
 
     const extraFiles = [
       {
@@ -2025,13 +1935,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
           evidenceIndexVersion: "1.0.0",
           blueprintHash: result.hash,
           evidenceVerified: false,
-          evidenceRecords: [
-            {
-              claim: "Sub-millisecond payment settlement latency below 15ms limit.",
-              status: "UNVERIFIED_DESIGN_INTENT",
-              assessedBy: "System Exporter Heuristics"
-            }
-          ]
+          evidenceRecords: []
         }, null, 2)
       },
       {
@@ -2054,46 +1958,6 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
         content: "UNSIGNED_PLANNING_EXPORT_NO_KEY_PROVISIONED"
       },
       {
-        path: "09_agent_execution_pack/packet-001.json",
-        content: JSON.stringify({
-          packetId: "packet-001",
-          title: "Build Einstein Prioritized Scheduler",
-          status: "NOT_STARTED",
-          executionEligibility: "BLOCKED",
-          targetRole: "Scheduler Backend Engineer",
-          objective: "Create Einstein optimized reputation priority router.",
-          files: ["src/scheduler/einstein.rs"]
-        }, null, 2)
-      },
-      {
-        path: "09_agent_execution_pack/packet-001.md",
-        content: `# Agent Execution Packet 001\n## Target Role: Scheduler Backend Engineer\n**STATUS**: NOT_STARTED (EXECUTION_ELIGIBILITY: BLOCKED)\n\nPlease implement the Einstein Prioritized Scheduler in \`src/scheduler/einstein.rs\`.\nSince this is a PLANNING_EXPORT, execution is currently blocked.`
-      },
-      {
-        path: "09_agent_execution_pack/packet-001.signature",
-        content: "UNSIGNED_PACKET"
-      },
-      {
-        path: "09_agent_execution_pack/packet-002.json",
-        content: JSON.stringify({
-          packetId: "packet-002",
-          title: "Deploy Escrow Contracts",
-          status: "NOT_STARTED",
-          executionEligibility: "BLOCKED",
-          targetRole: "Smart Contract Auditor",
-          objective: "Auditing and compiling the Solidity Escrow protocol",
-          files: ["contracts/X402Escrow.sol"]
-        }, null, 2)
-      },
-      {
-        path: "09_agent_execution_pack/packet-002.md",
-        content: `# Agent Execution Packet 002\n## Target Role: Smart Contract Auditor\n**STATUS**: NOT_STARTED (EXECUTION_ELIGIBILITY: BLOCKED)\n\nPlease implement the escrow contract inside \`contracts/X402Escrow.sol\`.\nSince this is a PLANNING_EXPORT, execution is currently blocked.`
-      },
-      {
-        path: "09_agent_execution_pack/packet-002.signature",
-        content: "UNSIGNED_PACKET"
-      },
-      {
         path: "12_checkpoint_pack/checkpoint-genesis.json",
         content: JSON.stringify({
           checkpointId: "chk-genesis",
@@ -2101,33 +1965,18 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
           activeAgentId: "None",
           ledgerSequence: 0,
           lastAction: "Genesis export compiled",
-          pendingTasksCount: 2,
+          pendingTasksCount: resultPackets.length,
           blockHeight: 0
         }, null, 2)
       },
       {
         path: "12_checkpoint_pack/unresolved-work.json",
         content: JSON.stringify({
-          unresolvedWorkItems: [
-            {
-              id: "work-001",
-              description: "Create scheduler source file 'src/scheduler/einstein.rs'",
-              status: "NOT_STARTED"
-            },
-            {
-              id: "work-002",
-              description: "Create Solidity Escrow smart contract 'contracts/X402Escrow.sol'",
-              status: "NOT_STARTED"
-            }
-          ]
-        }, null, 2)
-      },
-      {
-        path: "12_checkpoint_pack/repository-authority.json",
-        content: JSON.stringify({
-          authorityType: "UNVERIFIED_PLANNING",
-          repositoryUrl: "https://github.com/veklom/capability-os",
-          authorityFingerprint: "unsigned-authority-anchor"
+          unresolvedWorkItems: resultPackets.map((pkt: any, i: number) => ({
+            id: pkt.id || pkt.packetId || `work-${String(i + 1).padStart(3, "0")}`,
+            description: pkt.title || pkt.objective || pkt.name || "Agent work packet",
+            status: "NOT_STARTED"
+          }))
         }, null, 2)
       }
     ];
@@ -2283,9 +2132,9 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 
         {/* Dynamic System Status */}
         <div className="hidden lg:flex gap-8 text-[10px] font-mono tracking-widest uppercase text-[#666]">
-          <div>X402 Node: <span className="text-[#00F0FF] font-bold">Active</span></div>
-          <div>Latency: <span className="text-[#00F0FF] font-bold">0.02ms</span></div>
-          <div>Encryption: <span className="text-[#00F0FF] font-bold">AES-256</span></div>
+          <div>Engine: <span className="text-[#00F0FF] font-bold">{config.provider}</span></div>
+          <div>Model: <span className="text-[#00F0FF] font-bold">{config.modelName || "default"}</span></div>
+          <div>API Key: <span className={config.apiKey ? "text-[#00F0FF] font-bold" : "text-amber-400 font-bold"}>{config.apiKey ? "Entered" : "Not set"}</span></div>
         </div>
 
         <div className="flex items-center gap-3">
@@ -2339,7 +2188,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
             </h1>
             
             <p className="mt-4 text-xs font-mono uppercase tracking-widest text-[#666] max-w-2xl mx-auto leading-relaxed">
-              Backed by Einstein trend probability model, SSRN academic validator, and fully structured with X402 payment settlements. The ultimate software blueprint planner.
+              Turns your notes into a structured software blueprint and business plan using the AI model you choose under LLM Engine. Output is AI-generated: review it before relying on it.
             </p>
           </motion.div>
         </section>
@@ -2568,14 +2417,15 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 
                   <div className="space-y-3">
                     <div className="flex justify-between items-center text-[10px] text-[#666] font-mono border-b border-[#222] pb-1">
-                      <span>REASONER SUB-TASK PROGRESS</span>
-                      <span className="text-[#00F0FF] font-black">{Math.round(((compilationStep + 1) / HRM_STEPS.length) * 100)}%</span>
+                      <span>WAITING FOR {config.provider.toUpperCase()} RESPONSE (usually 30-120s)</span>
+                      <span className="text-[#00F0FF] font-black">{compilationStep}s elapsed</span>
                     </div>
 
                     <div className="space-y-2">
+                      <p className="text-[10px] text-[#666] font-mono uppercase">The model is asked to write:</p>
                       {HRM_STEPS.map((step, idx) => {
-                        const isCurrent = idx === compilationStep;
-                        const isCompleted = idx < compilationStep;
+                        const isCurrent = false;
+                        const isCompleted = false;
                         return (
                           <div
                             key={idx}
@@ -2741,8 +2591,8 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     {new Date(result.timestamp).toLocaleString()}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Award size={12} className="text-[#00F0FF]" />
-                    Verified Gold Standard
+                    <Award size={12} className={(result as any).partial ? "text-amber-400" : "text-[#00F0FF]"} />
+                    {isDemoMode ? "Built-in demo sample" : (result as any).partial ? "Partial output: some sections were missing from the AI response" : "AI-generated: review before use"}
                   </span>
                 </div>
               </div>
@@ -2750,29 +2600,27 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
               {/* Cryptographic IP Certificate Card */}
               <div className="w-full md:w-96 p-5 border-2 border-[#222] bg-[#0A0A0A] relative rounded-none">
                 <div className="absolute -top-3 -right-3 bg-[#00F0FF] text-black p-1.5 font-black uppercase text-[10px] tracking-wider shadow-[0_0_8px_#00F0FF]">
-                  SECURED
+                  {isDemoMode ? "DEMO" : "COMPILED"}
                 </div>
                 <div className="flex items-center gap-2 border-b border-[#222] pb-3 mb-3">
-                  <span className="text-[10px] font-mono font-black tracking-widest text-[#00F0FF] uppercase">IP PROTECTION REGISTER</span>
+                  <span className="text-[10px] font-mono font-black tracking-widest text-[#00F0FF] uppercase">COMPILE RECORD</span>
                 </div>
                 <div className="space-y-1.5 text-[10px] font-mono uppercase">
                   <div className="flex justify-between">
-                    <span className="text-[#444]">DIGITAL HASH:</span>
+                    <span className="text-[#444]">SHA-256 CONTENT HASH:</span>
                     <span className="text-[#00F0FF] font-black cursor-help truncate w-40 block text-right" title={result.hash}>{result.hash}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#444]">REGISTRANT:</span>
-                    <span className="text-[#E0E0E0]">{userEmail}</span>
+                    <span className="text-[#444]">REQUESTED BY:</span>
+                    <span className="text-[#E0E0E0]">{userEmail || "—"}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#444]">MINT SEAL:</span>
-                    <span className="text-[#E0E0E0]">UT_STAMP_CAL_M2M</span>
+                    <span className="text-[#444]">SOURCE:</span>
+                    <span className="text-[#E0E0E0]">{isDemoMode ? "Built-in sample" : `${config.provider} / ${config.modelName || "default"}`}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#444]">VERIFICATION:</span>
-                    <span className="text-[#00F0FF] font-black flex items-center gap-0.5">
-                      <CheckCircle2 size={9} /> COMPILER APPROVED
-                    </span>
+                    <span className="text-amber-400 font-black">NOT INDEPENDENTLY VERIFIED</span>
                   </div>
                   {result.cacheStatus && (
                     <div className="flex justify-between border-t border-[#222]/50 pt-1.5 mt-1.5">
@@ -2882,7 +2730,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         </p>
                         <div className="p-2 bg-black/60 border border-cyan-500/30 flex items-center gap-2 text-xs font-mono text-[#00F0FF] font-bold">
                           <ArrowRight size={14} className="shrink-0" />
-                          <span>When you put in your own messy intent and press 'Compile Production Payload', all this demo stuff is completely gone! It strictly focuses on what you ingested.</span>
+                          <span>Compiling your own notes replaces this sample blueprint with the AI's output for your notes. Some side tools (X402 escrow, Einstein router, telemetry views) are interactive simulations and do not reflect live systems.</span>
                         </div>
                       </div>
                     )}
@@ -3916,7 +3764,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                                 {onDiskVerifiedFile[path] ? (
                                   <div className="p-3 bg-emerald-950/20 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] flex items-center justify-center gap-1.5">
                                     <ShieldCheck size={14} className="animate-pulse text-emerald-400" />
-                                    <span>ON-DISK INTEGRITY VERIFIED (SHA256 MATCHED)</span>
+                                    <span>SIMULATED CHECK (no file was read or hashed)</span>
                                   </div>
                                 ) : (
                                   <div className="p-3 bg-[#111] border border-[#222] text-gray-500 text-[10px] text-center italic">
@@ -5838,11 +5686,11 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 
           {/* Final Certificate Stamp */}
           <div className="pt-12 text-center border-t-2 border-black space-y-2">
-            <p className="font-bold text-base uppercase">Certificate of Verification & Intellectual Protection</p>
+            <p className="font-bold text-base uppercase">Compile Record</p>
             <p className="text-xs text-gray-600 max-w-lg mx-auto">
-              This system blueprint has been compiled utilizing the elite APEX BLUEPRINT Hierarchical Reasoning Engine. All assets compiled herewith are mathematically backed, academically grounded, and cryptographically signed to protect concept authorship.
+              This blueprint was generated by an AI model from the notes provided. It has not been independently verified; review citations, figures and claims before relying on them. The hash below identifies this exact content; it is not a signature or proof of authorship.
             </p>
-            <p className="font-mono text-xs font-bold pt-4">MINT SEAL AUTHENTICATION: {result.hash.substring(0, 32).toUpperCase()}</p>
+            <p className="font-mono text-xs font-bold pt-4">SHA-256 CONTENT HASH: {result.hash.substring(0, 32).toUpperCase()}</p>
           </div>
 
         </div>

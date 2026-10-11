@@ -2356,7 +2356,7 @@ ${JSON.stringify(blueprint, null, 2)}`;
       framework: testFramework,
       code: fallbackTestCode,
       source: "local-compiler",
-      fallbackWarning: "Local high-fidelity generator output successfully (Ollama or remote API currently bypassed or offline)."
+      fallbackWarning: "The AI model call failed, so this is a generic local template"
     });
   }
 });

@@ -607,7 +607,7 @@ export function VnpAnalyticsCards() {
             </span>
             <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-mono bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-800/50">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              PROBE WORKERS ONLINE
+              SIMULATED PROBES
             </span>
           </div>
           <h2 className="text-2xl font-black text-white tracking-tight font-mono">
@@ -725,7 +725,7 @@ export function VnpAnalyticsCards() {
               Critical issues:{" "}
               <strong className="text-emerald-400">0 detected</strong>
             </span>
-            <span className="font-mono text-[#00F0FF]">100% SLA Uptime</span>
+            <span className="font-mono text-amber-400">Uptime not measured</span>
           </div>
         </div>
 
@@ -1097,7 +1097,7 @@ export function VnpAnalyticsCards() {
                 No official API available
               </strong>
             </span>
-            <span className="text-[#3B82F6]">4/4 Real Sources Online</span>
+            <span className="text-[#3B82F6]">Source status not live-checked</span>
           </div>
         </div>
       </div>

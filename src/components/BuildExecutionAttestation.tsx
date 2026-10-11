@@ -265,7 +265,7 @@ export default function BuildExecutionAttestation({ blueprint, userEmail }: Buil
           addLog(`✅ [COVENANT GATE] Build status: PASSED`);
           addLog(`✅ [COVENANT GATE] Artifact hash matches executable binary.`);
           addLog(`✅ [COVENANT GATE] Backend convergence score: ${syncData.systemState}`);
-          addLog(`✅ [COVENANT GATE] Real-time gateway latency: ${syncData.totalLatencyMs}ms`);
+          addLog(`[COVENANT GATE] Reported latency (simulated sync endpoint): ${syncData.totalLatencyMs}ms`);
           addLog(`👉 [COVENANT GATE] Handing execution to polter wrapper. Issuing execution permit...`);
           
           // Move to anchoring and completed
@@ -418,7 +418,7 @@ export default function BuildExecutionAttestation({ blueprint, userEmail }: Buil
           </div>
           <div>
             <span className="text-[9px] text-[#555] block">Linter & Compilers</span>
-            <span className="font-bold text-emerald-400 leading-tight">ONLINE / VERIFIED</span>
+            <span className="font-bold text-amber-400 leading-tight">NOT CHECKED</span>
           </div>
         </div>
       )}

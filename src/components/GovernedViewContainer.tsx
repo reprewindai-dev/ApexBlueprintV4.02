@@ -622,7 +622,7 @@ export default function GovernedViewContainer({
               </div>
 
               <div className="p-4 bg-black border border-[#222] space-y-2 text-[10px]">
-                <span className="text-gray-500 uppercase font-bold block">Live Attestation Console Trace:</span>
+                <span className="text-gray-500 uppercase font-bold block">Example Attestation Trace (static sample):</span>
                 <div className="p-2.5 bg-[#050508] border border-[#18181F] text-emerald-400 font-mono space-y-1">
                   <div>[SYSTEM: ZK-Proof Groth16 Received from External Agent]</div>
                   <div>[Z3-TS SMT Solver: Verifying R1CS Plonkish Arithmetization in Enclave...]</div>

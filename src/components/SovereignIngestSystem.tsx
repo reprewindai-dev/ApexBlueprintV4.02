@@ -102,7 +102,7 @@ export const SovereignIngestSystem: React.FC<SovereignIngestSystemProps> = ({
             addLog(`PLAN IR: Generating structured blueprint intermediate state vectors.`);
             break;
           case "gov":
-            addLog(`GOV APPROVAL: Verification score: ${statsObj?.integrity || "99.2%"} compliance rating.`);
+            addLog(`GOV: No automated approval is performed on ingested files. Extraction: ${statsObj?.integrity || "n/a"}.`);
             break;
           case "packets":
             addLog(`BOUNDED PACKETS: Packaging code boundaries to prevent unrequested scope drift.`);
@@ -113,7 +113,7 @@ export const SovereignIngestSystem: React.FC<SovereignIngestSystemProps> = ({
             // Format notes layout with provenance
             const heading = `--- SOVEREIGN INGESTED CONTEXT: ${fileName.toUpperCase()} ---
 [METADATA: Size: ${((ingestedFile?.size || 0) / 1024).toFixed(2)} KB, Format: ${fileName.split('.').pop()?.toUpperCase() || "Raw"}]
-[PROVENANCE: Ingested under Gnomledger Signature Match ${Math.random().toString(16).substring(2, 10).toUpperCase()}]
+[SOURCE FILE: ${fileName}]
 
 ${rawContent}
 
@@ -126,7 +126,7 @@ ${rawContent}
             }
             break;
           case "evidence":
-            addLog(`EVIDENCE: Signed Gnomledger proof hash: SHA256_x02e${Math.random().toString(16).substring(2, 8)}`);
+            addLog(`EVIDENCE: Not signed. Ingest happens locally in your browser; no ledger record is created.`);
             break;
           case "checkpoint":
             addLog(`CHECKPOINT: Ingested block compiled. No unauthorized drift becomes durable project state.`);
@@ -264,7 +264,7 @@ ${rawContent}
         const text = event.target?.result as string || "";
         const statData = {
           charCount: text.length,
-          integrity: "99.8% Integrity Match"
+          integrity: "Plain text read as-is"
         };
         setParsedStats(statData);
         runPipeline(file.name, text, statData);
@@ -278,7 +278,7 @@ ${rawContent}
         const statData = {
           charCount: text.length,
           rowsCount,
-          integrity: "100% Matrix Alignment"
+          integrity: "CSV converted to table"
         };
         setParsedStats(statData);
         runPipeline(file.name, markdownTable, statData);
@@ -290,7 +290,7 @@ ${rawContent}
         const parsedText = parsePdfBinary(buffer);
         const statData = {
           charCount: parsedText.length,
-          integrity: "97.5% Cognitive Extraction"
+          integrity: "PDF text extraction (best effort)"
         };
         setParsedStats(statData);
         runPipeline(file.name, parsedText, statData);
@@ -308,7 +308,7 @@ RECOMMENDED ACTION:
 Review and convert target specifications into plaintext/markdown lists to secure drift control limits on downstream nodes.`;
         const statData = {
           charCount: genericContent.length,
-          integrity: "94.0% Metadata Extraction"
+          integrity: "Binary file: name and size only"
         };
         setParsedStats(statData);
         runPipeline(file.name, genericContent, statData);
@@ -481,7 +481,7 @@ Review and convert target specifications into plaintext/markdown lists to secure
             </span>
           </div>
           <div>
-            <span className="text-gray-500 block">COGNITIVE MATCH</span>
+            <span className="text-gray-500 block">EXTRACTION METHOD</span>
             <span className="text-emerald-400 font-black">{parsedStats.integrity}</span>
           </div>
         </div>

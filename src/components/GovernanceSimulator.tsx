@@ -307,7 +307,7 @@ export default function GovernanceSimulator({ capabilities }: GovernanceSimulato
         </div>
         <div className="flex items-center gap-2">
           <span className="text-[10px] font-mono font-bold bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/30 px-2.5 py-1">
-            6 PRODUCTION ADAPTERS LIVE
+            6 ADAPTERS DEFINED (NOT LIVE-CHECKED)
           </span>
           <span className="text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-1">
             SEKED v4.02 COMPILER

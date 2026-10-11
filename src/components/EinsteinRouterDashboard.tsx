@@ -365,7 +365,7 @@ export const EinsteinRouterDashboard: React.FC<EinsteinRouterDashboardProps> = (
         </div>
         <div className="flex items-center gap-1.5 bg-black border border-[#222] px-2.5 py-1 text-[9px] text-[#888]">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>ROUTER: LIVE TELEMETRY STREAM</span>
+          <span>ROUTER: SIMULATED TELEMETRY (random demo data)</span>
         </div>
       </div>
 
