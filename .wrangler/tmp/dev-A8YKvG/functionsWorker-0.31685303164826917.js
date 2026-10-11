@@ -1,46 +1,48 @@
-var __create = Object.create;
 var __defProp = Object.defineProperty;
+var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
+
+// .wrangler/tmp/pages-B56NCQ/functionsWorker-0.31685303164826917.mjs
+var __create = Object.create;
+var __defProp2 = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
-var __esm = (fn, res, err) => function __init() {
+var __name2 = /* @__PURE__ */ __name((target, value) => __defProp2(target, "name", { value, configurable: true }), "__name");
+var __esm = /* @__PURE__ */ __name((fn, res, err) => /* @__PURE__ */ __name(function __init() {
   if (err) throw err[0];
   try {
     return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
   } catch (e) {
     throw err = [e], e;
   }
-};
-var __commonJS = (cb, mod) => function __require() {
+}, "__init"), "__esm");
+var __commonJS = /* @__PURE__ */ __name((cb, mod) => /* @__PURE__ */ __name(function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   } catch (e) {
     throw mod = 0, e;
   }
-};
-var __copyProps = (to, from, except, desc) => {
+}, "__require"), "__commonJS");
+var __copyProps = /* @__PURE__ */ __name((to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
       if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+        __defProp2(to, key, { get: /* @__PURE__ */ __name(() => from[key], "get"), enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
   return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+}, "__copyProps");
+var __toESM = /* @__PURE__ */ __name((mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
   // If the importer is in node compatibility mode or this is not an ESM
   // file that has been converted to a CommonJS file using a Babel-
   // compatible transform (i.e. "__esModule" has not been set), then set
   // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  isNodeMode || !mod || !mod.__esModule ? __defProp2(target, "default", { value: mod, enumerable: true }) : target,
   mod
-));
-
-// ../node_modules/retry/lib/retry_operation.js
+)), "__toESM");
 var require_retry_operation = __commonJS({
   "../node_modules/retry/lib/retry_operation.js"(exports, module) {
-    init_functionsRoutes_0_4909187672132509();
+    init_functionsRoutes_0_8669225902492499();
     function RetryOperation(timeouts, options) {
       if (typeof options === "boolean") {
         options = { forever: options };
@@ -62,6 +64,7 @@ var require_retry_operation = __commonJS({
       }
     }
     __name(RetryOperation, "RetryOperation");
+    __name2(RetryOperation, "RetryOperation");
     module.exports = RetryOperation;
     RetryOperation.prototype.reset = function() {
       this._attempts = 1;
@@ -173,11 +176,9 @@ var require_retry_operation = __commonJS({
     };
   }
 });
-
-// ../node_modules/retry/lib/retry.js
 var require_retry = __commonJS({
   "../node_modules/retry/lib/retry.js"(exports) {
-    init_functionsRoutes_0_4909187672132509();
+    init_functionsRoutes_0_8669225902492499();
     var RetryOperation = require_retry_operation();
     exports.operation = function(options) {
       var timeouts = exports.timeouts(options);
@@ -238,7 +239,7 @@ var require_retry = __commonJS({
       for (var i = 0; i < methods.length; i++) {
         var method = methods[i];
         var original = obj[method];
-        obj[method] = (/* @__PURE__ */ __name(function retryWrapper(original2) {
+        obj[method] = (/* @__PURE__ */ __name2(/* @__PURE__ */ __name(function retryWrapper(original2) {
           var op = exports.operation(options);
           var args = Array.prototype.slice.call(arguments, 1);
           var callback = args.pop();
@@ -254,26 +255,22 @@ var require_retry = __commonJS({
           op.attempt(function() {
             original2.apply(obj, args);
           });
-        }, "retryWrapper")).bind(obj, original);
+        }, "retryWrapper"), "retryWrapper")).bind(obj, original);
         obj[method].options = options;
       }
     };
   }
 });
-
-// ../node_modules/retry/index.js
 var require_retry2 = __commonJS({
   "../node_modules/retry/index.js"(exports, module) {
-    init_functionsRoutes_0_4909187672132509();
+    init_functionsRoutes_0_8669225902492499();
     module.exports = require_retry();
   }
 });
-
-// ../node_modules/p-retry/index.js
 var require_p_retry = __commonJS({
   "../node_modules/p-retry/index.js"(exports, module) {
     "use strict";
-    init_functionsRoutes_0_4909187672132509();
+    init_functionsRoutes_0_8669225902492499();
     var retry2 = require_retry2();
     var networkErrorMsgs = [
       "Failed to fetch",
@@ -287,7 +284,10 @@ var require_p_retry = __commonJS({
     ];
     var AbortError2 = class extends Error {
       static {
-        __name(this, "AbortError");
+        __name(this, "AbortError2");
+      }
+      static {
+        __name2(this, "AbortError");
       }
       constructor(message) {
         super();
@@ -302,16 +302,16 @@ var require_p_retry = __commonJS({
         this.message = message;
       }
     };
-    var decorateErrorWithCounts = /* @__PURE__ */ __name((error, attemptNumber, options) => {
+    var decorateErrorWithCounts = /* @__PURE__ */ __name2((error, attemptNumber, options) => {
       const retriesLeft = options.retries - (attemptNumber - 1);
       error.attemptNumber = attemptNumber;
       error.retriesLeft = retriesLeft;
       return error;
     }, "decorateErrorWithCounts");
-    var isNetworkError = /* @__PURE__ */ __name((errorMessage) => networkErrorMsgs.includes(errorMessage), "isNetworkError");
-    var pRetry2 = /* @__PURE__ */ __name((input, options) => new Promise((resolve, reject) => {
+    var isNetworkError = /* @__PURE__ */ __name2((errorMessage) => networkErrorMsgs.includes(errorMessage), "isNetworkError");
+    var pRetry2 = /* @__PURE__ */ __name2((input, options) => new Promise((resolve, reject) => {
       options = {
-        onFailedAttempt: /* @__PURE__ */ __name(() => {
+        onFailedAttempt: /* @__PURE__ */ __name2(() => {
         }, "onFailedAttempt"),
         retries: 10,
         ...options
@@ -351,14 +351,13 @@ var require_p_retry = __commonJS({
     module.exports.AbortError = AbortError2;
   }
 });
-
-// ../node_modules/@google/genai/dist/web/index.mjs
 function getDefaultBaseUrls() {
   return {
     geminiUrl: _defaultBaseGeminiUrl,
     vertexUrl: _defaultBaseVertexUrl
   };
 }
+__name(getDefaultBaseUrls, "getDefaultBaseUrls");
 function getBaseUrl(httpOptions, vertexai, vertexBaseUrlFromEnv, geminiBaseUrlFromEnv) {
   var _a2, _b;
   if (!(httpOptions === null || httpOptions === void 0 ? void 0 : httpOptions.baseUrl)) {
@@ -371,6 +370,7 @@ function getBaseUrl(httpOptions, vertexai, vertexBaseUrlFromEnv, geminiBaseUrlFr
   }
   return httpOptions.baseUrl;
 }
+__name(getBaseUrl, "getBaseUrl");
 function formatMap(templateString, valueMap) {
   const regex = /\{([^}]+)\}/g;
   return templateString.replace(regex, (match3, key) => {
@@ -382,6 +382,7 @@ function formatMap(templateString, valueMap) {
     }
   });
 }
+__name(formatMap, "formatMap");
 function setValueByPath(data, keys, value) {
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
@@ -445,6 +446,7 @@ function setValueByPath(data, keys, value) {
     }
   }
 }
+__name(setValueByPath, "setValueByPath");
 function getValueByPath(data, keys, defaultValue = void 0) {
   try {
     if (keys.length === 1 && keys[0] === "_self") {
@@ -478,6 +480,7 @@ function getValueByPath(data, keys, defaultValue = void 0) {
     throw error;
   }
 }
+__name(getValueByPath, "getValueByPath");
 function moveValueByPath(data, paths) {
   for (const [sourcePath, destPath] of Object.entries(paths)) {
     const sourceKeys = sourcePath.split(".");
@@ -501,6 +504,7 @@ function moveValueByPath(data, paths) {
     _moveValueRecursive(data, sourceKeys, destKeys, 0, excludeKeys);
   }
 }
+__name(moveValueByPath, "moveValueByPath");
 function _moveValueRecursive(data, sourceKeys, destKeys, keyIdx, excludeKeys) {
   if (keyIdx >= sourceKeys.length) {
     return;
@@ -547,12 +551,14 @@ function _moveValueRecursive(data, sourceKeys, destKeys, keyIdx, excludeKeys) {
     }
   }
 }
+__name(_moveValueRecursive, "_moveValueRecursive");
 function tBytes$1(fromBytes) {
   if (typeof fromBytes !== "string") {
     throw new Error("fromImageBytes must be a string");
   }
   return fromBytes;
 }
+__name(tBytes$1, "tBytes$1");
 function fetchPredictOperationParametersToVertex(fromObject) {
   const toObject = {};
   const fromOperationName = getValueByPath(fromObject, [
@@ -567,6 +573,7 @@ function fetchPredictOperationParametersToVertex(fromObject) {
   }
   return toObject;
 }
+__name(fetchPredictOperationParametersToVertex, "fetchPredictOperationParametersToVertex");
 function generateVideosOperationFromMldev$1(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -594,6 +601,7 @@ function generateVideosOperationFromMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(generateVideosOperationFromMldev$1, "generateVideosOperationFromMldev$1");
 function generateVideosOperationFromVertex$1(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -618,6 +626,7 @@ function generateVideosOperationFromVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(generateVideosOperationFromVertex$1, "generateVideosOperationFromVertex$1");
 function generateVideosResponseFromMldev$1(fromObject) {
   const toObject = {};
   const fromGeneratedVideos = getValueByPath(fromObject, [
@@ -646,6 +655,7 @@ function generateVideosResponseFromMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(generateVideosResponseFromMldev$1, "generateVideosResponseFromMldev$1");
 function generateVideosResponseFromVertex$1(fromObject) {
   const toObject = {};
   const fromGeneratedVideos = getValueByPath(fromObject, ["videos"]);
@@ -672,6 +682,7 @@ function generateVideosResponseFromVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(generateVideosResponseFromVertex$1, "generateVideosResponseFromVertex$1");
 function generatedVideoFromMldev$1(fromObject) {
   const toObject = {};
   const fromVideo = getValueByPath(fromObject, ["video"]);
@@ -680,6 +691,7 @@ function generatedVideoFromMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(generatedVideoFromMldev$1, "generatedVideoFromMldev$1");
 function generatedVideoFromVertex$1(fromObject) {
   const toObject = {};
   const fromVideo = getValueByPath(fromObject, ["_self"]);
@@ -688,6 +700,7 @@ function generatedVideoFromVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(generatedVideoFromVertex$1, "generatedVideoFromVertex$1");
 function getOperationParametersToMldev(fromObject) {
   const toObject = {};
   const fromOperationName = getValueByPath(fromObject, [
@@ -698,6 +711,7 @@ function getOperationParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(getOperationParametersToMldev, "getOperationParametersToMldev");
 function getOperationParametersToVertex(fromObject) {
   const toObject = {};
   const fromOperationName = getValueByPath(fromObject, [
@@ -708,6 +722,7 @@ function getOperationParametersToVertex(fromObject) {
   }
   return toObject;
 }
+__name(getOperationParametersToVertex, "getOperationParametersToVertex");
 function importFileOperationFromMldev$1(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -732,6 +747,7 @@ function importFileOperationFromMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(importFileOperationFromMldev$1, "importFileOperationFromMldev$1");
 function importFileResponseFromMldev$1(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -750,6 +766,7 @@ function importFileResponseFromMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(importFileResponseFromMldev$1, "importFileResponseFromMldev$1");
 function uploadToFileSearchStoreOperationFromMldev(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -774,6 +791,7 @@ function uploadToFileSearchStoreOperationFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(uploadToFileSearchStoreOperationFromMldev, "uploadToFileSearchStoreOperationFromMldev");
 function uploadToFileSearchStoreResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -792,6 +810,7 @@ function uploadToFileSearchStoreResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(uploadToFileSearchStoreResponseFromMldev, "uploadToFileSearchStoreResponseFromMldev");
 function videoFromMldev$1(fromObject) {
   const toObject = {};
   const fromUri = getValueByPath(fromObject, ["uri"]);
@@ -808,6 +827,7 @@ function videoFromMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(videoFromMldev$1, "videoFromMldev$1");
 function videoFromVertex$1(fromObject) {
   const toObject = {};
   const fromUri = getValueByPath(fromObject, ["gcsUri"]);
@@ -826,6 +846,7 @@ function videoFromVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(videoFromVertex$1, "videoFromVertex$1");
 function tModel(apiClient, model) {
   if (!model || typeof model !== "string") {
     throw new Error("model is required and must be a string");
@@ -850,6 +871,7 @@ function tModel(apiClient, model) {
     }
   }
 }
+__name(tModel, "tModel");
 function tCachesModel(apiClient, model) {
   const transformedModel = tModel(apiClient, model);
   if (!transformedModel) {
@@ -863,6 +885,7 @@ function tCachesModel(apiClient, model) {
     return transformedModel;
   }
 }
+__name(tCachesModel, "tCachesModel");
 function tBlobs(blobs) {
   if (Array.isArray(blobs)) {
     return blobs.map((blob) => tBlob(blob));
@@ -870,12 +893,14 @@ function tBlobs(blobs) {
     return [tBlob(blobs)];
   }
 }
+__name(tBlobs, "tBlobs");
 function tBlob(blob) {
   if (typeof blob === "object" && blob !== null) {
     return blob;
   }
   throw new Error(`Could not parse input as Blob. Unsupported blob type: ${typeof blob}`);
 }
+__name(tBlob, "tBlob");
 function tImageBlob(blob) {
   const transformedBlob = tBlob(blob);
   if (transformedBlob.mimeType && transformedBlob.mimeType.startsWith("image/")) {
@@ -883,6 +908,7 @@ function tImageBlob(blob) {
   }
   throw new Error(`Unsupported mime type: ${transformedBlob.mimeType}`);
 }
+__name(tImageBlob, "tImageBlob");
 function tAudioBlob(blob) {
   const transformedBlob = tBlob(blob);
   if (transformedBlob.mimeType && transformedBlob.mimeType.startsWith("audio/")) {
@@ -890,6 +916,7 @@ function tAudioBlob(blob) {
   }
   throw new Error(`Unsupported mime type: ${transformedBlob.mimeType}`);
 }
+__name(tAudioBlob, "tAudioBlob");
 function tPart(origin) {
   if (origin === null || origin === void 0) {
     throw new Error("PartUnion is required");
@@ -902,6 +929,7 @@ function tPart(origin) {
   }
   throw new Error(`Unsupported part type: ${typeof origin}`);
 }
+__name(tPart, "tPart");
 function tParts(origin) {
   if (origin === null || origin === void 0 || Array.isArray(origin) && origin.length === 0) {
     throw new Error("PartListUnion is required");
@@ -911,15 +939,19 @@ function tParts(origin) {
   }
   return [tPart(origin)];
 }
+__name(tParts, "tParts");
 function _isContent(origin) {
   return origin !== null && origin !== void 0 && typeof origin === "object" && "parts" in origin && Array.isArray(origin.parts);
 }
+__name(_isContent, "_isContent");
 function _isFunctionCallPart(origin) {
   return origin !== null && origin !== void 0 && typeof origin === "object" && "functionCall" in origin;
 }
+__name(_isFunctionCallPart, "_isFunctionCallPart");
 function _isFunctionResponsePart(origin) {
   return origin !== null && origin !== void 0 && typeof origin === "object" && "functionResponse" in origin;
 }
+__name(_isFunctionResponsePart, "_isFunctionResponsePart");
 function tContent(origin) {
   if (origin === null || origin === void 0) {
     throw new Error("ContentUnion is required");
@@ -932,6 +964,7 @@ function tContent(origin) {
     parts: tParts(origin)
   };
 }
+__name(tContent, "tContent");
 function tContentsForEmbed(apiClient, origin) {
   if (!origin) {
     return [];
@@ -956,6 +989,7 @@ function tContentsForEmbed(apiClient, origin) {
   }
   return [tContent(origin)];
 }
+__name(tContentsForEmbed, "tContentsForEmbed");
 function tContents(origin) {
   if (origin === null || origin === void 0 || Array.isArray(origin) && origin.length === 0) {
     throw new Error("contents are required");
@@ -987,6 +1021,7 @@ function tContents(origin) {
   }
   return result;
 }
+__name(tContents, "tContents");
 function flattenTypeArrayToAnyOf(typeList, resultingSchema) {
   if (typeList.includes("null")) {
     resultingSchema["nullable"] = true;
@@ -1003,6 +1038,7 @@ function flattenTypeArrayToAnyOf(typeList, resultingSchema) {
     }
   }
 }
+__name(flattenTypeArrayToAnyOf, "flattenTypeArrayToAnyOf");
 function processJsonSchema(_jsonSchema) {
   const genAISchema = {};
   const schemaFieldNames = ["items"];
@@ -1063,9 +1099,11 @@ function processJsonSchema(_jsonSchema) {
   }
   return genAISchema;
 }
+__name(processJsonSchema, "processJsonSchema");
 function tSchema(schema) {
   return processJsonSchema(schema);
 }
+__name(tSchema, "tSchema");
 function tSpeechConfig(speechConfig) {
   if (typeof speechConfig === "object") {
     return speechConfig;
@@ -1081,12 +1119,14 @@ function tSpeechConfig(speechConfig) {
     throw new Error(`Unsupported speechConfig type: ${typeof speechConfig}`);
   }
 }
+__name(tSpeechConfig, "tSpeechConfig");
 function tLiveSpeechConfig(speechConfig) {
   if ("multiSpeakerVoiceConfig" in speechConfig) {
     throw new Error("multiSpeakerVoiceConfig is not supported in the live API.");
   }
   return speechConfig;
 }
+__name(tLiveSpeechConfig, "tLiveSpeechConfig");
 function tTool(tool) {
   if (tool.functionDeclarations) {
     for (const functionDeclaration of tool.functionDeclarations) {
@@ -1114,6 +1154,7 @@ function tTool(tool) {
   }
   return tool;
 }
+__name(tTool, "tTool");
 function tTools(tools) {
   if (tools === void 0 || tools === null) {
     throw new Error("tools is required");
@@ -1127,6 +1168,7 @@ function tTools(tools) {
   }
   return result;
 }
+__name(tTools, "tTools");
 function resourceName(client, resourceName2, resourcePrefix, splitsAfterPrefix = 1) {
   const shouldAppendPrefix = !resourceName2.startsWith(`${resourcePrefix}/`) && resourceName2.split("/").length === splitsAfterPrefix;
   if (client.isVertexAI()) {
@@ -1147,12 +1189,14 @@ function resourceName(client, resourceName2, resourcePrefix, splitsAfterPrefix =
   }
   return resourceName2;
 }
+__name(resourceName, "resourceName");
 function tCachedContentName(apiClient, name) {
   if (typeof name !== "string") {
     throw new Error("name must be a string");
   }
   return resourceName(apiClient, name, "cachedContents");
 }
+__name(tCachedContentName, "tCachedContentName");
 function tTuningJobStatus(status) {
   switch (status) {
     case "STATE_UNSPECIFIED":
@@ -1167,18 +1211,23 @@ function tTuningJobStatus(status) {
       return status;
   }
 }
+__name(tTuningJobStatus, "tTuningJobStatus");
 function tBytes(fromImageBytes) {
   return tBytes$1(fromImageBytes);
 }
+__name(tBytes, "tBytes");
 function _isFile(origin) {
   return origin !== null && origin !== void 0 && typeof origin === "object" && "name" in origin;
 }
+__name(_isFile, "_isFile");
 function isGeneratedVideo(origin) {
   return origin !== null && origin !== void 0 && typeof origin === "object" && "video" in origin;
 }
+__name(isGeneratedVideo, "isGeneratedVideo");
 function isVideo(origin) {
   return origin !== null && origin !== void 0 && typeof origin === "object" && "uri" in origin;
 }
+__name(isVideo, "isVideo");
 function tFileName(fromName) {
   var _a2;
   let name;
@@ -1215,6 +1264,7 @@ function tFileName(fromName) {
   }
   return name;
 }
+__name(tFileName, "tFileName");
 function tModelsUrl(apiClient, baseModels) {
   let res;
   if (apiClient.isVertexAI()) {
@@ -1224,6 +1274,7 @@ function tModelsUrl(apiClient, baseModels) {
   }
   return res;
 }
+__name(tModelsUrl, "tModelsUrl");
 function tExtractModels(response) {
   for (const key of ["models", "tunedModels", "publisherModels"]) {
     if (hasField(response, key)) {
@@ -1232,9 +1283,11 @@ function tExtractModels(response) {
   }
   return [];
 }
+__name(tExtractModels, "tExtractModels");
 function hasField(data, fieldName) {
   return data !== null && typeof data === "object" && fieldName in data;
 }
+__name(hasField, "hasField");
 function mcpToGeminiTool(mcpTool, config = {}) {
   const mcpToolSchema = mcpTool;
   const functionDeclaration = {
@@ -1255,6 +1308,7 @@ function mcpToGeminiTool(mcpTool, config = {}) {
   };
   return geminiTool;
 }
+__name(mcpToGeminiTool, "mcpToGeminiTool");
 function mcpToolsToGeminiTool(mcpTools, config = {}) {
   const functionDeclarations = [];
   const toolNames = /* @__PURE__ */ new Set();
@@ -1271,6 +1325,7 @@ function mcpToolsToGeminiTool(mcpTools, config = {}) {
   }
   return { functionDeclarations };
 }
+__name(mcpToolsToGeminiTool, "mcpToolsToGeminiTool");
 function tBatchJobSource(client, src) {
   let sourceObj;
   if (typeof src === "string") {
@@ -1319,6 +1374,7 @@ function tBatchJobSource(client, src) {
   }
   return sourceObj;
 }
+__name(tBatchJobSource, "tBatchJobSource");
 function tBatchJobDestination(dest) {
   if (typeof dest !== "string") {
     return dest;
@@ -1338,6 +1394,7 @@ function tBatchJobDestination(dest) {
     throw new Error(`Unsupported destination: ${destString}`);
   }
 }
+__name(tBatchJobDestination, "tBatchJobDestination");
 function tRecvBatchJobDestination(dest) {
   if (typeof dest !== "object" || dest === null) {
     return {};
@@ -1374,6 +1431,7 @@ function tRecvBatchJobDestination(dest) {
   }
   return dest;
 }
+__name(tRecvBatchJobDestination, "tRecvBatchJobDestination");
 function tBatchJobName(apiClient, name) {
   const nameString = name;
   if (!apiClient.isVertexAI()) {
@@ -1393,6 +1451,7 @@ function tBatchJobName(apiClient, name) {
     throw new Error(`Invalid batch job name: ${nameString}.`);
   }
 }
+__name(tBatchJobName, "tBatchJobName");
 function tJobState(state) {
   const stateString = state;
   if (stateString === "BATCH_STATE_UNSPECIFIED") {
@@ -1413,9 +1472,11 @@ function tJobState(state) {
     return stateString;
   }
 }
+__name(tJobState, "tJobState");
 function tIsVertexEmbedContentModel(model) {
   return model.includes("gemini") && model !== "gemini-embedding-001" || model.includes("maas");
 }
+__name(tIsVertexEmbedContentModel, "tIsVertexEmbedContentModel");
 function authConfigToMldev$4(fromObject) {
   const toObject = {};
   const fromApiKey = getValueByPath(fromObject, ["apiKey"]);
@@ -1442,6 +1503,7 @@ function authConfigToMldev$4(fromObject) {
   }
   return toObject;
 }
+__name(authConfigToMldev$4, "authConfigToMldev$4");
 function batchJobDestinationFromMldev(fromObject) {
   const toObject = {};
   const fromFileName = getValueByPath(fromObject, ["responsesFile"]);
@@ -1476,6 +1538,7 @@ function batchJobDestinationFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(batchJobDestinationFromMldev, "batchJobDestinationFromMldev");
 function batchJobDestinationFromVertex(fromObject) {
   const toObject = {};
   const fromFormat = getValueByPath(fromObject, ["predictionsFormat"]);
@@ -1504,6 +1567,7 @@ function batchJobDestinationFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(batchJobDestinationFromVertex, "batchJobDestinationFromVertex");
 function batchJobDestinationToVertex(fromObject) {
   const toObject = {};
   const fromFormat = getValueByPath(fromObject, ["format"]);
@@ -1535,6 +1599,7 @@ function batchJobDestinationToVertex(fromObject) {
   }
   return toObject;
 }
+__name(batchJobDestinationToVertex, "batchJobDestinationToVertex");
 function batchJobFromMldev(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -1583,6 +1648,7 @@ function batchJobFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(batchJobFromMldev, "batchJobFromMldev");
 function batchJobFromVertex(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -1641,6 +1707,7 @@ function batchJobFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(batchJobFromVertex, "batchJobFromVertex");
 function batchJobSourceFromVertex(fromObject) {
   const toObject = {};
   const fromFormat = getValueByPath(fromObject, ["instancesFormat"]);
@@ -1667,6 +1734,7 @@ function batchJobSourceFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(batchJobSourceFromVertex, "batchJobSourceFromVertex");
 function batchJobSourceToMldev(apiClient, fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["format"]) !== void 0) {
@@ -1699,6 +1767,7 @@ function batchJobSourceToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(batchJobSourceToMldev, "batchJobSourceToMldev");
 function batchJobSourceToVertex(fromObject) {
   const toObject = {};
   const fromFormat = getValueByPath(fromObject, ["format"]);
@@ -1727,6 +1796,7 @@ function batchJobSourceToVertex(fromObject) {
   }
   return toObject;
 }
+__name(batchJobSourceToVertex, "batchJobSourceToVertex");
 function blobToMldev$4(fromObject) {
   const toObject = {};
   const fromData = getValueByPath(fromObject, ["data"]);
@@ -1742,6 +1812,7 @@ function blobToMldev$4(fromObject) {
   }
   return toObject;
 }
+__name(blobToMldev$4, "blobToMldev$4");
 function cancelBatchJobParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -1750,6 +1821,7 @@ function cancelBatchJobParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(cancelBatchJobParametersToMldev, "cancelBatchJobParametersToMldev");
 function cancelBatchJobParametersToVertex(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -1758,6 +1830,7 @@ function cancelBatchJobParametersToVertex(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(cancelBatchJobParametersToVertex, "cancelBatchJobParametersToVertex");
 function candidateFromMldev$1(fromObject) {
   const toObject = {};
   const fromContent = getValueByPath(fromObject, ["content"]);
@@ -1818,6 +1891,7 @@ function candidateFromMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(candidateFromMldev$1, "candidateFromMldev$1");
 function citationMetadataFromMldev$1(fromObject) {
   const toObject = {};
   const fromCitations = getValueByPath(fromObject, ["citationSources"]);
@@ -1832,6 +1906,7 @@ function citationMetadataFromMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(citationMetadataFromMldev$1, "citationMetadataFromMldev$1");
 function contentToMldev$4(fromObject) {
   const toObject = {};
   const fromParts = getValueByPath(fromObject, ["parts"]);
@@ -1850,6 +1925,7 @@ function contentToMldev$4(fromObject) {
   }
   return toObject;
 }
+__name(contentToMldev$4, "contentToMldev$4");
 function createBatchJobConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromDisplayName = getValueByPath(fromObject, ["displayName"]);
@@ -1867,6 +1943,7 @@ function createBatchJobConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(createBatchJobConfigToMldev, "createBatchJobConfigToMldev");
 function createBatchJobConfigToVertex(fromObject, parentObject) {
   const toObject = {};
   const fromDisplayName = getValueByPath(fromObject, ["displayName"]);
@@ -1882,6 +1959,7 @@ function createBatchJobConfigToVertex(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(createBatchJobConfigToVertex, "createBatchJobConfigToVertex");
 function createBatchJobParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -1898,6 +1976,7 @@ function createBatchJobParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(createBatchJobParametersToMldev, "createBatchJobParametersToMldev");
 function createBatchJobParametersToVertex(apiClient, fromObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -1914,6 +1993,7 @@ function createBatchJobParametersToVertex(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(createBatchJobParametersToVertex, "createBatchJobParametersToVertex");
 function createEmbeddingsBatchJobConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromDisplayName = getValueByPath(fromObject, ["displayName"]);
@@ -1922,6 +2002,7 @@ function createEmbeddingsBatchJobConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(createEmbeddingsBatchJobConfigToMldev, "createEmbeddingsBatchJobConfigToMldev");
 function createEmbeddingsBatchJobParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -1938,6 +2019,7 @@ function createEmbeddingsBatchJobParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(createEmbeddingsBatchJobParametersToMldev, "createEmbeddingsBatchJobParametersToMldev");
 function deleteBatchJobParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -1946,6 +2028,7 @@ function deleteBatchJobParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(deleteBatchJobParametersToMldev, "deleteBatchJobParametersToMldev");
 function deleteBatchJobParametersToVertex(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -1954,6 +2037,7 @@ function deleteBatchJobParametersToVertex(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(deleteBatchJobParametersToVertex, "deleteBatchJobParametersToVertex");
 function deleteResourceJobFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -1976,6 +2060,7 @@ function deleteResourceJobFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(deleteResourceJobFromMldev, "deleteResourceJobFromMldev");
 function deleteResourceJobFromVertex(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -1998,6 +2083,7 @@ function deleteResourceJobFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(deleteResourceJobFromVertex, "deleteResourceJobFromVertex");
 function embedContentBatchToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromContents = getValueByPath(fromObject, ["contents"]);
@@ -2017,6 +2103,7 @@ function embedContentBatchToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(embedContentBatchToMldev, "embedContentBatchToMldev");
 function embedContentConfigToMldev$1(fromObject, parentObject) {
   const toObject = {};
   const fromTaskType = getValueByPath(fromObject, ["taskType"]);
@@ -2047,6 +2134,7 @@ function embedContentConfigToMldev$1(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(embedContentConfigToMldev$1, "embedContentConfigToMldev$1");
 function embeddingsBatchJobSourceToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromFileName = getValueByPath(fromObject, ["fileName"]);
@@ -2061,6 +2149,7 @@ function embeddingsBatchJobSourceToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(embeddingsBatchJobSourceToMldev, "embeddingsBatchJobSourceToMldev");
 function fileDataToMldev$4(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["displayName"]) !== void 0) {
@@ -2076,6 +2165,7 @@ function fileDataToMldev$4(fromObject) {
   }
   return toObject;
 }
+__name(fileDataToMldev$4, "fileDataToMldev$4");
 function functionCallToMldev$4(fromObject) {
   const toObject = {};
   const fromId = getValueByPath(fromObject, ["id"]);
@@ -2098,6 +2188,7 @@ function functionCallToMldev$4(fromObject) {
   }
   return toObject;
 }
+__name(functionCallToMldev$4, "functionCallToMldev$4");
 function functionCallingConfigToMldev$2(fromObject) {
   const toObject = {};
   const fromAllowedFunctionNames = getValueByPath(fromObject, [
@@ -2115,6 +2206,7 @@ function functionCallingConfigToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(functionCallingConfigToMldev$2, "functionCallingConfigToMldev$2");
 function generateContentConfigToMldev$1(apiClient, fromObject, parentObject) {
   const toObject = {};
   const fromSystemInstruction = getValueByPath(fromObject, [
@@ -2282,6 +2374,7 @@ function generateContentConfigToMldev$1(apiClient, fromObject, parentObject) {
   }
   return toObject;
 }
+__name(generateContentConfigToMldev$1, "generateContentConfigToMldev$1");
 function generateContentResponseFromMldev$1(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -2326,6 +2419,7 @@ function generateContentResponseFromMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(generateContentResponseFromMldev$1, "generateContentResponseFromMldev$1");
 function getBatchJobParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -2334,6 +2428,7 @@ function getBatchJobParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(getBatchJobParametersToMldev, "getBatchJobParametersToMldev");
 function getBatchJobParametersToVertex(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -2342,6 +2437,7 @@ function getBatchJobParametersToVertex(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(getBatchJobParametersToVertex, "getBatchJobParametersToVertex");
 function googleMapsToMldev$4(fromObject) {
   const toObject = {};
   const fromAuthConfig = getValueByPath(fromObject, ["authConfig"]);
@@ -2354,6 +2450,7 @@ function googleMapsToMldev$4(fromObject) {
   }
   return toObject;
 }
+__name(googleMapsToMldev$4, "googleMapsToMldev$4");
 function googleSearchToMldev$4(fromObject) {
   const toObject = {};
   const fromSearchTypes = getValueByPath(fromObject, ["searchTypes"]);
@@ -2374,6 +2471,7 @@ function googleSearchToMldev$4(fromObject) {
   }
   return toObject;
 }
+__name(googleSearchToMldev$4, "googleSearchToMldev$4");
 function imageConfigToMldev$1(fromObject) {
   const toObject = {};
   const fromAspectRatio = getValueByPath(fromObject, ["aspectRatio"]);
@@ -2401,6 +2499,7 @@ function imageConfigToMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(imageConfigToMldev$1, "imageConfigToMldev$1");
 function inlinedRequestToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -2427,6 +2526,7 @@ function inlinedRequestToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(inlinedRequestToMldev, "inlinedRequestToMldev");
 function inlinedResponseFromMldev(fromObject) {
   const toObject = {};
   const fromResponse = getValueByPath(fromObject, ["response"]);
@@ -2443,6 +2543,7 @@ function inlinedResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(inlinedResponseFromMldev, "inlinedResponseFromMldev");
 function listBatchJobsConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -2458,6 +2559,7 @@ function listBatchJobsConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(listBatchJobsConfigToMldev, "listBatchJobsConfigToMldev");
 function listBatchJobsConfigToVertex(fromObject, parentObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -2474,6 +2576,7 @@ function listBatchJobsConfigToVertex(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(listBatchJobsConfigToVertex, "listBatchJobsConfigToVertex");
 function listBatchJobsParametersToMldev(fromObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -2482,6 +2585,7 @@ function listBatchJobsParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(listBatchJobsParametersToMldev, "listBatchJobsParametersToMldev");
 function listBatchJobsParametersToVertex(fromObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -2490,6 +2594,7 @@ function listBatchJobsParametersToVertex(fromObject) {
   }
   return toObject;
 }
+__name(listBatchJobsParametersToVertex, "listBatchJobsParametersToVertex");
 function listBatchJobsResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -2516,6 +2621,7 @@ function listBatchJobsResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(listBatchJobsResponseFromMldev, "listBatchJobsResponseFromMldev");
 function listBatchJobsResponseFromVertex(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -2544,6 +2650,7 @@ function listBatchJobsResponseFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(listBatchJobsResponseFromVertex, "listBatchJobsResponseFromVertex");
 function partToMldev$4(fromObject) {
   const toObject = {};
   const fromMediaResolution = getValueByPath(fromObject, [
@@ -2616,6 +2723,7 @@ function partToMldev$4(fromObject) {
   }
   return toObject;
 }
+__name(partToMldev$4, "partToMldev$4");
 function safetySettingToMldev$3(fromObject) {
   const toObject = {};
   const fromCategory = getValueByPath(fromObject, ["category"]);
@@ -2631,6 +2739,7 @@ function safetySettingToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(safetySettingToMldev$3, "safetySettingToMldev$3");
 function toolConfigToMldev$2(fromObject) {
   const toObject = {};
   const fromRetrievalConfig = getValueByPath(fromObject, [
@@ -2651,6 +2760,7 @@ function toolConfigToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(toolConfigToMldev$2, "toolConfigToMldev$2");
 function toolToMldev$4(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["retrieval"]) !== void 0) {
@@ -2721,6 +2831,7 @@ function toolToMldev$4(fromObject) {
   }
   return toObject;
 }
+__name(toolToMldev$4, "toolToMldev$4");
 function vertexMultimodalDatasetDestinationFromVertex(fromObject) {
   const toObject = {};
   const fromBigqueryDestination = getValueByPath(fromObject, [
@@ -2736,6 +2847,7 @@ function vertexMultimodalDatasetDestinationFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(vertexMultimodalDatasetDestinationFromVertex, "vertexMultimodalDatasetDestinationFromVertex");
 function vertexMultimodalDatasetDestinationToVertex(fromObject) {
   const toObject = {};
   const fromBigqueryDestination = getValueByPath(fromObject, [
@@ -2750,6 +2862,7 @@ function vertexMultimodalDatasetDestinationToVertex(fromObject) {
   }
   return toObject;
 }
+__name(vertexMultimodalDatasetDestinationToVertex, "vertexMultimodalDatasetDestinationToVertex");
 function authConfigToMldev$3(fromObject) {
   const toObject = {};
   const fromApiKey = getValueByPath(fromObject, ["apiKey"]);
@@ -2776,6 +2889,7 @@ function authConfigToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(authConfigToMldev$3, "authConfigToMldev$3");
 function blobToMldev$3(fromObject) {
   const toObject = {};
   const fromData = getValueByPath(fromObject, ["data"]);
@@ -2791,6 +2905,7 @@ function blobToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(blobToMldev$3, "blobToMldev$3");
 function codeExecutionResultToVertex$3(fromObject) {
   const toObject = {};
   const fromOutcome = getValueByPath(fromObject, ["outcome"]);
@@ -2806,6 +2921,7 @@ function codeExecutionResultToVertex$3(fromObject) {
   }
   return toObject;
 }
+__name(codeExecutionResultToVertex$3, "codeExecutionResultToVertex$3");
 function computerUseToVertex$2(fromObject) {
   const toObject = {};
   const fromEnvironment = getValueByPath(fromObject, ["environment"]);
@@ -2829,6 +2945,7 @@ function computerUseToVertex$2(fromObject) {
   }
   return toObject;
 }
+__name(computerUseToVertex$2, "computerUseToVertex$2");
 function contentToMldev$3(fromObject) {
   const toObject = {};
   const fromParts = getValueByPath(fromObject, ["parts"]);
@@ -2847,6 +2964,7 @@ function contentToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(contentToMldev$3, "contentToMldev$3");
 function contentToVertex$3(fromObject) {
   const toObject = {};
   const fromParts = getValueByPath(fromObject, ["parts"]);
@@ -2865,6 +2983,7 @@ function contentToVertex$3(fromObject) {
   }
   return toObject;
 }
+__name(contentToVertex$3, "contentToVertex$3");
 function createCachedContentConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromTtl = getValueByPath(fromObject, ["ttl"]);
@@ -2914,6 +3033,7 @@ function createCachedContentConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(createCachedContentConfigToMldev, "createCachedContentConfigToMldev");
 function createCachedContentConfigToVertex(fromObject, parentObject) {
   const toObject = {};
   const fromTtl = getValueByPath(fromObject, ["ttl"]);
@@ -2964,6 +3084,7 @@ function createCachedContentConfigToVertex(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(createCachedContentConfigToVertex, "createCachedContentConfigToVertex");
 function createCachedContentParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -2976,6 +3097,7 @@ function createCachedContentParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(createCachedContentParametersToMldev, "createCachedContentParametersToMldev");
 function createCachedContentParametersToVertex(apiClient, fromObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -2988,6 +3110,7 @@ function createCachedContentParametersToVertex(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(createCachedContentParametersToVertex, "createCachedContentParametersToVertex");
 function deleteCachedContentParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -2996,6 +3119,7 @@ function deleteCachedContentParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(deleteCachedContentParametersToMldev, "deleteCachedContentParametersToMldev");
 function deleteCachedContentParametersToVertex(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -3004,6 +3128,7 @@ function deleteCachedContentParametersToVertex(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(deleteCachedContentParametersToVertex, "deleteCachedContentParametersToVertex");
 function deleteCachedContentResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -3014,6 +3139,7 @@ function deleteCachedContentResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(deleteCachedContentResponseFromMldev, "deleteCachedContentResponseFromMldev");
 function deleteCachedContentResponseFromVertex(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -3024,6 +3150,7 @@ function deleteCachedContentResponseFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(deleteCachedContentResponseFromVertex, "deleteCachedContentResponseFromVertex");
 function executableCodeToVertex$3(fromObject) {
   const toObject = {};
   const fromCode = getValueByPath(fromObject, ["code"]);
@@ -3039,6 +3166,7 @@ function executableCodeToVertex$3(fromObject) {
   }
   return toObject;
 }
+__name(executableCodeToVertex$3, "executableCodeToVertex$3");
 function fileDataToMldev$3(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["displayName"]) !== void 0) {
@@ -3054,6 +3182,7 @@ function fileDataToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(fileDataToMldev$3, "fileDataToMldev$3");
 function functionCallToMldev$3(fromObject) {
   const toObject = {};
   const fromId = getValueByPath(fromObject, ["id"]);
@@ -3076,6 +3205,7 @@ function functionCallToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(functionCallToMldev$3, "functionCallToMldev$3");
 function functionCallingConfigToMldev$1(fromObject) {
   const toObject = {};
   const fromAllowedFunctionNames = getValueByPath(fromObject, [
@@ -3093,6 +3223,7 @@ function functionCallingConfigToMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(functionCallingConfigToMldev$1, "functionCallingConfigToMldev$1");
 function getCachedContentParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -3101,6 +3232,7 @@ function getCachedContentParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(getCachedContentParametersToMldev, "getCachedContentParametersToMldev");
 function getCachedContentParametersToVertex(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -3109,6 +3241,7 @@ function getCachedContentParametersToVertex(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(getCachedContentParametersToVertex, "getCachedContentParametersToVertex");
 function googleMapsToMldev$3(fromObject) {
   const toObject = {};
   const fromAuthConfig = getValueByPath(fromObject, ["authConfig"]);
@@ -3121,6 +3254,7 @@ function googleMapsToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(googleMapsToMldev$3, "googleMapsToMldev$3");
 function googleSearchToMldev$3(fromObject) {
   const toObject = {};
   const fromSearchTypes = getValueByPath(fromObject, ["searchTypes"]);
@@ -3141,6 +3275,7 @@ function googleSearchToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(googleSearchToMldev$3, "googleSearchToMldev$3");
 function listCachedContentsConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -3153,6 +3288,7 @@ function listCachedContentsConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(listCachedContentsConfigToMldev, "listCachedContentsConfigToMldev");
 function listCachedContentsConfigToVertex(fromObject, parentObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -3165,6 +3301,7 @@ function listCachedContentsConfigToVertex(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(listCachedContentsConfigToVertex, "listCachedContentsConfigToVertex");
 function listCachedContentsParametersToMldev(fromObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -3173,6 +3310,7 @@ function listCachedContentsParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(listCachedContentsParametersToMldev, "listCachedContentsParametersToMldev");
 function listCachedContentsParametersToVertex(fromObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -3181,6 +3319,7 @@ function listCachedContentsParametersToVertex(fromObject) {
   }
   return toObject;
 }
+__name(listCachedContentsParametersToVertex, "listCachedContentsParametersToVertex");
 function listCachedContentsResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -3209,6 +3348,7 @@ function listCachedContentsResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(listCachedContentsResponseFromMldev, "listCachedContentsResponseFromMldev");
 function listCachedContentsResponseFromVertex(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -3237,6 +3377,7 @@ function listCachedContentsResponseFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(listCachedContentsResponseFromVertex, "listCachedContentsResponseFromVertex");
 function mcpServerToVertex$2(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["name"]) !== void 0) {
@@ -3247,6 +3388,7 @@ function mcpServerToVertex$2(fromObject) {
   }
   return toObject;
 }
+__name(mcpServerToVertex$2, "mcpServerToVertex$2");
 function partToMldev$3(fromObject) {
   const toObject = {};
   const fromMediaResolution = getValueByPath(fromObject, [
@@ -3319,6 +3461,7 @@ function partToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(partToMldev$3, "partToMldev$3");
 function partToVertex$3(fromObject) {
   const toObject = {};
   const fromMediaResolution = getValueByPath(fromObject, [
@@ -3388,6 +3531,7 @@ function partToVertex$3(fromObject) {
   }
   return toObject;
 }
+__name(partToVertex$3, "partToVertex$3");
 function toolConfigToMldev$1(fromObject) {
   const toObject = {};
   const fromRetrievalConfig = getValueByPath(fromObject, [
@@ -3408,6 +3552,7 @@ function toolConfigToMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(toolConfigToMldev$1, "toolConfigToMldev$1");
 function toolConfigToVertex$1(fromObject) {
   const toObject = {};
   const fromRetrievalConfig = getValueByPath(fromObject, [
@@ -3427,6 +3572,7 @@ function toolConfigToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(toolConfigToVertex$1, "toolConfigToVertex$1");
 function toolToMldev$3(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["retrieval"]) !== void 0) {
@@ -3497,6 +3643,7 @@ function toolToMldev$3(fromObject) {
   }
   return toObject;
 }
+__name(toolToMldev$3, "toolToMldev$3");
 function toolToVertex$2(fromObject) {
   const toObject = {};
   const fromRetrieval = getValueByPath(fromObject, ["retrieval"]);
@@ -3574,6 +3721,7 @@ function toolToVertex$2(fromObject) {
   }
   return toObject;
 }
+__name(toolToVertex$2, "toolToVertex$2");
 function updateCachedContentConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromTtl = getValueByPath(fromObject, ["ttl"]);
@@ -3586,6 +3734,7 @@ function updateCachedContentConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(updateCachedContentConfigToMldev, "updateCachedContentConfigToMldev");
 function updateCachedContentConfigToVertex(fromObject, parentObject) {
   const toObject = {};
   const fromTtl = getValueByPath(fromObject, ["ttl"]);
@@ -3598,6 +3747,7 @@ function updateCachedContentConfigToVertex(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(updateCachedContentConfigToVertex, "updateCachedContentConfigToVertex");
 function updateCachedContentParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -3610,6 +3760,7 @@ function updateCachedContentParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(updateCachedContentParametersToMldev, "updateCachedContentParametersToMldev");
 function updateCachedContentParametersToVertex(apiClient, fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -3622,6 +3773,7 @@ function updateCachedContentParametersToVertex(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(updateCachedContentParametersToVertex, "updateCachedContentParametersToVertex");
 function __rest(s, e) {
   var t = {};
   for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
@@ -3633,20 +3785,23 @@ function __rest(s, e) {
     }
   return t;
 }
+__name(__rest, "__rest");
 function __values(o) {
   var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
   if (m) return m.call(o);
   if (o && typeof o.length === "number") return {
-    next: /* @__PURE__ */ __name(function() {
+    next: /* @__PURE__ */ __name2(function() {
       if (o && i >= o.length) o = void 0;
       return { value: o && o[i++], done: !o };
     }, "next")
   };
   throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 }
+__name(__values, "__values");
 function __await(v) {
   return this instanceof __await ? (this.v = v, this) : new __await(v);
 }
+__name(__await, "__await");
 function __asyncGenerator(thisArg, _arguments, generator) {
   if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
   var g = generator.apply(thisArg, _arguments || []), i, q = [];
@@ -3659,6 +3814,7 @@ function __asyncGenerator(thisArg, _arguments, generator) {
     };
   }
   __name(awaitReturn, "awaitReturn");
+  __name2(awaitReturn, "awaitReturn");
   function verb(n, f) {
     if (g[n]) {
       i[n] = function(v) {
@@ -3670,6 +3826,7 @@ function __asyncGenerator(thisArg, _arguments, generator) {
     }
   }
   __name(verb, "verb");
+  __name2(verb, "verb");
   function resume(n, v) {
     try {
       step(g[n](v));
@@ -3678,23 +3835,29 @@ function __asyncGenerator(thisArg, _arguments, generator) {
     }
   }
   __name(resume, "resume");
+  __name2(resume, "resume");
   function step(r) {
     r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);
   }
   __name(step, "step");
+  __name2(step, "step");
   function fulfill(value) {
     resume("next", value);
   }
   __name(fulfill, "fulfill");
+  __name2(fulfill, "fulfill");
   function reject(value) {
     resume("throw", value);
   }
   __name(reject, "reject");
+  __name2(reject, "reject");
   function settle(f, v) {
     if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]);
   }
   __name(settle, "settle");
+  __name2(settle, "settle");
 }
+__name(__asyncGenerator, "__asyncGenerator");
 function __asyncValues(o) {
   if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
   var m = o[Symbol.asyncIterator], i;
@@ -3709,13 +3872,16 @@ function __asyncValues(o) {
     };
   }
   __name(verb, "verb");
+  __name2(verb, "verb");
   function settle(resolve, reject, d, v) {
     Promise.resolve(v).then(function(v2) {
       resolve({ value: v2, done: d });
     }, reject);
   }
   __name(settle, "settle");
+  __name2(settle, "settle");
 }
+__name(__asyncValues, "__asyncValues");
 function isValidResponse(response) {
   var _a2;
   if (response.candidates == void 0 || response.candidates.length === 0) {
@@ -3727,6 +3893,7 @@ function isValidResponse(response) {
   }
   return isValidContent(content);
 }
+__name(isValidResponse, "isValidResponse");
 function isValidContent(content) {
   if (content.parts === void 0 || content.parts.length === 0) {
     return false;
@@ -3738,6 +3905,7 @@ function isValidContent(content) {
   }
   return true;
 }
+__name(isValidContent, "isValidContent");
 function validateHistory(history) {
   if (history.length === 0) {
     return;
@@ -3748,6 +3916,7 @@ function validateHistory(history) {
     }
   }
 }
+__name(validateHistory, "validateHistory");
 function extractCuratedHistory(comprehensiveHistory) {
   if (comprehensiveHistory === void 0 || comprehensiveHistory.length === 0) {
     return [];
@@ -3778,6 +3947,7 @@ function extractCuratedHistory(comprehensiveHistory) {
   }
   return curatedHistory;
 }
+__name(extractCuratedHistory, "extractCuratedHistory");
 function createFileParametersToMldev(fromObject) {
   const toObject = {};
   const fromFile = getValueByPath(fromObject, ["file"]);
@@ -3786,6 +3956,7 @@ function createFileParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(createFileParametersToMldev, "createFileParametersToMldev");
 function createFileResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -3796,6 +3967,7 @@ function createFileResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(createFileResponseFromMldev, "createFileResponseFromMldev");
 function deleteFileParametersToMldev(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -3804,6 +3976,7 @@ function deleteFileParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(deleteFileParametersToMldev, "deleteFileParametersToMldev");
 function deleteFileResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -3814,6 +3987,7 @@ function deleteFileResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(deleteFileResponseFromMldev, "deleteFileResponseFromMldev");
 function getFileParametersToMldev(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -3822,6 +3996,7 @@ function getFileParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(getFileParametersToMldev, "getFileParametersToMldev");
 function internalRegisterFilesParametersToMldev(fromObject) {
   const toObject = {};
   const fromUris = getValueByPath(fromObject, ["uris"]);
@@ -3830,6 +4005,7 @@ function internalRegisterFilesParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(internalRegisterFilesParametersToMldev, "internalRegisterFilesParametersToMldev");
 function listFilesConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -3842,6 +4018,7 @@ function listFilesConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(listFilesConfigToMldev, "listFilesConfigToMldev");
 function listFilesParametersToMldev(fromObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -3850,6 +4027,7 @@ function listFilesParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(listFilesParametersToMldev, "listFilesParametersToMldev");
 function listFilesResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -3876,6 +4054,7 @@ function listFilesResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(listFilesResponseFromMldev, "listFilesResponseFromMldev");
 function registerFilesResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -3896,6 +4075,7 @@ function registerFilesResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(registerFilesResponseFromMldev, "registerFilesResponseFromMldev");
 function audioTranscriptionConfigToMldev$1(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["languageCodes"]) !== void 0) {
@@ -3919,6 +4099,7 @@ function audioTranscriptionConfigToMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(audioTranscriptionConfigToMldev$1, "audioTranscriptionConfigToMldev$1");
 function authConfigToMldev$2(fromObject) {
   const toObject = {};
   const fromApiKey = getValueByPath(fromObject, ["apiKey"]);
@@ -3945,6 +4126,7 @@ function authConfigToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(authConfigToMldev$2, "authConfigToMldev$2");
 function blobToMldev$2(fromObject) {
   const toObject = {};
   const fromData = getValueByPath(fromObject, ["data"]);
@@ -3960,6 +4142,7 @@ function blobToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(blobToMldev$2, "blobToMldev$2");
 function codeExecutionResultToVertex$2(fromObject) {
   const toObject = {};
   const fromOutcome = getValueByPath(fromObject, ["outcome"]);
@@ -3975,6 +4158,7 @@ function codeExecutionResultToVertex$2(fromObject) {
   }
   return toObject;
 }
+__name(codeExecutionResultToVertex$2, "codeExecutionResultToVertex$2");
 function computerUseToVertex$1(fromObject) {
   const toObject = {};
   const fromEnvironment = getValueByPath(fromObject, ["environment"]);
@@ -3998,6 +4182,7 @@ function computerUseToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(computerUseToVertex$1, "computerUseToVertex$1");
 function contentToMldev$2(fromObject) {
   const toObject = {};
   const fromParts = getValueByPath(fromObject, ["parts"]);
@@ -4016,6 +4201,7 @@ function contentToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(contentToMldev$2, "contentToMldev$2");
 function contentToVertex$2(fromObject) {
   const toObject = {};
   const fromParts = getValueByPath(fromObject, ["parts"]);
@@ -4034,6 +4220,7 @@ function contentToVertex$2(fromObject) {
   }
   return toObject;
 }
+__name(contentToVertex$2, "contentToVertex$2");
 function executableCodeToVertex$2(fromObject) {
   const toObject = {};
   const fromCode = getValueByPath(fromObject, ["code"]);
@@ -4049,6 +4236,7 @@ function executableCodeToVertex$2(fromObject) {
   }
   return toObject;
 }
+__name(executableCodeToVertex$2, "executableCodeToVertex$2");
 function fileDataToMldev$2(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["displayName"]) !== void 0) {
@@ -4064,6 +4252,7 @@ function fileDataToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(fileDataToMldev$2, "fileDataToMldev$2");
 function functionCallToMldev$2(fromObject) {
   const toObject = {};
   const fromId = getValueByPath(fromObject, ["id"]);
@@ -4086,6 +4275,7 @@ function functionCallToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(functionCallToMldev$2, "functionCallToMldev$2");
 function generationConfigToVertex$1(fromObject) {
   const toObject = {};
   const fromModelSelectionConfig = getValueByPath(fromObject, [
@@ -4228,6 +4418,7 @@ function generationConfigToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(generationConfigToVertex$1, "generationConfigToVertex$1");
 function googleMapsToMldev$2(fromObject) {
   const toObject = {};
   const fromAuthConfig = getValueByPath(fromObject, ["authConfig"]);
@@ -4240,6 +4431,7 @@ function googleMapsToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(googleMapsToMldev$2, "googleMapsToMldev$2");
 function googleSearchToMldev$2(fromObject) {
   const toObject = {};
   const fromSearchTypes = getValueByPath(fromObject, ["searchTypes"]);
@@ -4260,6 +4452,7 @@ function googleSearchToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(googleSearchToMldev$2, "googleSearchToMldev$2");
 function liveConnectConfigToMldev$1(fromObject, parentObject) {
   const toObject = {};
   const fromGenerationConfig = getValueByPath(fromObject, [
@@ -4395,6 +4588,7 @@ function liveConnectConfigToMldev$1(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(liveConnectConfigToMldev$1, "liveConnectConfigToMldev$1");
 function liveConnectConfigToVertex(fromObject, parentObject) {
   const toObject = {};
   const fromGenerationConfig = getValueByPath(fromObject, [
@@ -4530,6 +4724,7 @@ function liveConnectConfigToVertex(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(liveConnectConfigToVertex, "liveConnectConfigToVertex");
 function liveConnectParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -4542,6 +4737,7 @@ function liveConnectParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(liveConnectParametersToMldev, "liveConnectParametersToMldev");
 function liveConnectParametersToVertex(apiClient, fromObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -4554,6 +4750,7 @@ function liveConnectParametersToVertex(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(liveConnectParametersToVertex, "liveConnectParametersToVertex");
 function liveMusicSetConfigParametersToMldev(fromObject) {
   const toObject = {};
   const fromMusicGenerationConfig = getValueByPath(fromObject, [
@@ -4564,6 +4761,7 @@ function liveMusicSetConfigParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(liveMusicSetConfigParametersToMldev, "liveMusicSetConfigParametersToMldev");
 function liveMusicSetWeightedPromptsParametersToMldev(fromObject) {
   const toObject = {};
   const fromWeightedPrompts = getValueByPath(fromObject, [
@@ -4580,6 +4778,7 @@ function liveMusicSetWeightedPromptsParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(liveMusicSetWeightedPromptsParametersToMldev, "liveMusicSetWeightedPromptsParametersToMldev");
 function liveSendRealtimeInputParametersToMldev(fromObject) {
   const toObject = {};
   const fromMedia = getValueByPath(fromObject, ["media"]);
@@ -4622,6 +4821,7 @@ function liveSendRealtimeInputParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(liveSendRealtimeInputParametersToMldev, "liveSendRealtimeInputParametersToMldev");
 function liveSendRealtimeInputParametersToVertex(fromObject) {
   const toObject = {};
   const fromMedia = getValueByPath(fromObject, ["media"]);
@@ -4664,6 +4864,7 @@ function liveSendRealtimeInputParametersToVertex(fromObject) {
   }
   return toObject;
 }
+__name(liveSendRealtimeInputParametersToVertex, "liveSendRealtimeInputParametersToVertex");
 function liveServerMessageFromVertex(fromObject) {
   const toObject = {};
   const fromSetupComplete = getValueByPath(fromObject, [
@@ -4718,6 +4919,7 @@ function liveServerMessageFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(liveServerMessageFromVertex, "liveServerMessageFromVertex");
 function mcpServerToVertex$1(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["name"]) !== void 0) {
@@ -4728,6 +4930,7 @@ function mcpServerToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(mcpServerToVertex$1, "mcpServerToVertex$1");
 function multiSpeakerVoiceConfigToVertex$1(fromObject) {
   const toObject = {};
   const fromSpeakerVoiceConfigs = getValueByPath(fromObject, [
@@ -4744,6 +4947,7 @@ function multiSpeakerVoiceConfigToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(multiSpeakerVoiceConfigToVertex$1, "multiSpeakerVoiceConfigToVertex$1");
 function partToMldev$2(fromObject) {
   const toObject = {};
   const fromMediaResolution = getValueByPath(fromObject, [
@@ -4816,6 +5020,7 @@ function partToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(partToMldev$2, "partToMldev$2");
 function partToVertex$2(fromObject) {
   const toObject = {};
   const fromMediaResolution = getValueByPath(fromObject, [
@@ -4885,6 +5090,7 @@ function partToVertex$2(fromObject) {
   }
   return toObject;
 }
+__name(partToVertex$2, "partToVertex$2");
 function replicatedVoiceConfigToVertex$1(fromObject) {
   const toObject = {};
   const fromMimeType = getValueByPath(fromObject, ["mimeType"]);
@@ -4905,6 +5111,7 @@ function replicatedVoiceConfigToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(replicatedVoiceConfigToVertex$1, "replicatedVoiceConfigToVertex$1");
 function safetySettingToMldev$2(fromObject) {
   const toObject = {};
   const fromCategory = getValueByPath(fromObject, ["category"]);
@@ -4920,6 +5127,7 @@ function safetySettingToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(safetySettingToMldev$2, "safetySettingToMldev$2");
 function sessionResumptionConfigToMldev$1(fromObject) {
   const toObject = {};
   const fromHandle = getValueByPath(fromObject, ["handle"]);
@@ -4931,6 +5139,7 @@ function sessionResumptionConfigToMldev$1(fromObject) {
   }
   return toObject;
 }
+__name(sessionResumptionConfigToMldev$1, "sessionResumptionConfigToMldev$1");
 function speakerVoiceConfigToVertex$1(fromObject) {
   const toObject = {};
   const fromSpeaker = getValueByPath(fromObject, ["speaker"]);
@@ -4943,6 +5152,7 @@ function speakerVoiceConfigToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(speakerVoiceConfigToVertex$1, "speakerVoiceConfigToVertex$1");
 function speechConfigToVertex$1(fromObject) {
   const toObject = {};
   const fromVoiceConfig = getValueByPath(fromObject, ["voiceConfig"]);
@@ -4961,6 +5171,7 @@ function speechConfigToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(speechConfigToVertex$1, "speechConfigToVertex$1");
 function toolToMldev$2(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["retrieval"]) !== void 0) {
@@ -5031,6 +5242,7 @@ function toolToMldev$2(fromObject) {
   }
   return toObject;
 }
+__name(toolToMldev$2, "toolToMldev$2");
 function toolToVertex$1(fromObject) {
   const toObject = {};
   const fromRetrieval = getValueByPath(fromObject, ["retrieval"]);
@@ -5108,6 +5320,7 @@ function toolToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(toolToVertex$1, "toolToVertex$1");
 function usageMetadataFromVertex(fromObject) {
   const toObject = {};
   const fromPromptTokenCount = getValueByPath(fromObject, [
@@ -5200,6 +5413,7 @@ function usageMetadataFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(usageMetadataFromVertex, "usageMetadataFromVertex");
 function voiceActivityFromVertex(fromObject) {
   const toObject = {};
   const fromVoiceActivityType = getValueByPath(fromObject, ["type"]);
@@ -5212,6 +5426,7 @@ function voiceActivityFromVertex(fromObject) {
   }
   return toObject;
 }
+__name(voiceActivityFromVertex, "voiceActivityFromVertex");
 function voiceConfigToVertex$1(fromObject) {
   const toObject = {};
   const fromReplicatedVoiceConfig = getValueByPath(fromObject, [
@@ -5228,6 +5443,7 @@ function voiceConfigToVertex$1(fromObject) {
   }
   return toObject;
 }
+__name(voiceConfigToVertex$1, "voiceConfigToVertex$1");
 function authConfigToMldev$1(fromObject, _rootObject) {
   const toObject = {};
   const fromApiKey = getValueByPath(fromObject, ["apiKey"]);
@@ -5254,6 +5470,7 @@ function authConfigToMldev$1(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(authConfigToMldev$1, "authConfigToMldev$1");
 function blobToMldev$1(fromObject, _rootObject) {
   const toObject = {};
   const fromData = getValueByPath(fromObject, ["data"]);
@@ -5269,6 +5486,7 @@ function blobToMldev$1(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(blobToMldev$1, "blobToMldev$1");
 function candidateFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromContent = getValueByPath(fromObject, ["content"]);
@@ -5329,6 +5547,7 @@ function candidateFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(candidateFromMldev, "candidateFromMldev");
 function citationMetadataFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromCitations = getValueByPath(fromObject, ["citationSources"]);
@@ -5343,6 +5562,7 @@ function citationMetadataFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(citationMetadataFromMldev, "citationMetadataFromMldev");
 function codeExecutionResultToVertex$1(fromObject, _rootObject) {
   const toObject = {};
   const fromOutcome = getValueByPath(fromObject, ["outcome"]);
@@ -5358,6 +5578,7 @@ function codeExecutionResultToVertex$1(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(codeExecutionResultToVertex$1, "codeExecutionResultToVertex$1");
 function computeTokensParametersToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -5376,6 +5597,7 @@ function computeTokensParametersToVertex(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(computeTokensParametersToVertex, "computeTokensParametersToVertex");
 function computeTokensResponseFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -5396,6 +5618,7 @@ function computeTokensResponseFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(computeTokensResponseFromVertex, "computeTokensResponseFromVertex");
 function computerUseToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromEnvironment = getValueByPath(fromObject, ["environment"]);
@@ -5419,6 +5642,7 @@ function computerUseToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(computerUseToVertex, "computerUseToVertex");
 function contentEmbeddingFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromValues = getValueByPath(fromObject, ["values"]);
@@ -5431,6 +5655,7 @@ function contentEmbeddingFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(contentEmbeddingFromVertex, "contentEmbeddingFromVertex");
 function contentEmbeddingStatisticsFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromTruncated = getValueByPath(fromObject, ["truncated"]);
@@ -5455,6 +5680,7 @@ function contentEmbeddingStatisticsFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(contentEmbeddingStatisticsFromVertex, "contentEmbeddingStatisticsFromVertex");
 function contentToMldev$1(fromObject, rootObject) {
   const toObject = {};
   const fromParts = getValueByPath(fromObject, ["parts"]);
@@ -5473,6 +5699,7 @@ function contentToMldev$1(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(contentToMldev$1, "contentToMldev$1");
 function contentToVertex$1(fromObject, rootObject) {
   const toObject = {};
   const fromParts = getValueByPath(fromObject, ["parts"]);
@@ -5491,6 +5718,7 @@ function contentToVertex$1(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(contentToVertex$1, "contentToVertex$1");
 function controlReferenceConfigToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromControlType = getValueByPath(fromObject, ["controlType"]);
@@ -5505,6 +5733,7 @@ function controlReferenceConfigToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(controlReferenceConfigToVertex, "controlReferenceConfigToVertex");
 function countTokensConfigToMldev(fromObject, _rootObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["systemInstruction"]) !== void 0) {
@@ -5518,6 +5747,7 @@ function countTokensConfigToMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(countTokensConfigToMldev, "countTokensConfigToMldev");
 function countTokensConfigToVertex(fromObject, parentObject, rootObject) {
   const toObject = {};
   const fromSystemInstruction = getValueByPath(fromObject, [
@@ -5544,6 +5774,7 @@ function countTokensConfigToVertex(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(countTokensConfigToVertex, "countTokensConfigToVertex");
 function countTokensParametersToMldev(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -5566,6 +5797,7 @@ function countTokensParametersToMldev(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(countTokensParametersToMldev, "countTokensParametersToMldev");
 function countTokensParametersToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -5588,6 +5820,7 @@ function countTokensParametersToVertex(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(countTokensParametersToVertex, "countTokensParametersToVertex");
 function countTokensResponseFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -5608,6 +5841,7 @@ function countTokensResponseFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(countTokensResponseFromMldev, "countTokensResponseFromMldev");
 function countTokensResponseFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -5622,6 +5856,7 @@ function countTokensResponseFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(countTokensResponseFromVertex, "countTokensResponseFromVertex");
 function deleteModelParametersToMldev(apiClient, fromObject, _rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -5630,6 +5865,7 @@ function deleteModelParametersToMldev(apiClient, fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(deleteModelParametersToMldev, "deleteModelParametersToMldev");
 function deleteModelParametersToVertex(apiClient, fromObject, _rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -5638,6 +5874,7 @@ function deleteModelParametersToVertex(apiClient, fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(deleteModelParametersToVertex, "deleteModelParametersToVertex");
 function deleteModelResponseFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -5648,6 +5885,7 @@ function deleteModelResponseFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(deleteModelResponseFromMldev, "deleteModelResponseFromMldev");
 function deleteModelResponseFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -5658,6 +5896,7 @@ function deleteModelResponseFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(deleteModelResponseFromVertex, "deleteModelResponseFromVertex");
 function editImageConfigToVertex(fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromOutputGcsUri = getValueByPath(fromObject, ["outputGcsUri"]);
@@ -5748,6 +5987,7 @@ function editImageConfigToVertex(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(editImageConfigToVertex, "editImageConfigToVertex");
 function editImageParametersInternalToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -5776,6 +6016,7 @@ function editImageParametersInternalToVertex(apiClient, fromObject, rootObject) 
   }
   return toObject;
 }
+__name(editImageParametersInternalToVertex, "editImageParametersInternalToVertex");
 function editImageResponseFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -5798,6 +6039,7 @@ function editImageResponseFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(editImageResponseFromVertex, "editImageResponseFromVertex");
 function embedContentConfigToMldev(fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromTaskType = getValueByPath(fromObject, ["taskType"]);
@@ -5828,6 +6070,7 @@ function embedContentConfigToMldev(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(embedContentConfigToMldev, "embedContentConfigToMldev");
 function embedContentConfigToVertex(fromObject, parentObject, rootObject) {
   const toObject = {};
   let discriminatorTaskType = getValueByPath(rootObject, [
@@ -5946,6 +6189,7 @@ function embedContentConfigToVertex(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(embedContentConfigToVertex, "embedContentConfigToVertex");
 function embedContentParametersPrivateToMldev(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -5976,6 +6220,7 @@ function embedContentParametersPrivateToMldev(apiClient, fromObject, rootObject)
   }
   return toObject;
 }
+__name(embedContentParametersPrivateToMldev, "embedContentParametersPrivateToMldev");
 function embedContentParametersPrivateToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -6018,6 +6263,7 @@ function embedContentParametersPrivateToVertex(apiClient, fromObject, rootObject
   }
   return toObject;
 }
+__name(embedContentParametersPrivateToVertex, "embedContentParametersPrivateToVertex");
 function embedContentResponseFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -6042,6 +6288,7 @@ function embedContentResponseFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(embedContentResponseFromMldev, "embedContentResponseFromMldev");
 function embedContentResponseFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -6088,6 +6335,7 @@ function embedContentResponseFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(embedContentResponseFromVertex, "embedContentResponseFromVertex");
 function endpointFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["endpoint"]);
@@ -6102,6 +6350,7 @@ function endpointFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(endpointFromVertex, "endpointFromVertex");
 function executableCodeToVertex$1(fromObject, _rootObject) {
   const toObject = {};
   const fromCode = getValueByPath(fromObject, ["code"]);
@@ -6117,6 +6366,7 @@ function executableCodeToVertex$1(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(executableCodeToVertex$1, "executableCodeToVertex$1");
 function fileDataToMldev$1(fromObject, _rootObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["displayName"]) !== void 0) {
@@ -6132,6 +6382,7 @@ function fileDataToMldev$1(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(fileDataToMldev$1, "fileDataToMldev$1");
 function functionCallToMldev$1(fromObject, _rootObject) {
   const toObject = {};
   const fromId = getValueByPath(fromObject, ["id"]);
@@ -6154,6 +6405,7 @@ function functionCallToMldev$1(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(functionCallToMldev$1, "functionCallToMldev$1");
 function functionCallingConfigToMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromAllowedFunctionNames = getValueByPath(fromObject, [
@@ -6171,6 +6423,7 @@ function functionCallingConfigToMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(functionCallingConfigToMldev, "functionCallingConfigToMldev");
 function generateContentConfigToMldev(apiClient, fromObject, parentObject, rootObject) {
   const toObject = {};
   const fromSystemInstruction = getValueByPath(fromObject, [
@@ -6338,6 +6591,7 @@ function generateContentConfigToMldev(apiClient, fromObject, parentObject, rootO
   }
   return toObject;
 }
+__name(generateContentConfigToMldev, "generateContentConfigToMldev");
 function generateContentConfigToVertex(apiClient, fromObject, parentObject, rootObject) {
   const toObject = {};
   const fromSystemInstruction = getValueByPath(fromObject, [
@@ -6515,6 +6769,7 @@ function generateContentConfigToVertex(apiClient, fromObject, parentObject, root
   }
   return toObject;
 }
+__name(generateContentConfigToVertex, "generateContentConfigToVertex");
 function generateContentParametersToMldev(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -6537,6 +6792,7 @@ function generateContentParametersToMldev(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateContentParametersToMldev, "generateContentParametersToMldev");
 function generateContentParametersToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -6559,6 +6815,7 @@ function generateContentParametersToVertex(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateContentParametersToVertex, "generateContentParametersToVertex");
 function generateContentResponseFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -6603,6 +6860,7 @@ function generateContentResponseFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateContentResponseFromMldev, "generateContentResponseFromMldev");
 function generateContentResponseFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -6647,6 +6905,7 @@ function generateContentResponseFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(generateContentResponseFromVertex, "generateContentResponseFromVertex");
 function generateImagesConfigToMldev(fromObject, parentObject, _rootObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["outputGcsUri"]) !== void 0) {
@@ -6729,6 +6988,7 @@ function generateImagesConfigToMldev(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(generateImagesConfigToMldev, "generateImagesConfigToMldev");
 function generateImagesConfigToVertex(fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromOutputGcsUri = getValueByPath(fromObject, ["outputGcsUri"]);
@@ -6821,6 +7081,7 @@ function generateImagesConfigToVertex(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(generateImagesConfigToVertex, "generateImagesConfigToVertex");
 function generateImagesParametersToMldev(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -6837,6 +7098,7 @@ function generateImagesParametersToMldev(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateImagesParametersToMldev, "generateImagesParametersToMldev");
 function generateImagesParametersToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -6853,6 +7115,7 @@ function generateImagesParametersToVertex(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateImagesParametersToVertex, "generateImagesParametersToVertex");
 function generateImagesResponseFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -6881,6 +7144,7 @@ function generateImagesResponseFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateImagesResponseFromMldev, "generateImagesResponseFromMldev");
 function generateImagesResponseFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -6909,6 +7173,7 @@ function generateImagesResponseFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateImagesResponseFromVertex, "generateImagesResponseFromVertex");
 function generateVideosConfigToMldev(fromObject, parentObject, rootObject) {
   const toObject = {};
   const fromNumberOfVideos = getValueByPath(fromObject, [
@@ -7000,6 +7265,7 @@ function generateVideosConfigToMldev(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosConfigToMldev, "generateVideosConfigToMldev");
 function generateVideosConfigToVertex(fromObject, parentObject, rootObject) {
   const toObject = {};
   const fromNumberOfVideos = getValueByPath(fromObject, [
@@ -7101,6 +7367,7 @@ function generateVideosConfigToVertex(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosConfigToVertex, "generateVideosConfigToVertex");
 function generateVideosOperationFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -7128,6 +7395,7 @@ function generateVideosOperationFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosOperationFromMldev, "generateVideosOperationFromMldev");
 function generateVideosOperationFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -7152,6 +7420,7 @@ function generateVideosOperationFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosOperationFromVertex, "generateVideosOperationFromVertex");
 function generateVideosParametersToMldev(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -7180,6 +7449,7 @@ function generateVideosParametersToMldev(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosParametersToMldev, "generateVideosParametersToMldev");
 function generateVideosParametersToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -7208,6 +7478,7 @@ function generateVideosParametersToVertex(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosParametersToVertex, "generateVideosParametersToVertex");
 function generateVideosResponseFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromGeneratedVideos = getValueByPath(fromObject, [
@@ -7236,6 +7507,7 @@ function generateVideosResponseFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosResponseFromMldev, "generateVideosResponseFromMldev");
 function generateVideosResponseFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromGeneratedVideos = getValueByPath(fromObject, ["videos"]);
@@ -7262,6 +7534,7 @@ function generateVideosResponseFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosResponseFromVertex, "generateVideosResponseFromVertex");
 function generateVideosSourceToMldev(fromObject, parentObject, rootObject) {
   const toObject = {};
   const fromPrompt = getValueByPath(fromObject, ["prompt"]);
@@ -7278,6 +7551,7 @@ function generateVideosSourceToMldev(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosSourceToMldev, "generateVideosSourceToMldev");
 function generateVideosSourceToVertex(fromObject, parentObject, rootObject) {
   const toObject = {};
   const fromPrompt = getValueByPath(fromObject, ["prompt"]);
@@ -7294,6 +7568,7 @@ function generateVideosSourceToVertex(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(generateVideosSourceToVertex, "generateVideosSourceToVertex");
 function generatedImageFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromImage = getValueByPath(fromObject, ["_self"]);
@@ -7312,6 +7587,7 @@ function generatedImageFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generatedImageFromMldev, "generatedImageFromMldev");
 function generatedImageFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromImage = getValueByPath(fromObject, ["_self"]);
@@ -7334,6 +7610,7 @@ function generatedImageFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generatedImageFromVertex, "generatedImageFromVertex");
 function generatedImageMaskFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromMask = getValueByPath(fromObject, ["_self"]);
@@ -7352,6 +7629,7 @@ function generatedImageMaskFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generatedImageMaskFromVertex, "generatedImageMaskFromVertex");
 function generatedVideoFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromVideo = getValueByPath(fromObject, ["video"]);
@@ -7360,6 +7638,7 @@ function generatedVideoFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generatedVideoFromMldev, "generatedVideoFromMldev");
 function generatedVideoFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromVideo = getValueByPath(fromObject, ["_self"]);
@@ -7368,6 +7647,7 @@ function generatedVideoFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generatedVideoFromVertex, "generatedVideoFromVertex");
 function generationConfigToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromModelSelectionConfig = getValueByPath(fromObject, [
@@ -7510,6 +7790,7 @@ function generationConfigToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(generationConfigToVertex, "generationConfigToVertex");
 function getModelParametersToMldev(apiClient, fromObject, _rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -7518,6 +7799,7 @@ function getModelParametersToMldev(apiClient, fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(getModelParametersToMldev, "getModelParametersToMldev");
 function getModelParametersToVertex(apiClient, fromObject, _rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -7526,6 +7808,7 @@ function getModelParametersToVertex(apiClient, fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(getModelParametersToVertex, "getModelParametersToVertex");
 function googleMapsToMldev$1(fromObject, rootObject) {
   const toObject = {};
   const fromAuthConfig = getValueByPath(fromObject, ["authConfig"]);
@@ -7538,6 +7821,7 @@ function googleMapsToMldev$1(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(googleMapsToMldev$1, "googleMapsToMldev$1");
 function googleSearchToMldev$1(fromObject, _rootObject) {
   const toObject = {};
   const fromSearchTypes = getValueByPath(fromObject, ["searchTypes"]);
@@ -7558,6 +7842,7 @@ function googleSearchToMldev$1(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(googleSearchToMldev$1, "googleSearchToMldev$1");
 function imageConfigToMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromAspectRatio = getValueByPath(fromObject, ["aspectRatio"]);
@@ -7585,6 +7870,7 @@ function imageConfigToMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(imageConfigToMldev, "imageConfigToMldev");
 function imageConfigToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromAspectRatio = getValueByPath(fromObject, ["aspectRatio"]);
@@ -7627,6 +7913,7 @@ function imageConfigToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(imageConfigToVertex, "imageConfigToVertex");
 function imageFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromImageBytes = getValueByPath(fromObject, [
@@ -7641,6 +7928,7 @@ function imageFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(imageFromMldev, "imageFromMldev");
 function imageFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromGcsUri = getValueByPath(fromObject, ["gcsUri"]);
@@ -7659,6 +7947,7 @@ function imageFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(imageFromVertex, "imageFromVertex");
 function imageToMldev(fromObject, _rootObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["gcsUri"]) !== void 0) {
@@ -7674,6 +7963,7 @@ function imageToMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(imageToMldev, "imageToMldev");
 function imageToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromGcsUri = getValueByPath(fromObject, ["gcsUri"]);
@@ -7690,6 +7980,7 @@ function imageToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(imageToVertex, "imageToVertex");
 function listModelsConfigToMldev(apiClient, fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -7710,6 +8001,7 @@ function listModelsConfigToMldev(apiClient, fromObject, parentObject, _rootObjec
   }
   return toObject;
 }
+__name(listModelsConfigToMldev, "listModelsConfigToMldev");
 function listModelsConfigToVertex(apiClient, fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -7730,6 +8022,7 @@ function listModelsConfigToVertex(apiClient, fromObject, parentObject, _rootObje
   }
   return toObject;
 }
+__name(listModelsConfigToVertex, "listModelsConfigToVertex");
 function listModelsParametersToMldev(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -7738,6 +8031,7 @@ function listModelsParametersToMldev(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(listModelsParametersToMldev, "listModelsParametersToMldev");
 function listModelsParametersToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -7746,6 +8040,7 @@ function listModelsParametersToVertex(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(listModelsParametersToVertex, "listModelsParametersToVertex");
 function listModelsResponseFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -7772,6 +8067,7 @@ function listModelsResponseFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(listModelsResponseFromMldev, "listModelsResponseFromMldev");
 function listModelsResponseFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -7798,6 +8094,7 @@ function listModelsResponseFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(listModelsResponseFromVertex, "listModelsResponseFromVertex");
 function maskReferenceConfigToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromMaskMode = getValueByPath(fromObject, ["maskMode"]);
@@ -7816,6 +8113,7 @@ function maskReferenceConfigToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(maskReferenceConfigToVertex, "maskReferenceConfigToVertex");
 function mcpServerToVertex(fromObject, _rootObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["name"]) !== void 0) {
@@ -7826,6 +8124,7 @@ function mcpServerToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(mcpServerToVertex, "mcpServerToVertex");
 function modelFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -7890,6 +8189,7 @@ function modelFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(modelFromMldev, "modelFromMldev");
 function modelFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -7944,6 +8244,7 @@ function modelFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(modelFromVertex, "modelFromVertex");
 function multiSpeakerVoiceConfigToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromSpeakerVoiceConfigs = getValueByPath(fromObject, [
@@ -7960,6 +8261,7 @@ function multiSpeakerVoiceConfigToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(multiSpeakerVoiceConfigToVertex, "multiSpeakerVoiceConfigToVertex");
 function partToMldev$1(fromObject, rootObject) {
   const toObject = {};
   const fromMediaResolution = getValueByPath(fromObject, [
@@ -8032,6 +8334,7 @@ function partToMldev$1(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(partToMldev$1, "partToMldev$1");
 function partToVertex$1(fromObject, rootObject) {
   const toObject = {};
   const fromMediaResolution = getValueByPath(fromObject, [
@@ -8101,6 +8404,7 @@ function partToVertex$1(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(partToVertex$1, "partToVertex$1");
 function productImageToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromProductImage = getValueByPath(fromObject, ["productImage"]);
@@ -8109,6 +8413,7 @@ function productImageToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(productImageToVertex, "productImageToVertex");
 function recontextImageConfigToVertex(fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromNumberOfImages = getValueByPath(fromObject, [
@@ -8169,6 +8474,7 @@ function recontextImageConfigToVertex(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(recontextImageConfigToVertex, "recontextImageConfigToVertex");
 function recontextImageParametersToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -8185,6 +8491,7 @@ function recontextImageParametersToVertex(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(recontextImageParametersToVertex, "recontextImageParametersToVertex");
 function recontextImageResponseFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromGeneratedImages = getValueByPath(fromObject, [
@@ -8201,6 +8508,7 @@ function recontextImageResponseFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(recontextImageResponseFromVertex, "recontextImageResponseFromVertex");
 function recontextImageSourceToVertex(fromObject, parentObject, rootObject) {
   const toObject = {};
   const fromPrompt = getValueByPath(fromObject, ["prompt"]);
@@ -8225,6 +8533,7 @@ function recontextImageSourceToVertex(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(recontextImageSourceToVertex, "recontextImageSourceToVertex");
 function referenceImageAPIInternalToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromReferenceImage = getValueByPath(fromObject, [
@@ -8269,6 +8578,7 @@ function referenceImageAPIInternalToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(referenceImageAPIInternalToVertex, "referenceImageAPIInternalToVertex");
 function replicatedVoiceConfigToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromMimeType = getValueByPath(fromObject, ["mimeType"]);
@@ -8289,6 +8599,7 @@ function replicatedVoiceConfigToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(replicatedVoiceConfigToVertex, "replicatedVoiceConfigToVertex");
 function safetyAttributesFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromCategories = getValueByPath(fromObject, [
@@ -8311,6 +8622,7 @@ function safetyAttributesFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(safetyAttributesFromMldev, "safetyAttributesFromMldev");
 function safetyAttributesFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromCategories = getValueByPath(fromObject, [
@@ -8333,6 +8645,7 @@ function safetyAttributesFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(safetyAttributesFromVertex, "safetyAttributesFromVertex");
 function safetySettingToMldev$1(fromObject, _rootObject) {
   const toObject = {};
   const fromCategory = getValueByPath(fromObject, ["category"]);
@@ -8348,6 +8661,7 @@ function safetySettingToMldev$1(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(safetySettingToMldev$1, "safetySettingToMldev$1");
 function scribbleImageToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromImage = getValueByPath(fromObject, ["image"]);
@@ -8356,6 +8670,7 @@ function scribbleImageToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(scribbleImageToVertex, "scribbleImageToVertex");
 function segmentImageConfigToVertex(fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromMode = getValueByPath(fromObject, ["mode"]);
@@ -8390,6 +8705,7 @@ function segmentImageConfigToVertex(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(segmentImageConfigToVertex, "segmentImageConfigToVertex");
 function segmentImageParametersToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -8406,6 +8722,7 @@ function segmentImageParametersToVertex(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(segmentImageParametersToVertex, "segmentImageParametersToVertex");
 function segmentImageResponseFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromGeneratedMasks = getValueByPath(fromObject, ["predictions"]);
@@ -8420,6 +8737,7 @@ function segmentImageResponseFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(segmentImageResponseFromVertex, "segmentImageResponseFromVertex");
 function segmentImageSourceToVertex(fromObject, parentObject, rootObject) {
   const toObject = {};
   const fromPrompt = getValueByPath(fromObject, ["prompt"]);
@@ -8438,6 +8756,7 @@ function segmentImageSourceToVertex(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(segmentImageSourceToVertex, "segmentImageSourceToVertex");
 function speakerVoiceConfigToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromSpeaker = getValueByPath(fromObject, ["speaker"]);
@@ -8450,6 +8769,7 @@ function speakerVoiceConfigToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(speakerVoiceConfigToVertex, "speakerVoiceConfigToVertex");
 function speechConfigToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromVoiceConfig = getValueByPath(fromObject, ["voiceConfig"]);
@@ -8468,6 +8788,7 @@ function speechConfigToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(speechConfigToVertex, "speechConfigToVertex");
 function toolConfigToMldev(fromObject, rootObject) {
   const toObject = {};
   const fromRetrievalConfig = getValueByPath(fromObject, [
@@ -8488,6 +8809,7 @@ function toolConfigToMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(toolConfigToMldev, "toolConfigToMldev");
 function toolConfigToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromRetrievalConfig = getValueByPath(fromObject, [
@@ -8507,6 +8829,7 @@ function toolConfigToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(toolConfigToVertex, "toolConfigToVertex");
 function toolToMldev$1(fromObject, rootObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["retrieval"]) !== void 0) {
@@ -8577,6 +8900,7 @@ function toolToMldev$1(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(toolToMldev$1, "toolToMldev$1");
 function toolToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromRetrieval = getValueByPath(fromObject, ["retrieval"]);
@@ -8654,6 +8978,7 @@ function toolToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(toolToVertex, "toolToVertex");
 function tunedModelInfoFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromBaseModel = getValueByPath(fromObject, ["baseModel"]);
@@ -8670,6 +8995,7 @@ function tunedModelInfoFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(tunedModelInfoFromMldev, "tunedModelInfoFromMldev");
 function tunedModelInfoFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromBaseModel = getValueByPath(fromObject, [
@@ -8689,6 +9015,7 @@ function tunedModelInfoFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(tunedModelInfoFromVertex, "tunedModelInfoFromVertex");
 function updateModelConfigToMldev(fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromDisplayName = getValueByPath(fromObject, ["displayName"]);
@@ -8707,6 +9034,7 @@ function updateModelConfigToMldev(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(updateModelConfigToMldev, "updateModelConfigToMldev");
 function updateModelConfigToVertex(fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromDisplayName = getValueByPath(fromObject, ["displayName"]);
@@ -8725,6 +9053,7 @@ function updateModelConfigToVertex(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(updateModelConfigToVertex, "updateModelConfigToVertex");
 function updateModelParametersToMldev(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -8737,6 +9066,7 @@ function updateModelParametersToMldev(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(updateModelParametersToMldev, "updateModelParametersToMldev");
 function updateModelParametersToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -8749,6 +9079,7 @@ function updateModelParametersToVertex(apiClient, fromObject, rootObject) {
   }
   return toObject;
 }
+__name(updateModelParametersToVertex, "updateModelParametersToVertex");
 function upscaleImageAPIConfigInternalToVertex(fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromOutputGcsUri = getValueByPath(fromObject, ["outputGcsUri"]);
@@ -8813,6 +9144,7 @@ function upscaleImageAPIConfigInternalToVertex(fromObject, parentObject, _rootOb
   }
   return toObject;
 }
+__name(upscaleImageAPIConfigInternalToVertex, "upscaleImageAPIConfigInternalToVertex");
 function upscaleImageAPIParametersInternalToVertex(apiClient, fromObject, rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -8835,6 +9167,7 @@ function upscaleImageAPIParametersInternalToVertex(apiClient, fromObject, rootOb
   }
   return toObject;
 }
+__name(upscaleImageAPIParametersInternalToVertex, "upscaleImageAPIParametersInternalToVertex");
 function upscaleImageResponseFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -8857,6 +9190,7 @@ function upscaleImageResponseFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(upscaleImageResponseFromVertex, "upscaleImageResponseFromVertex");
 function videoFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromUri = getValueByPath(fromObject, ["uri"]);
@@ -8873,6 +9207,7 @@ function videoFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(videoFromMldev, "videoFromMldev");
 function videoFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromUri = getValueByPath(fromObject, ["gcsUri"]);
@@ -8891,6 +9226,7 @@ function videoFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(videoFromVertex, "videoFromVertex");
 function videoGenerationMaskToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromImage = getValueByPath(fromObject, ["image"]);
@@ -8903,6 +9239,7 @@ function videoGenerationMaskToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(videoGenerationMaskToVertex, "videoGenerationMaskToVertex");
 function videoGenerationReferenceImageToMldev(fromObject, rootObject) {
   const toObject = {};
   const fromImage = getValueByPath(fromObject, ["image"]);
@@ -8917,6 +9254,7 @@ function videoGenerationReferenceImageToMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(videoGenerationReferenceImageToMldev, "videoGenerationReferenceImageToMldev");
 function videoGenerationReferenceImageToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromImage = getValueByPath(fromObject, ["image"]);
@@ -8931,6 +9269,7 @@ function videoGenerationReferenceImageToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(videoGenerationReferenceImageToVertex, "videoGenerationReferenceImageToVertex");
 function videoToMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromUri = getValueByPath(fromObject, ["uri"]);
@@ -8947,6 +9286,7 @@ function videoToMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(videoToMldev, "videoToMldev");
 function videoToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromUri = getValueByPath(fromObject, ["uri"]);
@@ -8963,6 +9303,7 @@ function videoToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(videoToVertex, "videoToVertex");
 function voiceConfigToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromReplicatedVoiceConfig = getValueByPath(fromObject, [
@@ -8979,6 +9320,7 @@ function voiceConfigToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(voiceConfigToVertex, "voiceConfigToVertex");
 function createFileSearchStoreConfigToMldev(apiClient, fromObject, parentObject) {
   const toObject = {};
   const fromDisplayName = getValueByPath(fromObject, ["displayName"]);
@@ -8993,6 +9335,7 @@ function createFileSearchStoreConfigToMldev(apiClient, fromObject, parentObject)
   }
   return toObject;
 }
+__name(createFileSearchStoreConfigToMldev, "createFileSearchStoreConfigToMldev");
 function createFileSearchStoreParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -9001,6 +9344,7 @@ function createFileSearchStoreParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(createFileSearchStoreParametersToMldev, "createFileSearchStoreParametersToMldev");
 function deleteFileSearchStoreConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromForce = getValueByPath(fromObject, ["force"]);
@@ -9009,6 +9353,7 @@ function deleteFileSearchStoreConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(deleteFileSearchStoreConfigToMldev, "deleteFileSearchStoreConfigToMldev");
 function deleteFileSearchStoreParametersToMldev(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -9021,6 +9366,7 @@ function deleteFileSearchStoreParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(deleteFileSearchStoreParametersToMldev, "deleteFileSearchStoreParametersToMldev");
 function getFileSearchStoreParametersToMldev(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -9029,6 +9375,7 @@ function getFileSearchStoreParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(getFileSearchStoreParametersToMldev, "getFileSearchStoreParametersToMldev");
 function importFileConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromCustomMetadata = getValueByPath(fromObject, [
@@ -9051,6 +9398,7 @@ function importFileConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(importFileConfigToMldev, "importFileConfigToMldev");
 function importFileOperationFromMldev(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -9075,6 +9423,7 @@ function importFileOperationFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(importFileOperationFromMldev, "importFileOperationFromMldev");
 function importFileParametersToMldev(fromObject) {
   const toObject = {};
   const fromFileSearchStoreName = getValueByPath(fromObject, [
@@ -9093,6 +9442,7 @@ function importFileParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(importFileParametersToMldev, "importFileParametersToMldev");
 function importFileResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -9111,6 +9461,7 @@ function importFileResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(importFileResponseFromMldev, "importFileResponseFromMldev");
 function listFileSearchStoresConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -9123,6 +9474,7 @@ function listFileSearchStoresConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(listFileSearchStoresConfigToMldev, "listFileSearchStoresConfigToMldev");
 function listFileSearchStoresParametersToMldev(fromObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -9131,6 +9483,7 @@ function listFileSearchStoresParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(listFileSearchStoresParametersToMldev, "listFileSearchStoresParametersToMldev");
 function listFileSearchStoresResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -9159,6 +9512,7 @@ function listFileSearchStoresResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(listFileSearchStoresResponseFromMldev, "listFileSearchStoresResponseFromMldev");
 function uploadToFileSearchStoreConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromMimeType = getValueByPath(fromObject, ["mimeType"]);
@@ -9189,6 +9543,7 @@ function uploadToFileSearchStoreConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(uploadToFileSearchStoreConfigToMldev, "uploadToFileSearchStoreConfigToMldev");
 function uploadToFileSearchStoreParametersToMldev(fromObject) {
   const toObject = {};
   const fromFileSearchStoreName = getValueByPath(fromObject, [
@@ -9203,6 +9558,7 @@ function uploadToFileSearchStoreParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(uploadToFileSearchStoreParametersToMldev, "uploadToFileSearchStoreParametersToMldev");
 function uploadToFileSearchStoreResumableResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -9213,6 +9569,7 @@ function uploadToFileSearchStoreResumableResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(uploadToFileSearchStoreResumableResponseFromMldev, "uploadToFileSearchStoreResumableResponseFromMldev");
 async function throwErrorIfNotOK(response) {
   var _a2;
   if (response === void 0) {
@@ -9243,6 +9600,7 @@ async function throwErrorIfNotOK(response) {
     throw new Error(errorMessage);
   }
 }
+__name(throwErrorIfNotOK, "throwErrorIfNotOK");
 function includeExtraBodyToRequestInit(requestInit, extraBody) {
   if (!extraBody || Object.keys(extraBody).length === 0) {
     return;
@@ -9285,9 +9643,11 @@ function includeExtraBodyToRequestInit(requestInit, extraBody) {
     return output;
   }
   __name(deepMerge, "deepMerge");
+  __name2(deepMerge, "deepMerge");
   const mergedBody = deepMerge(currentBodyObject, extraBody);
   requestInit.body = JSON.stringify(mergedBody);
 }
+__name(includeExtraBodyToRequestInit, "includeExtraBodyToRequestInit");
 function hasMcpToolUsage(tools) {
   for (const tool of tools) {
     if (isMcpCallableTool(tool)) {
@@ -9299,16 +9659,19 @@ function hasMcpToolUsage(tools) {
   }
   return hasMcpToolUsageFromMcpToTool;
 }
+__name(hasMcpToolUsage, "hasMcpToolUsage");
 function setMcpUsageHeader(headers) {
   var _a2;
   const existingHeader = (_a2 = headers[GOOGLE_API_CLIENT_HEADER]) !== null && _a2 !== void 0 ? _a2 : "";
   headers[GOOGLE_API_CLIENT_HEADER] = (existingHeader + ` ${MCP_LABEL}`).trimStart();
 }
+__name(setMcpUsageHeader, "setMcpUsageHeader");
 function isMcpCallableTool(object) {
   return object !== null && typeof object === "object" && object instanceof McpCallableTool;
 }
+__name(isMcpCallableTool, "isMcpCallableTool");
 function listAllTools(mcpClient_1) {
-  return __asyncGenerator(this, arguments, /* @__PURE__ */ __name(function* listAllTools_1(mcpClient, maxTools = 100) {
+  return __asyncGenerator(this, arguments, /* @__PURE__ */ __name2(/* @__PURE__ */ __name(function* listAllTools_1(mcpClient, maxTools = 100) {
     let cursor = void 0;
     let numTools = 0;
     while (numTools < maxTools) {
@@ -9322,8 +9685,9 @@ function listAllTools(mcpClient_1) {
       }
       cursor = t.nextCursor;
     }
-  }, "listAllTools_1"));
+  }, "listAllTools_1"), "listAllTools_1"));
 }
+__name(listAllTools, "listAllTools");
 async function handleWebSocketMessage$1(apiClient, onmessage, event) {
   const serverMessage = new LiveMusicServerMessage();
   let data;
@@ -9335,6 +9699,7 @@ async function handleWebSocketMessage$1(apiClient, onmessage, event) {
   Object.assign(serverMessage, data);
   onmessage(serverMessage);
 }
+__name(handleWebSocketMessage$1, "handleWebSocketMessage$1");
 function headersToMap$1(headers) {
   const headerMap = {};
   headers.forEach((value, key) => {
@@ -9342,6 +9707,7 @@ function headersToMap$1(headers) {
   });
   return headerMap;
 }
+__name(headersToMap$1, "headersToMap$1");
 function mapToHeaders$1(map) {
   const headers = new Headers();
   for (const [key, value] of Object.entries(map)) {
@@ -9349,6 +9715,7 @@ function mapToHeaders$1(map) {
   }
   return headers;
 }
+__name(mapToHeaders$1, "mapToHeaders$1");
 async function handleWebSocketMessage(apiClient, onmessage, event) {
   const serverMessage = new LiveServerMessage();
   let jsonData;
@@ -9369,6 +9736,7 @@ async function handleWebSocketMessage(apiClient, onmessage, event) {
   }
   onmessage(serverMessage);
 }
+__name(handleWebSocketMessage, "handleWebSocketMessage");
 function headersToMap(headers) {
   const headerMap = {};
   headers.forEach((value, key) => {
@@ -9376,6 +9744,7 @@ function headersToMap(headers) {
   });
   return headerMap;
 }
+__name(headersToMap, "headersToMap");
 function mapToHeaders(map) {
   const headers = new Headers();
   for (const [key, value] of Object.entries(map)) {
@@ -9383,6 +9752,7 @@ function mapToHeaders(map) {
   }
   return headers;
 }
+__name(mapToHeaders, "mapToHeaders");
 function shouldDisableAfc(config) {
   var _a2, _b, _c;
   if ((_a2 = config === null || config === void 0 ? void 0 : config.automaticFunctionCalling) === null || _a2 === void 0 ? void 0 : _a2.disable) {
@@ -9405,13 +9775,16 @@ function shouldDisableAfc(config) {
   }
   return false;
 }
+__name(shouldDisableAfc, "shouldDisableAfc");
 function isCallableTool(tool) {
   return "callTool" in tool && typeof tool.callTool === "function";
 }
+__name(isCallableTool, "isCallableTool");
 function hasCallableTools(params) {
   var _a2, _b, _c;
   return (_c = (_b = (_a2 = params.config) === null || _a2 === void 0 ? void 0 : _a2.tools) === null || _b === void 0 ? void 0 : _b.some((tool) => isCallableTool(tool))) !== null && _c !== void 0 ? _c : false;
 }
+__name(hasCallableTools, "hasCallableTools");
 function findAfcIncompatibleToolIndexes(params) {
   var _a2;
   const afcIncompatibleToolIndexes = [];
@@ -9429,10 +9802,12 @@ function findAfcIncompatibleToolIndexes(params) {
   });
   return afcIncompatibleToolIndexes;
 }
+__name(findAfcIncompatibleToolIndexes, "findAfcIncompatibleToolIndexes");
 function shouldAppendAfcHistory(config) {
   var _a2;
   return !((_a2 = config === null || config === void 0 ? void 0 : config.automaticFunctionCalling) === null || _a2 === void 0 ? void 0 : _a2.ignoreCallHistory);
 }
+__name(shouldAppendAfcHistory, "shouldAppendAfcHistory");
 function audioTranscriptionConfigToMldev(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["languageCodes"]) !== void 0) {
@@ -9456,6 +9831,7 @@ function audioTranscriptionConfigToMldev(fromObject) {
   }
   return toObject;
 }
+__name(audioTranscriptionConfigToMldev, "audioTranscriptionConfigToMldev");
 function authConfigToMldev(fromObject) {
   const toObject = {};
   const fromApiKey = getValueByPath(fromObject, ["apiKey"]);
@@ -9482,6 +9858,7 @@ function authConfigToMldev(fromObject) {
   }
   return toObject;
 }
+__name(authConfigToMldev, "authConfigToMldev");
 function blobToMldev(fromObject) {
   const toObject = {};
   const fromData = getValueByPath(fromObject, ["data"]);
@@ -9497,6 +9874,7 @@ function blobToMldev(fromObject) {
   }
   return toObject;
 }
+__name(blobToMldev, "blobToMldev");
 function contentToMldev(fromObject) {
   const toObject = {};
   const fromParts = getValueByPath(fromObject, ["parts"]);
@@ -9515,6 +9893,7 @@ function contentToMldev(fromObject) {
   }
   return toObject;
 }
+__name(contentToMldev, "contentToMldev");
 function createAuthTokenConfigToMldev(apiClient, fromObject, parentObject) {
   const toObject = {};
   const fromExpireTime = getValueByPath(fromObject, ["expireTime"]);
@@ -9545,6 +9924,7 @@ function createAuthTokenConfigToMldev(apiClient, fromObject, parentObject) {
   }
   return toObject;
 }
+__name(createAuthTokenConfigToMldev, "createAuthTokenConfigToMldev");
 function createAuthTokenParametersToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -9553,6 +9933,7 @@ function createAuthTokenParametersToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(createAuthTokenParametersToMldev, "createAuthTokenParametersToMldev");
 function fileDataToMldev(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["displayName"]) !== void 0) {
@@ -9568,6 +9949,7 @@ function fileDataToMldev(fromObject) {
   }
   return toObject;
 }
+__name(fileDataToMldev, "fileDataToMldev");
 function functionCallToMldev(fromObject) {
   const toObject = {};
   const fromId = getValueByPath(fromObject, ["id"]);
@@ -9590,6 +9972,7 @@ function functionCallToMldev(fromObject) {
   }
   return toObject;
 }
+__name(functionCallToMldev, "functionCallToMldev");
 function googleMapsToMldev(fromObject) {
   const toObject = {};
   const fromAuthConfig = getValueByPath(fromObject, ["authConfig"]);
@@ -9602,6 +9985,7 @@ function googleMapsToMldev(fromObject) {
   }
   return toObject;
 }
+__name(googleMapsToMldev, "googleMapsToMldev");
 function googleSearchToMldev(fromObject) {
   const toObject = {};
   const fromSearchTypes = getValueByPath(fromObject, ["searchTypes"]);
@@ -9622,6 +10006,7 @@ function googleSearchToMldev(fromObject) {
   }
   return toObject;
 }
+__name(googleSearchToMldev, "googleSearchToMldev");
 function liveConnectConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromGenerationConfig = getValueByPath(fromObject, [
@@ -9757,6 +10142,7 @@ function liveConnectConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(liveConnectConfigToMldev, "liveConnectConfigToMldev");
 function liveConnectConstraintsToMldev(apiClient, fromObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["model"]);
@@ -9769,6 +10155,7 @@ function liveConnectConstraintsToMldev(apiClient, fromObject) {
   }
   return toObject;
 }
+__name(liveConnectConstraintsToMldev, "liveConnectConstraintsToMldev");
 function partToMldev(fromObject) {
   const toObject = {};
   const fromMediaResolution = getValueByPath(fromObject, [
@@ -9841,6 +10228,7 @@ function partToMldev(fromObject) {
   }
   return toObject;
 }
+__name(partToMldev, "partToMldev");
 function safetySettingToMldev(fromObject) {
   const toObject = {};
   const fromCategory = getValueByPath(fromObject, ["category"]);
@@ -9856,6 +10244,7 @@ function safetySettingToMldev(fromObject) {
   }
   return toObject;
 }
+__name(safetySettingToMldev, "safetySettingToMldev");
 function sessionResumptionConfigToMldev(fromObject) {
   const toObject = {};
   const fromHandle = getValueByPath(fromObject, ["handle"]);
@@ -9867,6 +10256,7 @@ function sessionResumptionConfigToMldev(fromObject) {
   }
   return toObject;
 }
+__name(sessionResumptionConfigToMldev, "sessionResumptionConfigToMldev");
 function toolToMldev(fromObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["retrieval"]) !== void 0) {
@@ -9937,6 +10327,7 @@ function toolToMldev(fromObject) {
   }
   return toObject;
 }
+__name(toolToMldev, "toolToMldev");
 function getFieldMasks(setup) {
   const fields = [];
   for (const key in setup) {
@@ -9952,6 +10343,7 @@ function getFieldMasks(setup) {
   }
   return fields.join(",");
 }
+__name(getFieldMasks, "getFieldMasks");
 function convertBidiSetupToTokenSetup(requestDict, config) {
   let setupForMaskGeneration = null;
   const bidiGenerateContentSetupValue = requestDict["bidiGenerateContentSetup"];
@@ -10018,6 +10410,7 @@ function convertBidiSetupToTokenSetup(requestDict, config) {
   }
   return requestDict;
 }
+__name(convertBidiSetupToTokenSetup, "convertBidiSetupToTokenSetup");
 function deleteDocumentConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromForce = getValueByPath(fromObject, ["force"]);
@@ -10026,6 +10419,7 @@ function deleteDocumentConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(deleteDocumentConfigToMldev, "deleteDocumentConfigToMldev");
 function deleteDocumentParametersToMldev(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -10038,6 +10432,7 @@ function deleteDocumentParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(deleteDocumentParametersToMldev, "deleteDocumentParametersToMldev");
 function getDocumentParametersToMldev(fromObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -10046,6 +10441,7 @@ function getDocumentParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(getDocumentParametersToMldev, "getDocumentParametersToMldev");
 function listDocumentsConfigToMldev(fromObject, parentObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -10058,6 +10454,7 @@ function listDocumentsConfigToMldev(fromObject, parentObject) {
   }
   return toObject;
 }
+__name(listDocumentsConfigToMldev, "listDocumentsConfigToMldev");
 function listDocumentsParametersToMldev(fromObject) {
   const toObject = {};
   const fromParent = getValueByPath(fromObject, ["parent"]);
@@ -10070,6 +10467,7 @@ function listDocumentsParametersToMldev(fromObject) {
   }
   return toObject;
 }
+__name(listDocumentsParametersToMldev, "listDocumentsParametersToMldev");
 function listDocumentsResponseFromMldev(fromObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -10096,12 +10494,14 @@ function listDocumentsResponseFromMldev(fromObject) {
   }
   return toObject;
 }
+__name(listDocumentsResponseFromMldev, "listDocumentsResponseFromMldev");
 function isDeno() {
   if ("Deno" in globalThis) {
     return true;
   }
   return false;
 }
+__name(isDeno, "isDeno");
 function env() {
   var _a2, _b, _c, _d, _e, _f;
   if (envMemo) {
@@ -10117,6 +10517,7 @@ function env() {
   envMemo = envObject;
   return envMemo;
 }
+__name(env, "env");
 function fillGlobals(options) {
   var _a2, _b;
   const clone = Object.assign({}, options);
@@ -10129,6 +10530,7 @@ function fillGlobals(options) {
   }
   return clone;
 }
+__name(fillGlobals, "fillGlobals");
 function decodeSDKLevelAPIVersionPath(url) {
   const [, apiVersion, ...rest] = url.pathname.split("/");
   if (!apiVersion) {
@@ -10142,6 +10544,7 @@ function decodeSDKLevelAPIVersionPath(url) {
   nextURL.pathname = `/${decodedAPIVersion}/${rest.join("/")}`;
   return nextURL;
 }
+__name(decodeSDKLevelAPIVersionPath, "decodeSDKLevelAPIVersionPath");
 async function resolveSecurity$1(securitySource, requestURL) {
   if (isSecurityResolver(securitySource)) {
     return securitySource.resolveGoogleGenAISecurity(requestURL);
@@ -10152,6 +10555,7 @@ async function resolveSecurity$1(securitySource, requestURL) {
   }
   return withEnvSecurity(void 0);
 }
+__name(resolveSecurity$1, "resolveSecurity$1");
 function getStaticDefaultHeaders(securitySource) {
   var _a2, _b;
   if (isSecurityResolver(securitySource)) {
@@ -10162,12 +10566,14 @@ function getStaticDefaultHeaders(securitySource) {
   }
   return void 0;
 }
+__name(getStaticDefaultHeaders, "getStaticDefaultHeaders");
 function withEnvSecurity(security) {
   var _a2, _b;
   const envVars = env();
   const nextSecurity = Object.assign(Object.assign({}, security), { api_key: (_a2 = security === null || security === void 0 ? void 0 : security.api_key) !== null && _a2 !== void 0 ? _a2 : envVars.GOOGLE_GENAI_API_KEY, access_token: (_b = security === null || security === void 0 ? void 0 : security.access_token) !== null && _b !== void 0 ? _b : envVars.GOOGLE_GENAI_ACCESS_TOKEN });
   return hasSecurityValue(nextSecurity) ? nextSecurity : void 0;
 }
+__name(withEnvSecurity, "withEnvSecurity");
 function securityFromHeaders(headers) {
   var _a2, _b;
   const defaultHeaders = {};
@@ -10184,6 +10590,7 @@ function securityFromHeaders(headers) {
   };
   return hasSecurityValue(security) ? security : void 0;
 }
+__name(securityFromHeaders, "securityFromHeaders");
 function applyDefaultHeaders(target, source) {
   if (!source) {
     return;
@@ -10194,11 +10601,13 @@ function applyDefaultHeaders(target, source) {
     }
   }
 }
+__name(applyDefaultHeaders, "applyDefaultHeaders");
 function applyUserProject(hookCtx, headers) {
   if (hookCtx.options.user_project !== void 0 && headers.get("x-goog-user-project") === null) {
     headers.set("x-goog-user-project", hookCtx.options.user_project);
   }
 }
+__name(applyUserProject, "applyUserProject");
 function applyAuth(headers, security) {
   if (!security) {
     return;
@@ -10211,21 +10620,27 @@ function applyAuth(headers, security) {
     headers.set("Authorization", bearer(security.access_token));
   }
 }
+__name(applyAuth, "applyAuth");
 function hasAuthHeaders(headers) {
   return headers.get("authorization") !== null || headers.get("x-goog-api-key") !== null;
 }
+__name(hasAuthHeaders, "hasAuthHeaders");
 function bearer(token) {
   return token.slice(0, 7).toLowerCase() === "bearer " ? token : `Bearer ${token}`;
 }
+__name(bearer, "bearer");
 function isSecurity(value) {
   return typeof value === "object" && value !== null;
 }
+__name(isSecurity, "isSecurity");
 function isSecurityResolver(value) {
   return typeof value === "object" && value !== null && "resolveGoogleGenAISecurity" in value && typeof value.resolveGoogleGenAISecurity === "function";
 }
+__name(isSecurityResolver, "isSecurityResolver");
 function hasSecurityValue(security) {
   return security.api_key !== void 0 || security.access_token !== void 0 || security.default_headers !== void 0;
 }
+__name(hasSecurityValue, "hasSecurityValue");
 function wrapSDKError(error) {
   if (isCompatAPIErrorInstance(error)) {
     return error;
@@ -10238,6 +10653,7 @@ function wrapSDKError(error) {
   }
   return error;
 }
+__name(wrapSDKError, "wrapSDKError");
 function wrapAPIError(error) {
   const errorPayload = getErrorPayload(error);
   const wrapped = APIError.generate(error.statusCode, errorPayload, error.message, error.headers);
@@ -10248,6 +10664,7 @@ function wrapAPIError(error) {
   defineReadonly(wrapped, "cause", error);
   return wrapped;
 }
+__name(wrapAPIError, "wrapAPIError");
 function wrapHTTPClientError(error) {
   if (error instanceof RequestTimeoutError) {
     return new APIConnectionTimeoutError({ message: error.message });
@@ -10260,6 +10677,7 @@ function wrapHTTPClientError(error) {
   }
   return new APIConnectionError({ message: error.message, cause: error });
 }
+__name(wrapHTTPClientError, "wrapHTTPClientError");
 function getErrorPayload(error) {
   const data = getObjectProperty(error, "data$");
   if (data && typeof data === "object") {
@@ -10275,9 +10693,11 @@ function getErrorPayload(error) {
   const dataError = getObjectProperty(error, "error");
   return dataError && typeof dataError === "object" ? dataError : void 0;
 }
+__name(getErrorPayload, "getErrorPayload");
 function getObjectProperty(value, key) {
   return value && typeof value === "object" ? value[key] : void 0;
 }
+__name(getObjectProperty, "getObjectProperty");
 function stringifyErrorBody(error) {
   if (!error)
     return "";
@@ -10287,12 +10707,15 @@ function stringifyErrorBody(error) {
     return String(error);
   }
 }
+__name(stringifyErrorBody, "stringifyErrorBody");
 function isPlainObject$2(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
 }
+__name(isPlainObject$2, "isPlainObject$2");
 function isCompatAPIErrorInstance(value) {
   return typeof value === "object" && value !== null ? APIError.prototype.isPrototypeOf(value) : false;
 }
+__name(isCompatAPIErrorInstance, "isCompatAPIErrorInstance");
 function defineReadonly(target, key, value) {
   Object.defineProperty(target, key, {
     configurable: true,
@@ -10301,29 +10724,36 @@ function defineReadonly(target, key, value) {
     writable: false
   });
 }
+__name(defineReadonly, "defineReadonly");
 function initHooks(hooks) {
   const googleGenAIAuthHook = new GoogleGenAIAuthHook();
   hooks.registerBeforeCreateRequestHook(googleGenAIAuthHook);
   hooks.registerBeforeRequestHook(googleGenAIAuthHook);
 }
+__name(initHooks, "initHooks");
 function OK(value) {
   return { ok: true, value };
 }
+__name(OK, "OK");
 function ERR(error) {
   return { ok: false, error };
 }
+__name(ERR, "ERR");
 function bytesToBase64(u8arr) {
   return btoa(String.fromCodePoint(...u8arr));
 }
+__name(bytesToBase64, "bytesToBase64");
 function stringToBytes(str) {
   return new TextEncoder().encode(str);
 }
+__name(stringToBytes, "stringToBytes");
 function stringToBase64(str) {
   return bytesToBase64(stringToBytes(str));
 }
+__name(stringToBase64, "stringToBase64");
 function pathToFunc(pathPattern, options) {
   const paramRE = /\{([a-zA-Z0-9_][a-zA-Z0-9_-]*?)\}/g;
-  return /* @__PURE__ */ __name(function buildURLPath(params = {}) {
+  return /* @__PURE__ */ __name2(/* @__PURE__ */ __name(function buildURLPath(params = {}) {
     return pathPattern.replace(paramRE, function(_, placeholder) {
       if (!hasOwn.call(params, placeholder)) {
         throw new Error(`Parameter '${placeholder}' is required`);
@@ -10334,8 +10764,9 @@ function pathToFunc(pathPattern, options) {
       }
       return `${value}`;
     }).replace(/^\/+/, "");
-  }, "buildURLPath");
+  }, "buildURLPath"), "buildURLPath");
 }
+__name(pathToFunc, "pathToFunc");
 function serverURLFromOptions(options) {
   var _a2;
   let serverURL = options.server_url;
@@ -10350,6 +10781,7 @@ function serverURLFromOptions(options) {
   const u = pathToFunc(serverURL)(params);
   return new URL(u);
 }
+__name(serverURLFromOptions, "serverURLFromOptions");
 function combineSignals(...signals) {
   const filtered = [];
   for (const signal of signals) {
@@ -10368,6 +10800,7 @@ function combineSignals(...signals) {
       return abortSignalAny(filtered);
   }
 }
+__name(combineSignals, "combineSignals");
 function abortSignalAny(signals) {
   const controller = new AbortController();
   const result = controller.signal;
@@ -10387,6 +10820,7 @@ function abortSignalAny(signals) {
     clean();
   }
   __name(abort, "abort");
+  __name2(abort, "abort");
   const signalRefs = [];
   function clean() {
     for (const signalRef of signalRefs) {
@@ -10397,12 +10831,14 @@ function abortSignalAny(signals) {
     }
   }
   __name(clean, "clean");
+  __name2(clean, "clean");
   for (const signal of signals) {
     signalRefs.push(new WeakRef(signal));
     signal.addEventListener("abort", abort);
   }
   return result;
 }
+__name(abortSignalAny, "abortSignalAny");
 function compactMap(values) {
   const out = {};
   for (const [k, v] of Object.entries(values)) {
@@ -10412,6 +10848,7 @@ function compactMap(values) {
   }
   return out;
 }
+__name(compactMap, "compactMap");
 function isPlainObject$1(value) {
   if (value === null || typeof value !== "object")
     return false;
@@ -10426,6 +10863,7 @@ function isPlainObject$1(value) {
     return false;
   }
 }
+__name(isPlainObject$1, "isPlainObject$1");
 function formEncoder(sep) {
   return (key, value, options) => {
     let out = "";
@@ -10433,10 +10871,10 @@ function formEncoder(sep) {
     if (pairs.every(([_, v]) => v == null)) {
       return;
     }
-    const encodeString = /* @__PURE__ */ __name((v) => {
+    const encodeString = /* @__PURE__ */ __name2((v) => {
       return (options === null || options === void 0 ? void 0 : options.charEncoding) === "percent" ? encodeURIComponent(v) : v;
     }, "encodeString");
-    const encodeValue = /* @__PURE__ */ __name((v) => encodeString(serializeValue(v)), "encodeValue");
+    const encodeValue = /* @__PURE__ */ __name2((v) => encodeString(serializeValue(v)), "encodeValue");
     const encodedSep = encodeString(sep);
     pairs.forEach(([pk, pv]) => {
       var _a2, _b;
@@ -10465,16 +10903,18 @@ function formEncoder(sep) {
     return out.slice(1);
   };
 }
+__name(formEncoder, "formEncoder");
 function encodeJSON(key, value, options) {
   if (typeof value === "undefined") {
     return;
   }
-  const encodeString = /* @__PURE__ */ __name((v) => {
+  const encodeString = /* @__PURE__ */ __name2((v) => {
     return (options === null || options === void 0 ? void 0 : options.charEncoding) === "percent" ? encodeURIComponent(v) : v;
   }, "encodeString");
   const encVal = encodeString(JSON.stringify(value, jsonReplacer));
   return (options === null || options === void 0 ? void 0 : options.explode) ? encVal : `${encodeString(key)}=${encVal}`;
 }
+__name(encodeJSON, "encodeJSON");
 function explode(key, value) {
   if (Array.isArray(value)) {
     return value.map((v) => [key, v]);
@@ -10485,6 +10925,7 @@ function explode(key, value) {
     return [[key, value]];
   }
 }
+__name(explode, "explode");
 function serializeValue(value) {
   if (value == null) {
     return "";
@@ -10497,6 +10938,7 @@ function serializeValue(value) {
   }
   return `${value}`;
 }
+__name(serializeValue, "serializeValue");
 function jsonReplacer(_, value) {
   if (value instanceof Uint8Array) {
     return bytesToBase64(value);
@@ -10504,6 +10946,7 @@ function jsonReplacer(_, value) {
     return value;
   }
 }
+__name(jsonReplacer, "jsonReplacer");
 function mapDefined(inp, mapper) {
   const res = inp.reduce((acc, v) => {
     if (v == null) {
@@ -10518,6 +10961,7 @@ function mapDefined(inp, mapper) {
   }, []);
   return res.length ? res : null;
 }
+__name(mapDefined, "mapDefined");
 function mapDefinedEntries(inp, mapper) {
   const acc = [];
   for (const [k, v] of inp) {
@@ -10532,11 +10976,13 @@ function mapDefinedEntries(inp, mapper) {
   }
   return acc.length ? acc : null;
 }
+__name(mapDefinedEntries, "mapDefinedEntries");
 function queryJoin(...args) {
   return args.filter(Boolean).join("&");
 }
+__name(queryJoin, "queryJoin");
 function queryEncoder(f) {
-  const bulkEncode = /* @__PURE__ */ __name(function(values, options) {
+  const bulkEncode = /* @__PURE__ */ __name2(function(values, options) {
     var _a2, _b, _c;
     const opts = Object.assign(Object.assign({}, options), { explode: (_a2 = options === null || options === void 0 ? void 0 : options.explode) !== null && _a2 !== void 0 ? _a2 : true, charEncoding: (_b = options === null || options === void 0 ? void 0 : options.charEncoding) !== null && _b !== void 0 ? _b : "percent" });
     const allowEmptySet = new Set((_c = options === null || options === void 0 ? void 0 : options.allowEmptyValue) !== null && _c !== void 0 ? _c : []);
@@ -10552,6 +10998,7 @@ function queryEncoder(f) {
   }, "bulkEncode");
   return bulkEncode;
 }
+__name(queryEncoder, "queryEncoder");
 function matchContentType(response, pattern) {
   var _a2;
   if (pattern === "*") {
@@ -10584,6 +11031,7 @@ function matchContentType(response, pattern) {
   }
   return true;
 }
+__name(matchContentType, "matchContentType");
 function matchStatusCode(response, codes) {
   const actual = `${response.status}`;
   const expectedCodes = Array.isArray(codes) ? codes : [codes];
@@ -10609,9 +11057,11 @@ function matchStatusCode(response, codes) {
     return actualFamily === expectFamily;
   });
 }
+__name(matchStatusCode, "matchStatusCode");
 function matchResponse(response, code, contentTypePattern) {
   return matchStatusCode(response, code) && matchContentType(response, contentTypePattern);
 }
+__name(matchResponse, "matchResponse");
 function isConnectionError(err) {
   if (typeof err !== "object" || err == null) {
     return false;
@@ -10622,6 +11072,7 @@ function isConnectionError(err) {
   const isGenericErr = "code" in err && typeof err.code === "string" && err.code.toLowerCase() === "econnreset";
   return isBrowserErr || isNodeErr || isGenericErr || isBunErr;
 }
+__name(isConnectionError, "isConnectionError");
 function isTimeoutError(err) {
   if (typeof err !== "object" || err == null) {
     return false;
@@ -10631,6 +11082,7 @@ function isTimeoutError(err) {
   const isGenericErr = "code" in err && typeof err.code === "string" && err.code.toLowerCase() === "econnaborted";
   return isNative || isLegacyNative || isGenericErr;
 }
+__name(isTimeoutError, "isTimeoutError");
 function isAbortError(err) {
   if (typeof err !== "object" || err == null) {
     return false;
@@ -10640,6 +11092,7 @@ function isAbortError(err) {
   const isGenericErr = "code" in err && typeof err.code === "string" && err.code.toLowerCase() === "econnaborted";
   return isNative || isLegacyNative || isGenericErr;
 }
+__name(isAbortError, "isAbortError");
 async function retry(fetchFn, options) {
   var _a2;
   switch (options.config.strategy) {
@@ -10657,6 +11110,7 @@ async function retry(fetchFn, options) {
       return await fetchFn(0);
   }
 }
+__name(retry, "retry");
 function wrapFetcher(fn, options) {
   return async (attempt) => {
     try {
@@ -10676,6 +11130,7 @@ function wrapFetcher(fn, options) {
     }
   };
 }
+__name(wrapFetcher, "wrapFetcher");
 function isRetryableResponse(res, statusCodes) {
   const actual = `${res.status}`;
   return statusCodes.some((code) => {
@@ -10693,6 +11148,7 @@ function isRetryableResponse(res, statusCodes) {
     return actualFamily === expectFamily;
   });
 }
+__name(isRetryableResponse, "isRetryableResponse");
 async function retryBackoff(fn, strategy) {
   const { maxElapsedTime, initialInterval, exponent, maxInterval } = strategy;
   const start = Date.now();
@@ -10725,6 +11181,7 @@ async function retryBackoff(fn, strategy) {
     }
   }
 }
+__name(retryBackoff, "retryBackoff");
 async function retryAttemptCountBackoff(fn, strategy, config) {
   let attempt = 0;
   while (true) {
@@ -10753,6 +11210,7 @@ async function retryAttemptCountBackoff(fn, strategy, config) {
     }
   }
 }
+__name(retryAttemptCountBackoff, "retryAttemptCountBackoff");
 function retryIntervalFromResponse(res) {
   const retryAfterMsVal = res.headers.get("retry-after-ms");
   if (retryAfterMsVal) {
@@ -10776,9 +11234,11 @@ function retryIntervalFromResponse(res) {
   }
   return 0;
 }
+__name(retryIntervalFromResponse, "retryIntervalFromResponse");
 async function delay(delay2) {
   return new Promise((resolve) => setTimeout(resolve, delay2));
 }
+__name(delay, "delay");
 async function logRequest(logger, req) {
   if (!logger) {
     return;
@@ -10814,6 +11274,7 @@ async function logRequest(logger, req) {
   logger.groupEnd();
   logger.groupEnd();
 }
+__name(logRequest, "logRequest");
 async function logResponse(logger, res, req) {
   if (!logger) {
     return;
@@ -10854,6 +11315,7 @@ async function logResponse(logger, res, req) {
   logger.groupEnd();
   logger.groupEnd();
 }
+__name(logResponse, "logResponse");
 function tryParseJson(s) {
   try {
     return JSON.parse(s);
@@ -10861,6 +11323,7 @@ function tryParseJson(s) {
     return s;
   }
 }
+__name(tryParseJson, "tryParseJson");
 function wrapEventStreamResponse(body, opts = {}) {
   var _a2, _b;
   const flattened = opts.flattened === true;
@@ -10879,6 +11342,7 @@ function wrapEventStreamResponse(body, opts = {}) {
     };
   }, { dataRequired: (_b = opts.dataRequired) !== null && _b !== void 0 ? _b : true });
 }
+__name(wrapEventStreamResponse, "wrapEventStreamResponse");
 function findBoundary(buf, len, from) {
   for (let i = from; i < len; i++) {
     if (buf[i] !== CR && buf[i] !== LF)
@@ -10899,6 +11363,7 @@ function findBoundary(buf, len, from) {
   }
   return null;
 }
+__name(findBoundary, "findBoundary");
 function parseMessage(chunk, parse2, state, dataRequired) {
   const text = new TextDecoder().decode(chunk);
   const lines = text.split(/\r\n|\r|\n/);
@@ -10935,23 +11400,29 @@ function parseMessage(chunk, parse2, state, dataRequired) {
     return;
   return parse2(ret);
 }
+__name(parseMessage, "parseMessage");
 function jsonErr(codes, errorClass, options) {
   return Object.assign(Object.assign({}, options), { err: true, enc: "json", codes, errorClass });
 }
+__name(jsonErr, "jsonErr");
 function json(codes, options) {
   return Object.assign(Object.assign({}, options), { enc: "json", codes });
 }
+__name(json, "json");
 function sse(codes, sse2, options) {
   return Object.assign(Object.assign(Object.assign({}, options), { enc: "sse", codes }), sse2 ? { sse: sse2 } : {});
 }
+__name(sse, "sse");
 function nil(codes, options) {
   return Object.assign(Object.assign({}, options), { enc: "nil", codes });
 }
+__name(nil, "nil");
 function fail(codes) {
   return { enc: "fail", codes };
 }
+__name(fail, "fail");
 function match(...matchers) {
-  return /* @__PURE__ */ __name(async function matchFunc(response, request, options) {
+  return /* @__PURE__ */ __name2(/* @__PURE__ */ __name(async function matchFunc(response, request, options) {
     let raw;
     let matcher;
     for (const match3 of matchers) {
@@ -11048,8 +11519,9 @@ function match(...matchers) {
       return [{ ok: false, error: errValue }, raw];
     }
     return [{ ok: true, value: data }, raw];
-  }, "matchFunc");
+  }, "matchFunc"), "matchFunc");
 }
+__name(match, "match");
 function unpackHeaders(headers) {
   const out = {};
   for (const [k, v] of headers.entries()) {
@@ -11057,6 +11529,7 @@ function unpackHeaders(headers) {
   }
   return out;
 }
+__name(unpackHeaders, "unpackHeaders");
 function resolveSecurity(...options) {
   const state = {
     basic: {},
@@ -11130,12 +11603,14 @@ function resolveSecurity(...options) {
   });
   return state;
 }
+__name(resolveSecurity, "resolveSecurity");
 function applyBasic(state, spec) {
   if (spec.value == null) {
     return;
   }
   state.basic = spec.value;
 }
+__name(applyBasic, "applyBasic");
 function applyBearer(state, spec) {
   if (typeof spec.value !== "string" || !spec.value) {
     return;
@@ -11148,6 +11623,7 @@ function applyBearer(state, spec) {
     state.headers[spec.fieldName] = value;
   }
 }
+__name(applyBearer, "applyBearer");
 function resolveGlobalSecurity(security, allowedFields) {
   var _a2, _b;
   let inputs = [
@@ -11171,12 +11647,14 @@ function resolveGlobalSecurity(security, allowedFields) {
   ];
   return resolveSecurity(...inputs);
 }
+__name(resolveGlobalSecurity, "resolveGlobalSecurity");
 async function extractSecurity(sec) {
   if (sec == null) {
     return;
   }
   return typeof sec === "function" ? sec() : sec;
 }
+__name(extractSecurity, "extractSecurity");
 function unwrapAsAPIPromise(p) {
   const inner = p.$inspect();
   const data = inner.then(([r, call]) => {
@@ -11198,9 +11676,11 @@ function unwrapAsAPIPromise(p) {
   });
   return new APIPromise(data, callSource);
 }
+__name(unwrapAsAPIPromise, "unwrapAsAPIPromise");
 function agentsCreate(client, body, api_version, options) {
   return new APIPromise($do$l(client, body, api_version, options));
 }
+__name(agentsCreate, "agentsCreate");
 async function $do$l(client, body, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -11255,7 +11735,7 @@ async function $do$l(client, body, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11269,9 +11749,11 @@ async function $do$l(client, body, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$l, "$do$l");
 function agentsDelete(client, id, api_version, options) {
   return new APIPromise($do$k(client, id, api_version, options));
 }
+__name(agentsDelete, "agentsDelete");
 async function $do$k(client, id, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -11329,7 +11811,7 @@ async function $do$k(client, id, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11343,9 +11825,11 @@ async function $do$k(client, id, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$k, "$do$k");
 function agentsGet(client, id, api_version, options) {
   return new APIPromise($do$j(client, id, api_version, options));
 }
+__name(agentsGet, "agentsGet");
 async function $do$j(client, id, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -11403,7 +11887,7 @@ async function $do$j(client, id, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11417,9 +11901,11 @@ async function $do$j(client, id, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$j, "$do$j");
 function agentsList(client, api_version, page_size, page_token, parent, options) {
   return new APIPromise($do$i(client, api_version, page_size, page_token, parent, options));
 }
+__name(agentsList, "agentsList");
 async function $do$i(client, api_version, page_size, page_token, parent, options) {
   var _a2, _b, _c;
   const input = {
@@ -11481,7 +11967,7 @@ async function $do$i(client, api_version, page_size, page_token, parent, options
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11495,9 +11981,11 @@ async function $do$i(client, api_version, page_size, page_token, parent, options
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$i, "$do$i");
 function interactionsCancel(client, id, api_version, options) {
   return new APIPromise($do$h(client, id, api_version, options));
 }
+__name(interactionsCancel, "interactionsCancel");
 async function $do$h(client, id, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -11555,7 +12043,7 @@ async function $do$h(client, id, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11572,9 +12060,11 @@ async function $do$h(client, id, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$h, "$do$h");
 function interactionsCreate(client, body, api_version, options) {
   return new APIPromise($do$g(client, body, api_version, options));
 }
+__name(interactionsCreate, "interactionsCreate");
 async function $do$g(client, body, api_version, options) {
   var _a2, _b, _c, _d;
   const input = {
@@ -11629,7 +12119,7 @@ async function $do$g(client, body, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11649,9 +12139,11 @@ async function $do$g(client, body, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$g, "$do$g");
 function interactionsDelete(client, id, api_version, options) {
   return new APIPromise($do$f(client, id, api_version, options));
 }
+__name(interactionsDelete, "interactionsDelete");
 async function $do$f(client, id, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -11709,7 +12201,7 @@ async function $do$f(client, id, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11726,9 +12218,11 @@ async function $do$f(client, id, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$f, "$do$f");
 function interactionsGet(client, id, stream, last_event_id, include_input, api_version, options) {
   return new APIPromise($do$e(client, id, stream, last_event_id, include_input, api_version, options));
 }
+__name(interactionsGet, "interactionsGet");
 async function $do$e(client, id, stream, last_event_id, include_input, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -11795,7 +12289,7 @@ async function $do$e(client, id, stream, last_event_id, include_input, api_versi
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11815,9 +12309,11 @@ async function $do$e(client, id, stream, last_event_id, include_input, api_versi
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$e, "$do$e");
 function triggersCreate(client, body, api_version, options) {
   return new APIPromise($do$d(client, body, api_version, options));
 }
+__name(triggersCreate, "triggersCreate");
 async function $do$d(client, body, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -11872,7 +12368,7 @@ async function $do$d(client, body, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11886,9 +12382,11 @@ async function $do$d(client, body, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$d, "$do$d");
 function triggersDelete(client, id, api_version, options) {
   return new APIPromise($do$c(client, id, api_version, options));
 }
+__name(triggersDelete, "triggersDelete");
 async function $do$c(client, id, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -11946,7 +12444,7 @@ async function $do$c(client, id, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -11960,9 +12458,11 @@ async function $do$c(client, id, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$c, "$do$c");
 function triggersGet(client, id, api_version, options) {
   return new APIPromise($do$b(client, id, api_version, options));
 }
+__name(triggersGet, "triggersGet");
 async function $do$b(client, id, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -12020,7 +12520,7 @@ async function $do$b(client, id, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12034,9 +12534,11 @@ async function $do$b(client, id, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$b, "$do$b");
 function triggersListExecutions(client, trigger_id, api_version, page_size, page_token, options) {
   return new APIPromise($do$a(client, trigger_id, api_version, page_size, page_token, options));
 }
+__name(triggersListExecutions, "triggersListExecutions");
 async function $do$a(client, trigger_id, api_version, page_size, page_token, options) {
   var _a2, _b, _c;
   const input = {
@@ -12101,7 +12603,7 @@ async function $do$a(client, trigger_id, api_version, page_size, page_token, opt
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12115,9 +12617,11 @@ async function $do$a(client, trigger_id, api_version, page_size, page_token, opt
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$a, "$do$a");
 function triggersList(client, api_version, filter, page_size, page_token, options) {
   return new APIPromise($do$9(client, api_version, filter, page_size, page_token, options));
 }
+__name(triggersList, "triggersList");
 async function $do$9(client, api_version, filter, page_size, page_token, options) {
   var _a2, _b, _c;
   const input = {
@@ -12179,7 +12683,7 @@ async function $do$9(client, api_version, filter, page_size, page_token, options
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12193,9 +12697,11 @@ async function $do$9(client, api_version, filter, page_size, page_token, options
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$9, "$do$9");
 function triggersRun(client, trigger_id, api_version, options) {
   return new APIPromise($do$8(client, trigger_id, api_version, options));
 }
+__name(triggersRun, "triggersRun");
 async function $do$8(client, trigger_id, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -12253,7 +12759,7 @@ async function $do$8(client, trigger_id, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12267,9 +12773,11 @@ async function $do$8(client, trigger_id, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$8, "$do$8");
 function triggersUpdate(client, id, body, api_version, options) {
   return new APIPromise($do$7(client, id, body, api_version, options));
 }
+__name(triggersUpdate, "triggersUpdate");
 async function $do$7(client, id, body, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -12329,7 +12837,7 @@ async function $do$7(client, id, body, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12343,9 +12851,11 @@ async function $do$7(client, id, body, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$7, "$do$7");
 function webhooksCreate(client, body, api_version, options) {
   return new APIPromise($do$6(client, body, api_version, options));
 }
+__name(webhooksCreate, "webhooksCreate");
 async function $do$6(client, body, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -12400,7 +12910,7 @@ async function $do$6(client, body, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12414,9 +12924,11 @@ async function $do$6(client, body, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$6, "$do$6");
 function webhooksDelete(client, id, api_version, options) {
   return new APIPromise($do$5(client, id, api_version, options));
 }
+__name(webhooksDelete, "webhooksDelete");
 async function $do$5(client, id, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -12474,7 +12986,7 @@ async function $do$5(client, id, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12488,9 +13000,11 @@ async function $do$5(client, id, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$5, "$do$5");
 function webhooksGet(client, id, api_version, options) {
   return new APIPromise($do$4(client, id, api_version, options));
 }
+__name(webhooksGet, "webhooksGet");
 async function $do$4(client, id, api_version, options) {
   var _a2, _b, _c;
   const input = {
@@ -12548,7 +13062,7 @@ async function $do$4(client, id, api_version, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12562,9 +13076,11 @@ async function $do$4(client, id, api_version, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$4, "$do$4");
 function webhooksList(client, api_version, page_size, page_token, options) {
   return new APIPromise($do$3(client, api_version, page_size, page_token, options));
 }
+__name(webhooksList, "webhooksList");
 async function $do$3(client, api_version, page_size, page_token, options) {
   var _a2, _b, _c;
   const input = {
@@ -12624,7 +13140,7 @@ async function $do$3(client, api_version, page_size, page_token, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12638,9 +13154,11 @@ async function $do$3(client, api_version, page_size, page_token, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$3, "$do$3");
 function webhooksPing(client, id, api_version, body, options) {
   return new APIPromise($do$2(client, id, api_version, body, options));
 }
+__name(webhooksPing, "webhooksPing");
 async function $do$2(client, id, api_version, body, options) {
   var _a2, _b, _c;
   const input = {
@@ -12700,7 +13218,7 @@ async function $do$2(client, id, api_version, body, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12714,9 +13232,11 @@ async function $do$2(client, id, api_version, body, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$2, "$do$2");
 function webhooksRotateSigningSecret(client, id, api_version, body, options) {
   return new APIPromise($do$1(client, id, api_version, body, options));
 }
+__name(webhooksRotateSigningSecret, "webhooksRotateSigningSecret");
 async function $do$1(client, id, api_version, body, options) {
   var _a2, _b, _c;
   const input = {
@@ -12776,7 +13296,7 @@ async function $do$1(client, id, api_version, body, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12790,9 +13310,11 @@ async function $do$1(client, id, api_version, body, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do$1, "$do$1");
 function webhooksUpdate(client, id, api_version, update_mask, body, options) {
   return new APIPromise($do(client, id, api_version, update_mask, body, options));
 }
+__name(webhooksUpdate, "webhooksUpdate");
 async function $do(client, id, api_version, update_mask, body, options) {
   var _a2, _b, _c;
   const input = {
@@ -12857,7 +13379,7 @@ async function $do(client, id, api_version, update_mask, body, options) {
   const req = requestRes.value;
   const doResult = await client._do(req, {
     context,
-    isErrorStatusCode: /* @__PURE__ */ __name((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
+    isErrorStatusCode: /* @__PURE__ */ __name2((statusCode) => matchStatusCode({ status: statusCode }, ["4XX", "5XX"]), "isErrorStatusCode"),
     retryConfig: context.retry_config,
     retryCodes: context.retry_codes
   });
@@ -12871,6 +13393,7 @@ async function $do(client, id, api_version, update_mask, body, options) {
   }
   return [result, { status: "complete", request: req, response }];
 }
+__name($do, "$do");
 function getGoogleGenAIServerURL(parentClient) {
   const serverURL = parentClient.getBaseUrl();
   if (!serverURL) {
@@ -12878,6 +13401,7 @@ function getGoogleGenAIServerURL(parentClient) {
   }
   return serverURL.replace(/\/+$/, "");
 }
+__name(getGoogleGenAIServerURL, "getGoogleGenAIServerURL");
 function getGoogleGenAIAPIVersion(parentClient) {
   const apiVersion = trimSlashes(parentClient.getApiVersion());
   const project = parentClient.getProject();
@@ -12887,17 +13411,20 @@ function getGoogleGenAIAPIVersion(parentClient) {
   }
   return apiVersion;
 }
+__name(getGoogleGenAIAPIVersion, "getGoogleGenAIAPIVersion");
 function buildGoogleGenAIClient(parentClient, options = {}) {
   var _a2, _b, _c, _d, _e;
   const sdk = new GoogleGenAI$1(Object.assign(Object.assign({}, options), { api_version: (_a2 = options.api_version) !== null && _a2 !== void 0 ? _a2 : getGoogleGenAIAPIVersion(parentClient), security: (_b = options.security) !== null && _b !== void 0 ? _b : new GoogleGenAISecurityProvider({
     defaultHeaders: Object.assign(Object.assign({}, (_c = parentClient.getDefaultHeaders) === null || _c === void 0 ? void 0 : _c.call(parentClient)), (_d = parentClient.getHeaders) === null || _d === void 0 ? void 0 : _d.call(parentClient)),
-    getAuthHeaders: /* @__PURE__ */ __name((url) => parentClient.getAuthHeaders(url), "getAuthHeaders")
+    getAuthHeaders: /* @__PURE__ */ __name2((url) => parentClient.getAuthHeaders(url), "getAuthHeaders")
   }), server_url: (_e = options.server_url) !== null && _e !== void 0 ? _e : getGoogleGenAIServerURL(parentClient) }));
   return sdk;
 }
+__name(buildGoogleGenAIClient, "buildGoogleGenAIClient");
 function trimSlashes(value) {
   return value.replace(/^\/+|\/+$/g, "");
 }
+__name(trimSlashes, "trimSlashes");
 function toGoogleGenAIRequestOptions(options, streaming = false) {
   var _a2, _b, _c, _d;
   if (!options && !streaming) {
@@ -12941,11 +13468,13 @@ function toGoogleGenAIRequestOptions(options, streaming = false) {
   }
   return nextOptions;
 }
+__name(toGoogleGenAIRequestOptions, "toGoogleGenAIRequestOptions");
 function warnIgnoredOption(name, value) {
   if (value !== void 0 && value !== null) {
     console.warn(`GoogleGenAI.interactions: request option ${name} is not supported by the Google GenAI interactions bridge and will be ignored.`);
   }
 }
+__name(warnIgnoredOption, "warnIgnoredOption");
 async function unwrapWithSdkHttpResponse(promise) {
   const [result, call] = await promise.$inspect();
   if (!result.ok) {
@@ -12953,6 +13482,7 @@ async function unwrapWithSdkHttpResponse(promise) {
   }
   return attachSdkHttpResponse(result.value, call);
 }
+__name(unwrapWithSdkHttpResponse, "unwrapWithSdkHttpResponse");
 async function wrapSDKCall(operation) {
   try {
     return await operation();
@@ -12960,6 +13490,7 @@ async function wrapSDKCall(operation) {
     throw wrapSDKError(error);
   }
 }
+__name(wrapSDKCall, "wrapSDKCall");
 function wrapStreamErrors(stream) {
   const asyncIterable = stream;
   return new Proxy(stream, {
@@ -12968,7 +13499,7 @@ function wrapStreamErrors(stream) {
         const value = Reflect.get(target, property, target);
         return typeof value === "function" ? value.bind(target) : value;
       }
-      return /* @__PURE__ */ __name(function wrappedAsyncIterator() {
+      return /* @__PURE__ */ __name2(/* @__PURE__ */ __name(function wrappedAsyncIterator() {
         const iterator = asyncIterable[Symbol.asyncIterator]();
         return {
           async next(...args) {
@@ -13002,16 +13533,18 @@ function wrapStreamErrors(stream) {
             return this;
           }
         };
-      }, "wrappedAsyncIterator");
+      }, "wrappedAsyncIterator"), "wrappedAsyncIterator");
     }
   });
 }
+__name(wrapStreamErrors, "wrapStreamErrors");
 function attachSdkHttpResponse(value, call) {
   if (!isPlainObject(value) || call.status !== "complete") {
     return value;
   }
   return Object.assign(Object.assign({}, value), { sdkHttpResponse: createSdkHttpResponse(call.response, value) });
 }
+__name(attachSdkHttpResponse, "attachSdkHttpResponse");
 function createSdkHttpResponse(response, parsedBody) {
   const headers = {};
   for (const [key, value] of response.headers.entries()) {
@@ -13020,9 +13553,10 @@ function createSdkHttpResponse(response, parsedBody) {
   return {
     headers,
     responseInternal: response,
-    json: /* @__PURE__ */ __name(async () => parsedBody, "json")
+    json: /* @__PURE__ */ __name2(async () => parsedBody, "json")
   };
 }
+__name(createSdkHttpResponse, "createSdkHttpResponse");
 function addOutputPropertiesIfInteraction(value) {
   const interaction = normalizeInteractionShape(value);
   if (!interaction) {
@@ -13030,6 +13564,7 @@ function addOutputPropertiesIfInteraction(value) {
   }
   return addOutputProperties(interaction);
 }
+__name(addOutputPropertiesIfInteraction, "addOutputPropertiesIfInteraction");
 function normalizeInteractionShape(value) {
   if (!isPlainObject(value)) {
     return void 0;
@@ -13046,13 +13581,16 @@ function normalizeInteractionShape(value) {
   }
   return Object.assign(Object.assign({}, value), { steps: [] });
 }
+__name(normalizeInteractionShape, "normalizeInteractionShape");
 function isLegacyLyriaInteraction(value) {
   const model = value["model"];
   return typeof model === "string" && LEGACY_LYRIA_MODELS.has(model);
 }
+__name(isLegacyLyriaInteraction, "isLegacyLyriaInteraction");
 function isPlainObject(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
+__name(isPlainObject, "isPlainObject");
 function addOutputProperties(interaction) {
   var _a2, _b;
   const normalized = normalizeInteractionDates(interaction);
@@ -13107,12 +13645,15 @@ function addOutputProperties(interaction) {
   const output_text = textParts.reverse().join("");
   return Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, normalized), output_text && { output_text }), output_image ? { output_image } : {}), output_audio ? { output_audio } : {}), output_video ? { output_video } : {});
 }
+__name(addOutputProperties, "addOutputProperties");
 function normalizeInteractionDates(interaction) {
   return Object.assign(Object.assign({}, interaction), { created: normalizeDateLike(interaction["created"]), updated: normalizeDateLike(interaction["updated"]) });
 }
+__name(normalizeInteractionDates, "normalizeInteractionDates");
 function normalizeDateLike(value) {
   return value instanceof Date ? value.toISOString() : value;
 }
+__name(normalizeDateLike, "normalizeDateLike");
 function cancelTuningJobParametersToMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -13121,6 +13662,7 @@ function cancelTuningJobParametersToMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(cancelTuningJobParametersToMldev, "cancelTuningJobParametersToMldev");
 function cancelTuningJobParametersToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -13129,6 +13671,7 @@ function cancelTuningJobParametersToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(cancelTuningJobParametersToVertex, "cancelTuningJobParametersToVertex");
 function cancelTuningJobResponseFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -13139,6 +13682,7 @@ function cancelTuningJobResponseFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(cancelTuningJobResponseFromMldev, "cancelTuningJobResponseFromMldev");
 function cancelTuningJobResponseFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -13149,6 +13693,7 @@ function cancelTuningJobResponseFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(cancelTuningJobResponseFromVertex, "cancelTuningJobResponseFromVertex");
 function codeExecutionResultToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromOutcome = getValueByPath(fromObject, ["outcome"]);
@@ -13164,6 +13709,7 @@ function codeExecutionResultToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(codeExecutionResultToVertex, "codeExecutionResultToVertex");
 function contentToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromParts = getValueByPath(fromObject, ["parts"]);
@@ -13182,6 +13728,7 @@ function contentToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(contentToVertex, "contentToVertex");
 function createTuningJobConfigToMldev(fromObject, parentObject, _rootObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["validationDataset"]) !== void 0) {
@@ -13276,6 +13823,7 @@ function createTuningJobConfigToMldev(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(createTuningJobConfigToMldev, "createTuningJobConfigToMldev");
 function createTuningJobConfigToVertex(fromObject, parentObject, rootObject) {
   const toObject = {};
   let discriminatorValidationDataset = getValueByPath(rootObject, [
@@ -13603,6 +14151,7 @@ function createTuningJobConfigToVertex(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(createTuningJobConfigToVertex, "createTuningJobConfigToVertex");
 function createTuningJobParametersPrivateToMldev(fromObject, rootObject) {
   const toObject = {};
   const fromBaseModel = getValueByPath(fromObject, ["baseModel"]);
@@ -13627,6 +14176,7 @@ function createTuningJobParametersPrivateToMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(createTuningJobParametersPrivateToMldev, "createTuningJobParametersPrivateToMldev");
 function createTuningJobParametersPrivateToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromBaseModel = getValueByPath(fromObject, ["baseModel"]);
@@ -13651,6 +14201,7 @@ function createTuningJobParametersPrivateToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(createTuningJobParametersPrivateToVertex, "createTuningJobParametersPrivateToVertex");
 function distillationHyperParametersFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromAdapterSize = getValueByPath(fromObject, ["adapterSize"]);
@@ -13683,6 +14234,7 @@ function distillationHyperParametersFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(distillationHyperParametersFromVertex, "distillationHyperParametersFromVertex");
 function distillationSamplingSpecFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromBaseTeacherModel = getValueByPath(fromObject, [
@@ -13717,6 +14269,7 @@ function distillationSamplingSpecFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(distillationSamplingSpecFromVertex, "distillationSamplingSpecFromVertex");
 function distillationSpecFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromPromptDatasetUri = getValueByPath(fromObject, [
@@ -13771,6 +14324,7 @@ function distillationSpecFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(distillationSpecFromVertex, "distillationSpecFromVertex");
 function executableCodeToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromCode = getValueByPath(fromObject, ["code"]);
@@ -13786,6 +14340,7 @@ function executableCodeToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(executableCodeToVertex, "executableCodeToVertex");
 function generationConfigFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromModelSelectionConfig = getValueByPath(fromObject, [
@@ -13922,6 +14477,7 @@ function generationConfigFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(generationConfigFromVertex, "generationConfigFromVertex");
 function getTuningJobParametersToMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -13930,6 +14486,7 @@ function getTuningJobParametersToMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(getTuningJobParametersToMldev, "getTuningJobParametersToMldev");
 function getTuningJobParametersToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromName = getValueByPath(fromObject, ["name"]);
@@ -13938,6 +14495,7 @@ function getTuningJobParametersToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(getTuningJobParametersToVertex, "getTuningJobParametersToVertex");
 function listTuningJobsConfigToVertex(fromObject, parentObject, _rootObject) {
   const toObject = {};
   const fromPageSize = getValueByPath(fromObject, ["pageSize"]);
@@ -13954,6 +14512,7 @@ function listTuningJobsConfigToVertex(fromObject, parentObject, _rootObject) {
   }
   return toObject;
 }
+__name(listTuningJobsConfigToVertex, "listTuningJobsConfigToVertex");
 function listTuningJobsParametersToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromConfig = getValueByPath(fromObject, ["config"]);
@@ -13962,6 +14521,7 @@ function listTuningJobsParametersToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(listTuningJobsParametersToVertex, "listTuningJobsParametersToVertex");
 function listTuningJobsResponseFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -13988,6 +14548,7 @@ function listTuningJobsResponseFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(listTuningJobsResponseFromVertex, "listTuningJobsResponseFromVertex");
 function partToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromMediaResolution = getValueByPath(fromObject, [
@@ -14057,6 +14618,7 @@ function partToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(partToVertex, "partToVertex");
 function reinforcementTuningExampleToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromContents = getValueByPath(fromObject, ["contents"]);
@@ -14081,6 +14643,7 @@ function reinforcementTuningExampleToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(reinforcementTuningExampleToVertex, "reinforcementTuningExampleToVertex");
 function tunedModelFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromModel = getValueByPath(fromObject, ["name"]);
@@ -14093,6 +14656,7 @@ function tunedModelFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(tunedModelFromMldev, "tunedModelFromMldev");
 function tuningDatasetToMldev(fromObject, _rootObject) {
   const toObject = {};
   if (getValueByPath(fromObject, ["gcsUri"]) !== void 0) {
@@ -14113,6 +14677,7 @@ function tuningDatasetToMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(tuningDatasetToMldev, "tuningDatasetToMldev");
 function tuningDatasetToVertex(fromObject, parentObject, rootObject) {
   const toObject = {};
   let discriminatorGcsUri = getValueByPath(rootObject, [
@@ -14184,6 +14749,7 @@ function tuningDatasetToVertex(fromObject, parentObject, rootObject) {
   }
   return toObject;
 }
+__name(tuningDatasetToVertex, "tuningDatasetToVertex");
 function tuningJobFromMldev(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -14236,6 +14802,7 @@ function tuningJobFromMldev(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(tuningJobFromMldev, "tuningJobFromMldev");
 function tuningJobFromVertex(fromObject, rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -14416,6 +14983,7 @@ function tuningJobFromVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(tuningJobFromVertex, "tuningJobFromVertex");
 function tuningOperationFromMldev(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -14442,6 +15010,7 @@ function tuningOperationFromMldev(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(tuningOperationFromMldev, "tuningOperationFromMldev");
 function tuningValidationDatasetToVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromGcsUri = getValueByPath(fromObject, ["gcsUri"]);
@@ -14456,6 +15025,7 @@ function tuningValidationDatasetToVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(tuningValidationDatasetToVertex, "tuningValidationDatasetToVertex");
 function validateRewardParametersToVertex(fromObject, rootObject) {
   const toObject = {};
   const fromParent = getValueByPath(fromObject, ["parent"]);
@@ -14486,6 +15056,7 @@ function validateRewardParametersToVertex(fromObject, rootObject) {
   }
   return toObject;
 }
+__name(validateRewardParametersToVertex, "validateRewardParametersToVertex");
 function validateRewardResponseFromVertex(fromObject, _rootObject) {
   const toObject = {};
   const fromSdkHttpResponse = getValueByPath(fromObject, [
@@ -14512,6 +15083,7 @@ function validateRewardResponseFromVertex(fromObject, _rootObject) {
   }
   return toObject;
 }
+__name(validateRewardResponseFromVertex, "validateRewardResponseFromVertex");
 async function uploadBlob(file, uploadUrl, apiClient, httpOptions) {
   var _a2;
   const response = await uploadBlobInternal(file, uploadUrl, apiClient, httpOptions);
@@ -14521,6 +15093,7 @@ async function uploadBlob(file, uploadUrl, apiClient, httpOptions) {
   }
   return responseJson["file"];
 }
+__name(uploadBlob, "uploadBlob");
 async function uploadBlobToFileSearchStore(file, uploadUrl, apiClient, httpOptions) {
   var _a2;
   const response = await uploadBlobInternal(file, uploadUrl, apiClient, httpOptions);
@@ -14533,6 +15106,7 @@ async function uploadBlobToFileSearchStore(file, uploadUrl, apiClient, httpOptio
   Object.assign(typedResp, resp);
   return typedResp;
 }
+__name(uploadBlobToFileSearchStore, "uploadBlobToFileSearchStore");
 async function uploadBlobInternal(file, uploadUrl, apiClient, httpOptions) {
   var _a2, _b, _c;
   let finalUrl = uploadUrl;
@@ -14583,48 +15157,285 @@ async function uploadBlobInternal(file, uploadUrl, apiClient, httpOptions) {
   }
   return response;
 }
+__name(uploadBlobInternal, "uploadBlobInternal");
 async function getBlobStat(file) {
   const fileStat = { size: file.size, type: file.type };
   return fileStat;
 }
+__name(getBlobStat, "getBlobStat");
 function sleep(ms) {
   return new Promise((resolvePromise) => setTimeout(resolvePromise, ms));
 }
-var import_p_retry, _defaultBaseGeminiUrl, _defaultBaseVertexUrl, BaseModule, Outcome, Language, FunctionResponseScheduling, Type, AuthType, HttpElementLocation, ApiSpec, Environment, SafetyPolicy, PhishBlockThreshold, Behavior, DynamicRetrievalConfigMode, ThinkingLevel, PersonGeneration, ProminentPeople, HarmCategory, HarmBlockMethod, HarmBlockThreshold, FunctionCallingConfigMode, FinishReason, HarmProbability, HarmSeverity, UrlRetrievalStatus, BlockedReason, TrafficType, MediaModality, ModelStage, MediaResolution, Modality, Delivery, AspectRatio, ImageSize, TuningMode, AdapterSize, ResponseParseType, MatchOperation, ReinforcementTuningThinkingLevel, JobState, TuningJobState, AggregationMetric, PairwiseChoice, TuningSpeed, TuningTask, VideoOrientation, DocumentState, ServiceTier, PartMediaResolutionLevel, ToolType, ResourceScope, FeatureSelectionPreference, EmbeddingApiType, SafetyFilterLevel, ImagePromptLanguage, MaskReferenceMode, ControlReferenceType, SubjectReferenceType, EditMode, SegmentMode, VideoGenerationReferenceType, VideoGenerationMaskMode, VideoCompressionQuality, ImageResizeMode, TuningMethod, FileState, FileSource, TurnCompleteReason, VadSignalType, VoiceActivityType, StartSensitivity, EndSensitivity, ActivityHandling, TurnCoverage, Scale, MusicGenerationMode, LiveMusicPlaybackControl, HttpResponse, GenerateContentResponse, EmbedContentResponse, GenerateImagesResponse, EditImageResponse, UpscaleImageResponse, RecontextImageResponse, SegmentImageResponse, ListModelsResponse, DeleteModelResponse, CountTokensResponse, ComputeTokensResponse, GenerateVideosOperation, ListTuningJobsResponse, CancelTuningJobResponse, ValidateRewardResponse, DeleteCachedContentResponse, ListCachedContentsResponse, ListDocumentsResponse, ListFileSearchStoresResponse, UploadToFileSearchStoreResumableResponse, ImportFileOperation, ListFilesResponse, CreateFileResponse, DeleteFileResponse, RegisterFilesResponse, ListBatchJobsResponse, LiveServerMessage, LiveMusicServerMessage, UploadToFileSearchStoreOperation, PagedItem, Pager, Batches, Caches, Chats, Chat, ApiError, Files, CONTENT_TYPE_HEADER, SERVER_TIMEOUT_HEADER, USER_AGENT_HEADER, GOOGLE_API_CLIENT_HEADER, SDK_VERSION, LIBRARY_LABEL, VERTEX_AI_API_DEFAULT_VERSION, GOOGLE_AI_API_DEFAULT_VERSION, MULTI_REGIONAL_LOCATIONS, DEFAULT_RETRY_ATTEMPTS, DEFAULT_RETRY_HTTP_STATUS_CODES, ApiClient, MCP_LABEL, hasMcpToolUsageFromMcpToTool, McpCallableTool, LiveMusic, LiveMusicSession, FUNCTION_RESPONSE_REQUIRES_ID, Live, defaultLiveSendClientContentParamerters, Session, DEFAULT_MAX_REMOTE_CALLS, Models, Operations, Tokens, Documents, FileSearchStores, envMemo, GoogleGenAISecurityProvider, GoogleGenAIAuthHook, HTTPClientError, UnexpectedClientError, InvalidRequestError, RequestAbortedError, RequestTimeoutError, ConnectionError, GoogleGenAiError, GeminiNextGenAPIClientError, APIError, APIUserAbortError, APIConnectionError, APIConnectionTimeoutError, BadRequestError, AuthenticationError, PermissionDeniedError, NotFoundError, ConflictError, UnprocessableEntityError, RateLimitError, InternalServerError, SDKHooks, hasOwn, ServerList, SDK_METADATA, encodeForm, encodeSimple, encodeFormQuery, DEFAULT_FETCHER, HTTPClient, mediaParamSeparator, codeRangeRE$1, defaultBackoff, PermanentError, TemporaryError, codeRangeRE, gt, webWorkerLike, isBrowserLike, ClientSDK, jsonLikeContentTypeRE, jsonlLikeContentTypeRE, GoogleGenAiDefaultError, Stream, CR, LF, BOUNDARIES, MAX_BOUNDARY_LEN, DEFAULT_CONTENT_TYPES, headerValRE, SecurityErrorCode, SecurityError, _a, APIPromise, Agents, CancelInteractionByIdServerError, CancelInteractionByIdClientError, CreateInteractionServerError, CreateInteractionClientError, DeleteInteractionServerError, DeleteInteractionClientError, GetInteractionByIdServerError, GetInteractionByIdClientError, Interactions, Triggers, Webhooks, GoogleGenAI$1, LEGACY_LYRIA_MODELS, GeminiNextGenInteractions, GeminiNextGenAgents, GeminiNextGenWebhooks, GeminiNextGenTriggers, Tunings, BrowserDownloader, MAX_CHUNK_SIZE, MAX_RETRY_COUNT, INITIAL_RETRY_DELAY_MS, DELAY_MULTIPLIER, X_GOOG_UPLOAD_STATUS_HEADER_FIELD, BrowserUploader, BrowserWebSocketFactory, BrowserWebSocket, GOOGLE_API_KEY_HEADER, WebAuth, LANGUAGE_LABEL_PREFIX, GoogleGenAI2;
+__name(sleep, "sleep");
+var import_p_retry;
+var _defaultBaseGeminiUrl;
+var _defaultBaseVertexUrl;
+var BaseModule;
+var Outcome;
+var Language;
+var FunctionResponseScheduling;
+var Type;
+var AuthType;
+var HttpElementLocation;
+var ApiSpec;
+var Environment;
+var SafetyPolicy;
+var PhishBlockThreshold;
+var Behavior;
+var DynamicRetrievalConfigMode;
+var ThinkingLevel;
+var PersonGeneration;
+var ProminentPeople;
+var HarmCategory;
+var HarmBlockMethod;
+var HarmBlockThreshold;
+var FunctionCallingConfigMode;
+var FinishReason;
+var HarmProbability;
+var HarmSeverity;
+var UrlRetrievalStatus;
+var BlockedReason;
+var TrafficType;
+var MediaModality;
+var ModelStage;
+var MediaResolution;
+var Modality;
+var Delivery;
+var AspectRatio;
+var ImageSize;
+var TuningMode;
+var AdapterSize;
+var ResponseParseType;
+var MatchOperation;
+var ReinforcementTuningThinkingLevel;
+var JobState;
+var TuningJobState;
+var AggregationMetric;
+var PairwiseChoice;
+var TuningSpeed;
+var TuningTask;
+var VideoOrientation;
+var DocumentState;
+var ServiceTier;
+var PartMediaResolutionLevel;
+var ToolType;
+var ResourceScope;
+var FeatureSelectionPreference;
+var EmbeddingApiType;
+var SafetyFilterLevel;
+var ImagePromptLanguage;
+var MaskReferenceMode;
+var ControlReferenceType;
+var SubjectReferenceType;
+var EditMode;
+var SegmentMode;
+var VideoGenerationReferenceType;
+var VideoGenerationMaskMode;
+var VideoCompressionQuality;
+var ImageResizeMode;
+var TuningMethod;
+var FileState;
+var FileSource;
+var TurnCompleteReason;
+var VadSignalType;
+var VoiceActivityType;
+var StartSensitivity;
+var EndSensitivity;
+var ActivityHandling;
+var TurnCoverage;
+var Scale;
+var MusicGenerationMode;
+var LiveMusicPlaybackControl;
+var HttpResponse;
+var GenerateContentResponse;
+var EmbedContentResponse;
+var GenerateImagesResponse;
+var EditImageResponse;
+var UpscaleImageResponse;
+var RecontextImageResponse;
+var SegmentImageResponse;
+var ListModelsResponse;
+var DeleteModelResponse;
+var CountTokensResponse;
+var ComputeTokensResponse;
+var GenerateVideosOperation;
+var ListTuningJobsResponse;
+var CancelTuningJobResponse;
+var ValidateRewardResponse;
+var DeleteCachedContentResponse;
+var ListCachedContentsResponse;
+var ListDocumentsResponse;
+var ListFileSearchStoresResponse;
+var UploadToFileSearchStoreResumableResponse;
+var ImportFileOperation;
+var ListFilesResponse;
+var CreateFileResponse;
+var DeleteFileResponse;
+var RegisterFilesResponse;
+var ListBatchJobsResponse;
+var LiveServerMessage;
+var LiveMusicServerMessage;
+var UploadToFileSearchStoreOperation;
+var PagedItem;
+var Pager;
+var Batches;
+var Caches;
+var Chats;
+var Chat;
+var ApiError;
+var Files;
+var CONTENT_TYPE_HEADER;
+var SERVER_TIMEOUT_HEADER;
+var USER_AGENT_HEADER;
+var GOOGLE_API_CLIENT_HEADER;
+var SDK_VERSION;
+var LIBRARY_LABEL;
+var VERTEX_AI_API_DEFAULT_VERSION;
+var GOOGLE_AI_API_DEFAULT_VERSION;
+var MULTI_REGIONAL_LOCATIONS;
+var DEFAULT_RETRY_ATTEMPTS;
+var DEFAULT_RETRY_HTTP_STATUS_CODES;
+var ApiClient;
+var MCP_LABEL;
+var hasMcpToolUsageFromMcpToTool;
+var McpCallableTool;
+var LiveMusic;
+var LiveMusicSession;
+var FUNCTION_RESPONSE_REQUIRES_ID;
+var Live;
+var defaultLiveSendClientContentParamerters;
+var Session;
+var DEFAULT_MAX_REMOTE_CALLS;
+var Models;
+var Operations;
+var Tokens;
+var Documents;
+var FileSearchStores;
+var envMemo;
+var GoogleGenAISecurityProvider;
+var GoogleGenAIAuthHook;
+var HTTPClientError;
+var UnexpectedClientError;
+var InvalidRequestError;
+var RequestAbortedError;
+var RequestTimeoutError;
+var ConnectionError;
+var GoogleGenAiError;
+var GeminiNextGenAPIClientError;
+var APIError;
+var APIUserAbortError;
+var APIConnectionError;
+var APIConnectionTimeoutError;
+var BadRequestError;
+var AuthenticationError;
+var PermissionDeniedError;
+var NotFoundError;
+var ConflictError;
+var UnprocessableEntityError;
+var RateLimitError;
+var InternalServerError;
+var SDKHooks;
+var hasOwn;
+var ServerList;
+var SDK_METADATA;
+var encodeForm;
+var encodeSimple;
+var encodeFormQuery;
+var DEFAULT_FETCHER;
+var HTTPClient;
+var mediaParamSeparator;
+var codeRangeRE$1;
+var defaultBackoff;
+var PermanentError;
+var TemporaryError;
+var codeRangeRE;
+var gt;
+var webWorkerLike;
+var isBrowserLike;
+var ClientSDK;
+var jsonLikeContentTypeRE;
+var jsonlLikeContentTypeRE;
+var GoogleGenAiDefaultError;
+var Stream;
+var CR;
+var LF;
+var BOUNDARIES;
+var MAX_BOUNDARY_LEN;
+var DEFAULT_CONTENT_TYPES;
+var headerValRE;
+var SecurityErrorCode;
+var SecurityError;
+var _a;
+var APIPromise;
+var Agents;
+var CancelInteractionByIdServerError;
+var CancelInteractionByIdClientError;
+var CreateInteractionServerError;
+var CreateInteractionClientError;
+var DeleteInteractionServerError;
+var DeleteInteractionClientError;
+var GetInteractionByIdServerError;
+var GetInteractionByIdClientError;
+var Interactions;
+var Triggers;
+var Webhooks;
+var GoogleGenAI$1;
+var LEGACY_LYRIA_MODELS;
+var GeminiNextGenInteractions;
+var GeminiNextGenAgents;
+var GeminiNextGenWebhooks;
+var GeminiNextGenTriggers;
+var Tunings;
+var BrowserDownloader;
+var MAX_CHUNK_SIZE;
+var MAX_RETRY_COUNT;
+var INITIAL_RETRY_DELAY_MS;
+var DELAY_MULTIPLIER;
+var X_GOOG_UPLOAD_STATUS_HEADER_FIELD;
+var BrowserUploader;
+var BrowserWebSocketFactory;
+var BrowserWebSocket;
+var GOOGLE_API_KEY_HEADER;
+var WebAuth;
+var LANGUAGE_LABEL_PREFIX;
+var GoogleGenAI2;
 var init_web = __esm({
   "../node_modules/@google/genai/dist/web/index.mjs"() {
-    init_functionsRoutes_0_4909187672132509();
+    init_functionsRoutes_0_8669225902492499();
     import_p_retry = __toESM(require_p_retry(), 1);
     _defaultBaseGeminiUrl = void 0;
     _defaultBaseVertexUrl = void 0;
-    __name(getDefaultBaseUrls, "getDefaultBaseUrls");
-    __name(getBaseUrl, "getBaseUrl");
+    __name2(getDefaultBaseUrls, "getDefaultBaseUrls");
+    __name2(getBaseUrl, "getBaseUrl");
     BaseModule = class {
       static {
         __name(this, "BaseModule");
       }
+      static {
+        __name2(this, "BaseModule");
+      }
     };
-    __name(formatMap, "formatMap");
-    __name(setValueByPath, "setValueByPath");
-    __name(getValueByPath, "getValueByPath");
-    __name(moveValueByPath, "moveValueByPath");
-    __name(_moveValueRecursive, "_moveValueRecursive");
-    __name(tBytes$1, "tBytes$1");
-    __name(fetchPredictOperationParametersToVertex, "fetchPredictOperationParametersToVertex");
-    __name(generateVideosOperationFromMldev$1, "generateVideosOperationFromMldev$1");
-    __name(generateVideosOperationFromVertex$1, "generateVideosOperationFromVertex$1");
-    __name(generateVideosResponseFromMldev$1, "generateVideosResponseFromMldev$1");
-    __name(generateVideosResponseFromVertex$1, "generateVideosResponseFromVertex$1");
-    __name(generatedVideoFromMldev$1, "generatedVideoFromMldev$1");
-    __name(generatedVideoFromVertex$1, "generatedVideoFromVertex$1");
-    __name(getOperationParametersToMldev, "getOperationParametersToMldev");
-    __name(getOperationParametersToVertex, "getOperationParametersToVertex");
-    __name(importFileOperationFromMldev$1, "importFileOperationFromMldev$1");
-    __name(importFileResponseFromMldev$1, "importFileResponseFromMldev$1");
-    __name(uploadToFileSearchStoreOperationFromMldev, "uploadToFileSearchStoreOperationFromMldev");
-    __name(uploadToFileSearchStoreResponseFromMldev, "uploadToFileSearchStoreResponseFromMldev");
-    __name(videoFromMldev$1, "videoFromMldev$1");
-    __name(videoFromVertex$1, "videoFromVertex$1");
+    __name2(formatMap, "formatMap");
+    __name2(setValueByPath, "setValueByPath");
+    __name2(getValueByPath, "getValueByPath");
+    __name2(moveValueByPath, "moveValueByPath");
+    __name2(_moveValueRecursive, "_moveValueRecursive");
+    __name2(tBytes$1, "tBytes$1");
+    __name2(fetchPredictOperationParametersToVertex, "fetchPredictOperationParametersToVertex");
+    __name2(generateVideosOperationFromMldev$1, "generateVideosOperationFromMldev$1");
+    __name2(generateVideosOperationFromVertex$1, "generateVideosOperationFromVertex$1");
+    __name2(generateVideosResponseFromMldev$1, "generateVideosResponseFromMldev$1");
+    __name2(generateVideosResponseFromVertex$1, "generateVideosResponseFromVertex$1");
+    __name2(generatedVideoFromMldev$1, "generatedVideoFromMldev$1");
+    __name2(generatedVideoFromVertex$1, "generatedVideoFromVertex$1");
+    __name2(getOperationParametersToMldev, "getOperationParametersToMldev");
+    __name2(getOperationParametersToVertex, "getOperationParametersToVertex");
+    __name2(importFileOperationFromMldev$1, "importFileOperationFromMldev$1");
+    __name2(importFileResponseFromMldev$1, "importFileResponseFromMldev$1");
+    __name2(uploadToFileSearchStoreOperationFromMldev, "uploadToFileSearchStoreOperationFromMldev");
+    __name2(uploadToFileSearchStoreResponseFromMldev, "uploadToFileSearchStoreResponseFromMldev");
+    __name2(videoFromMldev$1, "videoFromMldev$1");
+    __name2(videoFromVertex$1, "videoFromVertex$1");
     (function(Outcome2) {
       Outcome2["OUTCOME_UNSPECIFIED"] = "OUTCOME_UNSPECIFIED";
       Outcome2["OUTCOME_OK"] = "OUTCOME_OK";
@@ -15182,6 +15993,9 @@ var init_web = __esm({
       static {
         __name(this, "HttpResponse");
       }
+      static {
+        __name2(this, "HttpResponse");
+      }
       constructor(response) {
         const headers = {};
         for (const pair of response.headers.entries()) {
@@ -15197,6 +16011,9 @@ var init_web = __esm({
     GenerateContentResponse = class {
       static {
         __name(this, "GenerateContentResponse");
+      }
+      static {
+        __name2(this, "GenerateContentResponse");
       }
       /**
        * Returns the concatenation of all text parts from the first candidate in the response.
@@ -15422,55 +16239,88 @@ var init_web = __esm({
       static {
         __name(this, "EmbedContentResponse");
       }
+      static {
+        __name2(this, "EmbedContentResponse");
+      }
     };
     GenerateImagesResponse = class {
       static {
         __name(this, "GenerateImagesResponse");
+      }
+      static {
+        __name2(this, "GenerateImagesResponse");
       }
     };
     EditImageResponse = class {
       static {
         __name(this, "EditImageResponse");
       }
+      static {
+        __name2(this, "EditImageResponse");
+      }
     };
     UpscaleImageResponse = class {
       static {
         __name(this, "UpscaleImageResponse");
+      }
+      static {
+        __name2(this, "UpscaleImageResponse");
       }
     };
     RecontextImageResponse = class {
       static {
         __name(this, "RecontextImageResponse");
       }
+      static {
+        __name2(this, "RecontextImageResponse");
+      }
     };
     SegmentImageResponse = class {
       static {
         __name(this, "SegmentImageResponse");
+      }
+      static {
+        __name2(this, "SegmentImageResponse");
       }
     };
     ListModelsResponse = class {
       static {
         __name(this, "ListModelsResponse");
       }
+      static {
+        __name2(this, "ListModelsResponse");
+      }
     };
     DeleteModelResponse = class {
       static {
         __name(this, "DeleteModelResponse");
+      }
+      static {
+        __name2(this, "DeleteModelResponse");
       }
     };
     CountTokensResponse = class {
       static {
         __name(this, "CountTokensResponse");
       }
+      static {
+        __name2(this, "CountTokensResponse");
+      }
     };
     ComputeTokensResponse = class {
       static {
         __name(this, "ComputeTokensResponse");
       }
+      static {
+        __name2(this, "ComputeTokensResponse");
+      }
     };
     GenerateVideosOperation = class _GenerateVideosOperation {
       static {
-        __name(this, "GenerateVideosOperation");
+        __name(this, "_GenerateVideosOperation");
+      }
+      static {
+        __name2(this, "GenerateVideosOperation");
       }
       /**
        * Instantiates an Operation of the same type as the one being called with the fields set from the API response.
@@ -15492,45 +16342,72 @@ var init_web = __esm({
       static {
         __name(this, "ListTuningJobsResponse");
       }
+      static {
+        __name2(this, "ListTuningJobsResponse");
+      }
     };
     CancelTuningJobResponse = class {
       static {
         __name(this, "CancelTuningJobResponse");
+      }
+      static {
+        __name2(this, "CancelTuningJobResponse");
       }
     };
     ValidateRewardResponse = class {
       static {
         __name(this, "ValidateRewardResponse");
       }
+      static {
+        __name2(this, "ValidateRewardResponse");
+      }
     };
     DeleteCachedContentResponse = class {
       static {
         __name(this, "DeleteCachedContentResponse");
+      }
+      static {
+        __name2(this, "DeleteCachedContentResponse");
       }
     };
     ListCachedContentsResponse = class {
       static {
         __name(this, "ListCachedContentsResponse");
       }
+      static {
+        __name2(this, "ListCachedContentsResponse");
+      }
     };
     ListDocumentsResponse = class {
       static {
         __name(this, "ListDocumentsResponse");
+      }
+      static {
+        __name2(this, "ListDocumentsResponse");
       }
     };
     ListFileSearchStoresResponse = class {
       static {
         __name(this, "ListFileSearchStoresResponse");
       }
+      static {
+        __name2(this, "ListFileSearchStoresResponse");
+      }
     };
     UploadToFileSearchStoreResumableResponse = class {
       static {
         __name(this, "UploadToFileSearchStoreResumableResponse");
       }
+      static {
+        __name2(this, "UploadToFileSearchStoreResumableResponse");
+      }
     };
     ImportFileOperation = class _ImportFileOperation {
       static {
-        __name(this, "ImportFileOperation");
+        __name(this, "_ImportFileOperation");
+      }
+      static {
+        __name2(this, "ImportFileOperation");
       }
       /**
        * Instantiates an Operation of the same type as the one being called with the fields set from the API response.
@@ -15547,30 +16424,48 @@ var init_web = __esm({
       static {
         __name(this, "ListFilesResponse");
       }
+      static {
+        __name2(this, "ListFilesResponse");
+      }
     };
     CreateFileResponse = class {
       static {
         __name(this, "CreateFileResponse");
+      }
+      static {
+        __name2(this, "CreateFileResponse");
       }
     };
     DeleteFileResponse = class {
       static {
         __name(this, "DeleteFileResponse");
       }
+      static {
+        __name2(this, "DeleteFileResponse");
+      }
     };
     RegisterFilesResponse = class {
       static {
         __name(this, "RegisterFilesResponse");
+      }
+      static {
+        __name2(this, "RegisterFilesResponse");
       }
     };
     ListBatchJobsResponse = class {
       static {
         __name(this, "ListBatchJobsResponse");
       }
+      static {
+        __name2(this, "ListBatchJobsResponse");
+      }
     };
     LiveServerMessage = class {
       static {
         __name(this, "LiveServerMessage");
+      }
+      static {
+        __name2(this, "LiveServerMessage");
       }
       /**
        * Returns the concatenation of all text parts from the server content if present.
@@ -15635,6 +16530,9 @@ var init_web = __esm({
       static {
         __name(this, "LiveMusicServerMessage");
       }
+      static {
+        __name2(this, "LiveMusicServerMessage");
+      }
       /**
        * Returns the first audio chunk from the server content, if present.
        *
@@ -15650,7 +16548,10 @@ var init_web = __esm({
     };
     UploadToFileSearchStoreOperation = class _UploadToFileSearchStoreOperation {
       static {
-        __name(this, "UploadToFileSearchStoreOperation");
+        __name(this, "_UploadToFileSearchStoreOperation");
+      }
+      static {
+        __name2(this, "UploadToFileSearchStoreOperation");
       }
       /**
        * Instantiates an Operation of the same type as the one being called with the fields set from the API response.
@@ -15663,98 +16564,98 @@ var init_web = __esm({
         return operation;
       }
     };
-    __name(tModel, "tModel");
-    __name(tCachesModel, "tCachesModel");
-    __name(tBlobs, "tBlobs");
-    __name(tBlob, "tBlob");
-    __name(tImageBlob, "tImageBlob");
-    __name(tAudioBlob, "tAudioBlob");
-    __name(tPart, "tPart");
-    __name(tParts, "tParts");
-    __name(_isContent, "_isContent");
-    __name(_isFunctionCallPart, "_isFunctionCallPart");
-    __name(_isFunctionResponsePart, "_isFunctionResponsePart");
-    __name(tContent, "tContent");
-    __name(tContentsForEmbed, "tContentsForEmbed");
-    __name(tContents, "tContents");
-    __name(flattenTypeArrayToAnyOf, "flattenTypeArrayToAnyOf");
-    __name(processJsonSchema, "processJsonSchema");
-    __name(tSchema, "tSchema");
-    __name(tSpeechConfig, "tSpeechConfig");
-    __name(tLiveSpeechConfig, "tLiveSpeechConfig");
-    __name(tTool, "tTool");
-    __name(tTools, "tTools");
-    __name(resourceName, "resourceName");
-    __name(tCachedContentName, "tCachedContentName");
-    __name(tTuningJobStatus, "tTuningJobStatus");
-    __name(tBytes, "tBytes");
-    __name(_isFile, "_isFile");
-    __name(isGeneratedVideo, "isGeneratedVideo");
-    __name(isVideo, "isVideo");
-    __name(tFileName, "tFileName");
-    __name(tModelsUrl, "tModelsUrl");
-    __name(tExtractModels, "tExtractModels");
-    __name(hasField, "hasField");
-    __name(mcpToGeminiTool, "mcpToGeminiTool");
-    __name(mcpToolsToGeminiTool, "mcpToolsToGeminiTool");
-    __name(tBatchJobSource, "tBatchJobSource");
-    __name(tBatchJobDestination, "tBatchJobDestination");
-    __name(tRecvBatchJobDestination, "tRecvBatchJobDestination");
-    __name(tBatchJobName, "tBatchJobName");
-    __name(tJobState, "tJobState");
-    __name(tIsVertexEmbedContentModel, "tIsVertexEmbedContentModel");
-    __name(authConfigToMldev$4, "authConfigToMldev$4");
-    __name(batchJobDestinationFromMldev, "batchJobDestinationFromMldev");
-    __name(batchJobDestinationFromVertex, "batchJobDestinationFromVertex");
-    __name(batchJobDestinationToVertex, "batchJobDestinationToVertex");
-    __name(batchJobFromMldev, "batchJobFromMldev");
-    __name(batchJobFromVertex, "batchJobFromVertex");
-    __name(batchJobSourceFromVertex, "batchJobSourceFromVertex");
-    __name(batchJobSourceToMldev, "batchJobSourceToMldev");
-    __name(batchJobSourceToVertex, "batchJobSourceToVertex");
-    __name(blobToMldev$4, "blobToMldev$4");
-    __name(cancelBatchJobParametersToMldev, "cancelBatchJobParametersToMldev");
-    __name(cancelBatchJobParametersToVertex, "cancelBatchJobParametersToVertex");
-    __name(candidateFromMldev$1, "candidateFromMldev$1");
-    __name(citationMetadataFromMldev$1, "citationMetadataFromMldev$1");
-    __name(contentToMldev$4, "contentToMldev$4");
-    __name(createBatchJobConfigToMldev, "createBatchJobConfigToMldev");
-    __name(createBatchJobConfigToVertex, "createBatchJobConfigToVertex");
-    __name(createBatchJobParametersToMldev, "createBatchJobParametersToMldev");
-    __name(createBatchJobParametersToVertex, "createBatchJobParametersToVertex");
-    __name(createEmbeddingsBatchJobConfigToMldev, "createEmbeddingsBatchJobConfigToMldev");
-    __name(createEmbeddingsBatchJobParametersToMldev, "createEmbeddingsBatchJobParametersToMldev");
-    __name(deleteBatchJobParametersToMldev, "deleteBatchJobParametersToMldev");
-    __name(deleteBatchJobParametersToVertex, "deleteBatchJobParametersToVertex");
-    __name(deleteResourceJobFromMldev, "deleteResourceJobFromMldev");
-    __name(deleteResourceJobFromVertex, "deleteResourceJobFromVertex");
-    __name(embedContentBatchToMldev, "embedContentBatchToMldev");
-    __name(embedContentConfigToMldev$1, "embedContentConfigToMldev$1");
-    __name(embeddingsBatchJobSourceToMldev, "embeddingsBatchJobSourceToMldev");
-    __name(fileDataToMldev$4, "fileDataToMldev$4");
-    __name(functionCallToMldev$4, "functionCallToMldev$4");
-    __name(functionCallingConfigToMldev$2, "functionCallingConfigToMldev$2");
-    __name(generateContentConfigToMldev$1, "generateContentConfigToMldev$1");
-    __name(generateContentResponseFromMldev$1, "generateContentResponseFromMldev$1");
-    __name(getBatchJobParametersToMldev, "getBatchJobParametersToMldev");
-    __name(getBatchJobParametersToVertex, "getBatchJobParametersToVertex");
-    __name(googleMapsToMldev$4, "googleMapsToMldev$4");
-    __name(googleSearchToMldev$4, "googleSearchToMldev$4");
-    __name(imageConfigToMldev$1, "imageConfigToMldev$1");
-    __name(inlinedRequestToMldev, "inlinedRequestToMldev");
-    __name(inlinedResponseFromMldev, "inlinedResponseFromMldev");
-    __name(listBatchJobsConfigToMldev, "listBatchJobsConfigToMldev");
-    __name(listBatchJobsConfigToVertex, "listBatchJobsConfigToVertex");
-    __name(listBatchJobsParametersToMldev, "listBatchJobsParametersToMldev");
-    __name(listBatchJobsParametersToVertex, "listBatchJobsParametersToVertex");
-    __name(listBatchJobsResponseFromMldev, "listBatchJobsResponseFromMldev");
-    __name(listBatchJobsResponseFromVertex, "listBatchJobsResponseFromVertex");
-    __name(partToMldev$4, "partToMldev$4");
-    __name(safetySettingToMldev$3, "safetySettingToMldev$3");
-    __name(toolConfigToMldev$2, "toolConfigToMldev$2");
-    __name(toolToMldev$4, "toolToMldev$4");
-    __name(vertexMultimodalDatasetDestinationFromVertex, "vertexMultimodalDatasetDestinationFromVertex");
-    __name(vertexMultimodalDatasetDestinationToVertex, "vertexMultimodalDatasetDestinationToVertex");
+    __name2(tModel, "tModel");
+    __name2(tCachesModel, "tCachesModel");
+    __name2(tBlobs, "tBlobs");
+    __name2(tBlob, "tBlob");
+    __name2(tImageBlob, "tImageBlob");
+    __name2(tAudioBlob, "tAudioBlob");
+    __name2(tPart, "tPart");
+    __name2(tParts, "tParts");
+    __name2(_isContent, "_isContent");
+    __name2(_isFunctionCallPart, "_isFunctionCallPart");
+    __name2(_isFunctionResponsePart, "_isFunctionResponsePart");
+    __name2(tContent, "tContent");
+    __name2(tContentsForEmbed, "tContentsForEmbed");
+    __name2(tContents, "tContents");
+    __name2(flattenTypeArrayToAnyOf, "flattenTypeArrayToAnyOf");
+    __name2(processJsonSchema, "processJsonSchema");
+    __name2(tSchema, "tSchema");
+    __name2(tSpeechConfig, "tSpeechConfig");
+    __name2(tLiveSpeechConfig, "tLiveSpeechConfig");
+    __name2(tTool, "tTool");
+    __name2(tTools, "tTools");
+    __name2(resourceName, "resourceName");
+    __name2(tCachedContentName, "tCachedContentName");
+    __name2(tTuningJobStatus, "tTuningJobStatus");
+    __name2(tBytes, "tBytes");
+    __name2(_isFile, "_isFile");
+    __name2(isGeneratedVideo, "isGeneratedVideo");
+    __name2(isVideo, "isVideo");
+    __name2(tFileName, "tFileName");
+    __name2(tModelsUrl, "tModelsUrl");
+    __name2(tExtractModels, "tExtractModels");
+    __name2(hasField, "hasField");
+    __name2(mcpToGeminiTool, "mcpToGeminiTool");
+    __name2(mcpToolsToGeminiTool, "mcpToolsToGeminiTool");
+    __name2(tBatchJobSource, "tBatchJobSource");
+    __name2(tBatchJobDestination, "tBatchJobDestination");
+    __name2(tRecvBatchJobDestination, "tRecvBatchJobDestination");
+    __name2(tBatchJobName, "tBatchJobName");
+    __name2(tJobState, "tJobState");
+    __name2(tIsVertexEmbedContentModel, "tIsVertexEmbedContentModel");
+    __name2(authConfigToMldev$4, "authConfigToMldev$4");
+    __name2(batchJobDestinationFromMldev, "batchJobDestinationFromMldev");
+    __name2(batchJobDestinationFromVertex, "batchJobDestinationFromVertex");
+    __name2(batchJobDestinationToVertex, "batchJobDestinationToVertex");
+    __name2(batchJobFromMldev, "batchJobFromMldev");
+    __name2(batchJobFromVertex, "batchJobFromVertex");
+    __name2(batchJobSourceFromVertex, "batchJobSourceFromVertex");
+    __name2(batchJobSourceToMldev, "batchJobSourceToMldev");
+    __name2(batchJobSourceToVertex, "batchJobSourceToVertex");
+    __name2(blobToMldev$4, "blobToMldev$4");
+    __name2(cancelBatchJobParametersToMldev, "cancelBatchJobParametersToMldev");
+    __name2(cancelBatchJobParametersToVertex, "cancelBatchJobParametersToVertex");
+    __name2(candidateFromMldev$1, "candidateFromMldev$1");
+    __name2(citationMetadataFromMldev$1, "citationMetadataFromMldev$1");
+    __name2(contentToMldev$4, "contentToMldev$4");
+    __name2(createBatchJobConfigToMldev, "createBatchJobConfigToMldev");
+    __name2(createBatchJobConfigToVertex, "createBatchJobConfigToVertex");
+    __name2(createBatchJobParametersToMldev, "createBatchJobParametersToMldev");
+    __name2(createBatchJobParametersToVertex, "createBatchJobParametersToVertex");
+    __name2(createEmbeddingsBatchJobConfigToMldev, "createEmbeddingsBatchJobConfigToMldev");
+    __name2(createEmbeddingsBatchJobParametersToMldev, "createEmbeddingsBatchJobParametersToMldev");
+    __name2(deleteBatchJobParametersToMldev, "deleteBatchJobParametersToMldev");
+    __name2(deleteBatchJobParametersToVertex, "deleteBatchJobParametersToVertex");
+    __name2(deleteResourceJobFromMldev, "deleteResourceJobFromMldev");
+    __name2(deleteResourceJobFromVertex, "deleteResourceJobFromVertex");
+    __name2(embedContentBatchToMldev, "embedContentBatchToMldev");
+    __name2(embedContentConfigToMldev$1, "embedContentConfigToMldev$1");
+    __name2(embeddingsBatchJobSourceToMldev, "embeddingsBatchJobSourceToMldev");
+    __name2(fileDataToMldev$4, "fileDataToMldev$4");
+    __name2(functionCallToMldev$4, "functionCallToMldev$4");
+    __name2(functionCallingConfigToMldev$2, "functionCallingConfigToMldev$2");
+    __name2(generateContentConfigToMldev$1, "generateContentConfigToMldev$1");
+    __name2(generateContentResponseFromMldev$1, "generateContentResponseFromMldev$1");
+    __name2(getBatchJobParametersToMldev, "getBatchJobParametersToMldev");
+    __name2(getBatchJobParametersToVertex, "getBatchJobParametersToVertex");
+    __name2(googleMapsToMldev$4, "googleMapsToMldev$4");
+    __name2(googleSearchToMldev$4, "googleSearchToMldev$4");
+    __name2(imageConfigToMldev$1, "imageConfigToMldev$1");
+    __name2(inlinedRequestToMldev, "inlinedRequestToMldev");
+    __name2(inlinedResponseFromMldev, "inlinedResponseFromMldev");
+    __name2(listBatchJobsConfigToMldev, "listBatchJobsConfigToMldev");
+    __name2(listBatchJobsConfigToVertex, "listBatchJobsConfigToVertex");
+    __name2(listBatchJobsParametersToMldev, "listBatchJobsParametersToMldev");
+    __name2(listBatchJobsParametersToVertex, "listBatchJobsParametersToVertex");
+    __name2(listBatchJobsResponseFromMldev, "listBatchJobsResponseFromMldev");
+    __name2(listBatchJobsResponseFromVertex, "listBatchJobsResponseFromVertex");
+    __name2(partToMldev$4, "partToMldev$4");
+    __name2(safetySettingToMldev$3, "safetySettingToMldev$3");
+    __name2(toolConfigToMldev$2, "toolConfigToMldev$2");
+    __name2(toolToMldev$4, "toolToMldev$4");
+    __name2(vertexMultimodalDatasetDestinationFromVertex, "vertexMultimodalDatasetDestinationFromVertex");
+    __name2(vertexMultimodalDatasetDestinationToVertex, "vertexMultimodalDatasetDestinationToVertex");
     (function(PagedItem2) {
       PagedItem2["PAGED_ITEM_BATCH_JOBS"] = "batchJobs";
       PagedItem2["PAGED_ITEM_MODELS"] = "models";
@@ -15768,6 +16669,9 @@ var init_web = __esm({
     Pager = class {
       static {
         __name(this, "Pager");
+      }
+      static {
+        __name2(this, "Pager");
       }
       constructor(name, request, response, params) {
         this.pageInternal = [];
@@ -15871,7 +16775,7 @@ var init_web = __esm({
        */
       [Symbol.asyncIterator]() {
         return {
-          next: /* @__PURE__ */ __name(async () => {
+          next: /* @__PURE__ */ __name2(async () => {
             if (this.idxInternal >= this.pageLength) {
               if (this.hasNextPage()) {
                 await this.nextPage();
@@ -15883,7 +16787,7 @@ var init_web = __esm({
             this.idxInternal += 1;
             return { value: item, done: false };
           }, "next"),
-          return: /* @__PURE__ */ __name(async () => {
+          return: /* @__PURE__ */ __name2(async () => {
             return { value: void 0, done: true };
           }, "return")
         };
@@ -15931,6 +16835,9 @@ var init_web = __esm({
     Batches = class extends BaseModule {
       static {
         __name(this, "Batches");
+      }
+      static {
+        __name2(this, "Batches");
       }
       constructor(apiClient) {
         super();
@@ -16354,48 +17261,51 @@ var init_web = __esm({
         }
       }
     };
-    __name(authConfigToMldev$3, "authConfigToMldev$3");
-    __name(blobToMldev$3, "blobToMldev$3");
-    __name(codeExecutionResultToVertex$3, "codeExecutionResultToVertex$3");
-    __name(computerUseToVertex$2, "computerUseToVertex$2");
-    __name(contentToMldev$3, "contentToMldev$3");
-    __name(contentToVertex$3, "contentToVertex$3");
-    __name(createCachedContentConfigToMldev, "createCachedContentConfigToMldev");
-    __name(createCachedContentConfigToVertex, "createCachedContentConfigToVertex");
-    __name(createCachedContentParametersToMldev, "createCachedContentParametersToMldev");
-    __name(createCachedContentParametersToVertex, "createCachedContentParametersToVertex");
-    __name(deleteCachedContentParametersToMldev, "deleteCachedContentParametersToMldev");
-    __name(deleteCachedContentParametersToVertex, "deleteCachedContentParametersToVertex");
-    __name(deleteCachedContentResponseFromMldev, "deleteCachedContentResponseFromMldev");
-    __name(deleteCachedContentResponseFromVertex, "deleteCachedContentResponseFromVertex");
-    __name(executableCodeToVertex$3, "executableCodeToVertex$3");
-    __name(fileDataToMldev$3, "fileDataToMldev$3");
-    __name(functionCallToMldev$3, "functionCallToMldev$3");
-    __name(functionCallingConfigToMldev$1, "functionCallingConfigToMldev$1");
-    __name(getCachedContentParametersToMldev, "getCachedContentParametersToMldev");
-    __name(getCachedContentParametersToVertex, "getCachedContentParametersToVertex");
-    __name(googleMapsToMldev$3, "googleMapsToMldev$3");
-    __name(googleSearchToMldev$3, "googleSearchToMldev$3");
-    __name(listCachedContentsConfigToMldev, "listCachedContentsConfigToMldev");
-    __name(listCachedContentsConfigToVertex, "listCachedContentsConfigToVertex");
-    __name(listCachedContentsParametersToMldev, "listCachedContentsParametersToMldev");
-    __name(listCachedContentsParametersToVertex, "listCachedContentsParametersToVertex");
-    __name(listCachedContentsResponseFromMldev, "listCachedContentsResponseFromMldev");
-    __name(listCachedContentsResponseFromVertex, "listCachedContentsResponseFromVertex");
-    __name(mcpServerToVertex$2, "mcpServerToVertex$2");
-    __name(partToMldev$3, "partToMldev$3");
-    __name(partToVertex$3, "partToVertex$3");
-    __name(toolConfigToMldev$1, "toolConfigToMldev$1");
-    __name(toolConfigToVertex$1, "toolConfigToVertex$1");
-    __name(toolToMldev$3, "toolToMldev$3");
-    __name(toolToVertex$2, "toolToVertex$2");
-    __name(updateCachedContentConfigToMldev, "updateCachedContentConfigToMldev");
-    __name(updateCachedContentConfigToVertex, "updateCachedContentConfigToVertex");
-    __name(updateCachedContentParametersToMldev, "updateCachedContentParametersToMldev");
-    __name(updateCachedContentParametersToVertex, "updateCachedContentParametersToVertex");
+    __name2(authConfigToMldev$3, "authConfigToMldev$3");
+    __name2(blobToMldev$3, "blobToMldev$3");
+    __name2(codeExecutionResultToVertex$3, "codeExecutionResultToVertex$3");
+    __name2(computerUseToVertex$2, "computerUseToVertex$2");
+    __name2(contentToMldev$3, "contentToMldev$3");
+    __name2(contentToVertex$3, "contentToVertex$3");
+    __name2(createCachedContentConfigToMldev, "createCachedContentConfigToMldev");
+    __name2(createCachedContentConfigToVertex, "createCachedContentConfigToVertex");
+    __name2(createCachedContentParametersToMldev, "createCachedContentParametersToMldev");
+    __name2(createCachedContentParametersToVertex, "createCachedContentParametersToVertex");
+    __name2(deleteCachedContentParametersToMldev, "deleteCachedContentParametersToMldev");
+    __name2(deleteCachedContentParametersToVertex, "deleteCachedContentParametersToVertex");
+    __name2(deleteCachedContentResponseFromMldev, "deleteCachedContentResponseFromMldev");
+    __name2(deleteCachedContentResponseFromVertex, "deleteCachedContentResponseFromVertex");
+    __name2(executableCodeToVertex$3, "executableCodeToVertex$3");
+    __name2(fileDataToMldev$3, "fileDataToMldev$3");
+    __name2(functionCallToMldev$3, "functionCallToMldev$3");
+    __name2(functionCallingConfigToMldev$1, "functionCallingConfigToMldev$1");
+    __name2(getCachedContentParametersToMldev, "getCachedContentParametersToMldev");
+    __name2(getCachedContentParametersToVertex, "getCachedContentParametersToVertex");
+    __name2(googleMapsToMldev$3, "googleMapsToMldev$3");
+    __name2(googleSearchToMldev$3, "googleSearchToMldev$3");
+    __name2(listCachedContentsConfigToMldev, "listCachedContentsConfigToMldev");
+    __name2(listCachedContentsConfigToVertex, "listCachedContentsConfigToVertex");
+    __name2(listCachedContentsParametersToMldev, "listCachedContentsParametersToMldev");
+    __name2(listCachedContentsParametersToVertex, "listCachedContentsParametersToVertex");
+    __name2(listCachedContentsResponseFromMldev, "listCachedContentsResponseFromMldev");
+    __name2(listCachedContentsResponseFromVertex, "listCachedContentsResponseFromVertex");
+    __name2(mcpServerToVertex$2, "mcpServerToVertex$2");
+    __name2(partToMldev$3, "partToMldev$3");
+    __name2(partToVertex$3, "partToVertex$3");
+    __name2(toolConfigToMldev$1, "toolConfigToMldev$1");
+    __name2(toolConfigToVertex$1, "toolConfigToVertex$1");
+    __name2(toolToMldev$3, "toolToMldev$3");
+    __name2(toolToVertex$2, "toolToVertex$2");
+    __name2(updateCachedContentConfigToMldev, "updateCachedContentConfigToMldev");
+    __name2(updateCachedContentConfigToVertex, "updateCachedContentConfigToVertex");
+    __name2(updateCachedContentParametersToMldev, "updateCachedContentParametersToMldev");
+    __name2(updateCachedContentParametersToVertex, "updateCachedContentParametersToVertex");
     Caches = class extends BaseModule {
       static {
         __name(this, "Caches");
+      }
+      static {
+        __name2(this, "Caches");
       }
       constructor(apiClient) {
         super();
@@ -16728,18 +17638,21 @@ var init_web = __esm({
         }
       }
     };
-    __name(__rest, "__rest");
-    __name(__values, "__values");
-    __name(__await, "__await");
-    __name(__asyncGenerator, "__asyncGenerator");
-    __name(__asyncValues, "__asyncValues");
-    __name(isValidResponse, "isValidResponse");
-    __name(isValidContent, "isValidContent");
-    __name(validateHistory, "validateHistory");
-    __name(extractCuratedHistory, "extractCuratedHistory");
+    __name2(__rest, "__rest");
+    __name2(__values, "__values");
+    __name2(__await, "__await");
+    __name2(__asyncGenerator, "__asyncGenerator");
+    __name2(__asyncValues, "__asyncValues");
+    __name2(isValidResponse, "isValidResponse");
+    __name2(isValidContent, "isValidContent");
+    __name2(validateHistory, "validateHistory");
+    __name2(extractCuratedHistory, "extractCuratedHistory");
     Chats = class {
       static {
         __name(this, "Chats");
+      }
+      static {
+        __name2(this, "Chats");
       }
       constructor(modelsModule, apiClient) {
         this.modelsModule = modelsModule;
@@ -16782,6 +17695,9 @@ var init_web = __esm({
     Chat = class {
       static {
         __name(this, "Chat");
+      }
+      static {
+        __name2(this, "Chat");
       }
       constructor(apiClient, modelsModule, model, config = {}, history = []) {
         this.apiClient = apiClient;
@@ -16904,7 +17820,7 @@ var init_web = __esm({
         return structuredClone(history);
       }
       processStreamResponse(streamResponse, inputContent) {
-        return __asyncGenerator(this, arguments, /* @__PURE__ */ __name(function* processStreamResponse_1() {
+        return __asyncGenerator(this, arguments, /* @__PURE__ */ __name2(/* @__PURE__ */ __name(function* processStreamResponse_1() {
           var _a2, e_1, _b, _c;
           var _d, _e;
           const outputContent = [];
@@ -16931,7 +17847,7 @@ var init_web = __esm({
             }
           }
           this.recordHistory(inputContent, outputContent);
-        }, "processStreamResponse_1"));
+        }, "processStreamResponse_1"), "processStreamResponse_1"));
       }
       recordHistory(userInput, modelOutput, automaticFunctionCallingHistory) {
         let outputContents = [];
@@ -16953,7 +17869,10 @@ var init_web = __esm({
     };
     ApiError = class _ApiError extends Error {
       static {
-        __name(this, "ApiError");
+        __name(this, "_ApiError");
+      }
+      static {
+        __name2(this, "ApiError");
       }
       constructor(options) {
         super(options.message);
@@ -16962,19 +17881,22 @@ var init_web = __esm({
         Object.setPrototypeOf(this, _ApiError.prototype);
       }
     };
-    __name(createFileParametersToMldev, "createFileParametersToMldev");
-    __name(createFileResponseFromMldev, "createFileResponseFromMldev");
-    __name(deleteFileParametersToMldev, "deleteFileParametersToMldev");
-    __name(deleteFileResponseFromMldev, "deleteFileResponseFromMldev");
-    __name(getFileParametersToMldev, "getFileParametersToMldev");
-    __name(internalRegisterFilesParametersToMldev, "internalRegisterFilesParametersToMldev");
-    __name(listFilesConfigToMldev, "listFilesConfigToMldev");
-    __name(listFilesParametersToMldev, "listFilesParametersToMldev");
-    __name(listFilesResponseFromMldev, "listFilesResponseFromMldev");
-    __name(registerFilesResponseFromMldev, "registerFilesResponseFromMldev");
+    __name2(createFileParametersToMldev, "createFileParametersToMldev");
+    __name2(createFileResponseFromMldev, "createFileResponseFromMldev");
+    __name2(deleteFileParametersToMldev, "deleteFileParametersToMldev");
+    __name2(deleteFileResponseFromMldev, "deleteFileResponseFromMldev");
+    __name2(getFileParametersToMldev, "getFileParametersToMldev");
+    __name2(internalRegisterFilesParametersToMldev, "internalRegisterFilesParametersToMldev");
+    __name2(listFilesConfigToMldev, "listFilesConfigToMldev");
+    __name2(listFilesParametersToMldev, "listFilesParametersToMldev");
+    __name2(listFilesResponseFromMldev, "listFilesResponseFromMldev");
+    __name2(registerFilesResponseFromMldev, "registerFilesResponseFromMldev");
     Files = class extends BaseModule {
       static {
         __name(this, "Files");
+      }
+      static {
+        __name2(this, "Files");
       }
       constructor(apiClient) {
         super();
@@ -17256,183 +18178,183 @@ var init_web = __esm({
         }
       }
     };
-    __name(audioTranscriptionConfigToMldev$1, "audioTranscriptionConfigToMldev$1");
-    __name(authConfigToMldev$2, "authConfigToMldev$2");
-    __name(blobToMldev$2, "blobToMldev$2");
-    __name(codeExecutionResultToVertex$2, "codeExecutionResultToVertex$2");
-    __name(computerUseToVertex$1, "computerUseToVertex$1");
-    __name(contentToMldev$2, "contentToMldev$2");
-    __name(contentToVertex$2, "contentToVertex$2");
-    __name(executableCodeToVertex$2, "executableCodeToVertex$2");
-    __name(fileDataToMldev$2, "fileDataToMldev$2");
-    __name(functionCallToMldev$2, "functionCallToMldev$2");
-    __name(generationConfigToVertex$1, "generationConfigToVertex$1");
-    __name(googleMapsToMldev$2, "googleMapsToMldev$2");
-    __name(googleSearchToMldev$2, "googleSearchToMldev$2");
-    __name(liveConnectConfigToMldev$1, "liveConnectConfigToMldev$1");
-    __name(liveConnectConfigToVertex, "liveConnectConfigToVertex");
-    __name(liveConnectParametersToMldev, "liveConnectParametersToMldev");
-    __name(liveConnectParametersToVertex, "liveConnectParametersToVertex");
-    __name(liveMusicSetConfigParametersToMldev, "liveMusicSetConfigParametersToMldev");
-    __name(liveMusicSetWeightedPromptsParametersToMldev, "liveMusicSetWeightedPromptsParametersToMldev");
-    __name(liveSendRealtimeInputParametersToMldev, "liveSendRealtimeInputParametersToMldev");
-    __name(liveSendRealtimeInputParametersToVertex, "liveSendRealtimeInputParametersToVertex");
-    __name(liveServerMessageFromVertex, "liveServerMessageFromVertex");
-    __name(mcpServerToVertex$1, "mcpServerToVertex$1");
-    __name(multiSpeakerVoiceConfigToVertex$1, "multiSpeakerVoiceConfigToVertex$1");
-    __name(partToMldev$2, "partToMldev$2");
-    __name(partToVertex$2, "partToVertex$2");
-    __name(replicatedVoiceConfigToVertex$1, "replicatedVoiceConfigToVertex$1");
-    __name(safetySettingToMldev$2, "safetySettingToMldev$2");
-    __name(sessionResumptionConfigToMldev$1, "sessionResumptionConfigToMldev$1");
-    __name(speakerVoiceConfigToVertex$1, "speakerVoiceConfigToVertex$1");
-    __name(speechConfigToVertex$1, "speechConfigToVertex$1");
-    __name(toolToMldev$2, "toolToMldev$2");
-    __name(toolToVertex$1, "toolToVertex$1");
-    __name(usageMetadataFromVertex, "usageMetadataFromVertex");
-    __name(voiceActivityFromVertex, "voiceActivityFromVertex");
-    __name(voiceConfigToVertex$1, "voiceConfigToVertex$1");
-    __name(authConfigToMldev$1, "authConfigToMldev$1");
-    __name(blobToMldev$1, "blobToMldev$1");
-    __name(candidateFromMldev, "candidateFromMldev");
-    __name(citationMetadataFromMldev, "citationMetadataFromMldev");
-    __name(codeExecutionResultToVertex$1, "codeExecutionResultToVertex$1");
-    __name(computeTokensParametersToVertex, "computeTokensParametersToVertex");
-    __name(computeTokensResponseFromVertex, "computeTokensResponseFromVertex");
-    __name(computerUseToVertex, "computerUseToVertex");
-    __name(contentEmbeddingFromVertex, "contentEmbeddingFromVertex");
-    __name(contentEmbeddingStatisticsFromVertex, "contentEmbeddingStatisticsFromVertex");
-    __name(contentToMldev$1, "contentToMldev$1");
-    __name(contentToVertex$1, "contentToVertex$1");
-    __name(controlReferenceConfigToVertex, "controlReferenceConfigToVertex");
-    __name(countTokensConfigToMldev, "countTokensConfigToMldev");
-    __name(countTokensConfigToVertex, "countTokensConfigToVertex");
-    __name(countTokensParametersToMldev, "countTokensParametersToMldev");
-    __name(countTokensParametersToVertex, "countTokensParametersToVertex");
-    __name(countTokensResponseFromMldev, "countTokensResponseFromMldev");
-    __name(countTokensResponseFromVertex, "countTokensResponseFromVertex");
-    __name(deleteModelParametersToMldev, "deleteModelParametersToMldev");
-    __name(deleteModelParametersToVertex, "deleteModelParametersToVertex");
-    __name(deleteModelResponseFromMldev, "deleteModelResponseFromMldev");
-    __name(deleteModelResponseFromVertex, "deleteModelResponseFromVertex");
-    __name(editImageConfigToVertex, "editImageConfigToVertex");
-    __name(editImageParametersInternalToVertex, "editImageParametersInternalToVertex");
-    __name(editImageResponseFromVertex, "editImageResponseFromVertex");
-    __name(embedContentConfigToMldev, "embedContentConfigToMldev");
-    __name(embedContentConfigToVertex, "embedContentConfigToVertex");
-    __name(embedContentParametersPrivateToMldev, "embedContentParametersPrivateToMldev");
-    __name(embedContentParametersPrivateToVertex, "embedContentParametersPrivateToVertex");
-    __name(embedContentResponseFromMldev, "embedContentResponseFromMldev");
-    __name(embedContentResponseFromVertex, "embedContentResponseFromVertex");
-    __name(endpointFromVertex, "endpointFromVertex");
-    __name(executableCodeToVertex$1, "executableCodeToVertex$1");
-    __name(fileDataToMldev$1, "fileDataToMldev$1");
-    __name(functionCallToMldev$1, "functionCallToMldev$1");
-    __name(functionCallingConfigToMldev, "functionCallingConfigToMldev");
-    __name(generateContentConfigToMldev, "generateContentConfigToMldev");
-    __name(generateContentConfigToVertex, "generateContentConfigToVertex");
-    __name(generateContentParametersToMldev, "generateContentParametersToMldev");
-    __name(generateContentParametersToVertex, "generateContentParametersToVertex");
-    __name(generateContentResponseFromMldev, "generateContentResponseFromMldev");
-    __name(generateContentResponseFromVertex, "generateContentResponseFromVertex");
-    __name(generateImagesConfigToMldev, "generateImagesConfigToMldev");
-    __name(generateImagesConfigToVertex, "generateImagesConfigToVertex");
-    __name(generateImagesParametersToMldev, "generateImagesParametersToMldev");
-    __name(generateImagesParametersToVertex, "generateImagesParametersToVertex");
-    __name(generateImagesResponseFromMldev, "generateImagesResponseFromMldev");
-    __name(generateImagesResponseFromVertex, "generateImagesResponseFromVertex");
-    __name(generateVideosConfigToMldev, "generateVideosConfigToMldev");
-    __name(generateVideosConfigToVertex, "generateVideosConfigToVertex");
-    __name(generateVideosOperationFromMldev, "generateVideosOperationFromMldev");
-    __name(generateVideosOperationFromVertex, "generateVideosOperationFromVertex");
-    __name(generateVideosParametersToMldev, "generateVideosParametersToMldev");
-    __name(generateVideosParametersToVertex, "generateVideosParametersToVertex");
-    __name(generateVideosResponseFromMldev, "generateVideosResponseFromMldev");
-    __name(generateVideosResponseFromVertex, "generateVideosResponseFromVertex");
-    __name(generateVideosSourceToMldev, "generateVideosSourceToMldev");
-    __name(generateVideosSourceToVertex, "generateVideosSourceToVertex");
-    __name(generatedImageFromMldev, "generatedImageFromMldev");
-    __name(generatedImageFromVertex, "generatedImageFromVertex");
-    __name(generatedImageMaskFromVertex, "generatedImageMaskFromVertex");
-    __name(generatedVideoFromMldev, "generatedVideoFromMldev");
-    __name(generatedVideoFromVertex, "generatedVideoFromVertex");
-    __name(generationConfigToVertex, "generationConfigToVertex");
-    __name(getModelParametersToMldev, "getModelParametersToMldev");
-    __name(getModelParametersToVertex, "getModelParametersToVertex");
-    __name(googleMapsToMldev$1, "googleMapsToMldev$1");
-    __name(googleSearchToMldev$1, "googleSearchToMldev$1");
-    __name(imageConfigToMldev, "imageConfigToMldev");
-    __name(imageConfigToVertex, "imageConfigToVertex");
-    __name(imageFromMldev, "imageFromMldev");
-    __name(imageFromVertex, "imageFromVertex");
-    __name(imageToMldev, "imageToMldev");
-    __name(imageToVertex, "imageToVertex");
-    __name(listModelsConfigToMldev, "listModelsConfigToMldev");
-    __name(listModelsConfigToVertex, "listModelsConfigToVertex");
-    __name(listModelsParametersToMldev, "listModelsParametersToMldev");
-    __name(listModelsParametersToVertex, "listModelsParametersToVertex");
-    __name(listModelsResponseFromMldev, "listModelsResponseFromMldev");
-    __name(listModelsResponseFromVertex, "listModelsResponseFromVertex");
-    __name(maskReferenceConfigToVertex, "maskReferenceConfigToVertex");
-    __name(mcpServerToVertex, "mcpServerToVertex");
-    __name(modelFromMldev, "modelFromMldev");
-    __name(modelFromVertex, "modelFromVertex");
-    __name(multiSpeakerVoiceConfigToVertex, "multiSpeakerVoiceConfigToVertex");
-    __name(partToMldev$1, "partToMldev$1");
-    __name(partToVertex$1, "partToVertex$1");
-    __name(productImageToVertex, "productImageToVertex");
-    __name(recontextImageConfigToVertex, "recontextImageConfigToVertex");
-    __name(recontextImageParametersToVertex, "recontextImageParametersToVertex");
-    __name(recontextImageResponseFromVertex, "recontextImageResponseFromVertex");
-    __name(recontextImageSourceToVertex, "recontextImageSourceToVertex");
-    __name(referenceImageAPIInternalToVertex, "referenceImageAPIInternalToVertex");
-    __name(replicatedVoiceConfigToVertex, "replicatedVoiceConfigToVertex");
-    __name(safetyAttributesFromMldev, "safetyAttributesFromMldev");
-    __name(safetyAttributesFromVertex, "safetyAttributesFromVertex");
-    __name(safetySettingToMldev$1, "safetySettingToMldev$1");
-    __name(scribbleImageToVertex, "scribbleImageToVertex");
-    __name(segmentImageConfigToVertex, "segmentImageConfigToVertex");
-    __name(segmentImageParametersToVertex, "segmentImageParametersToVertex");
-    __name(segmentImageResponseFromVertex, "segmentImageResponseFromVertex");
-    __name(segmentImageSourceToVertex, "segmentImageSourceToVertex");
-    __name(speakerVoiceConfigToVertex, "speakerVoiceConfigToVertex");
-    __name(speechConfigToVertex, "speechConfigToVertex");
-    __name(toolConfigToMldev, "toolConfigToMldev");
-    __name(toolConfigToVertex, "toolConfigToVertex");
-    __name(toolToMldev$1, "toolToMldev$1");
-    __name(toolToVertex, "toolToVertex");
-    __name(tunedModelInfoFromMldev, "tunedModelInfoFromMldev");
-    __name(tunedModelInfoFromVertex, "tunedModelInfoFromVertex");
-    __name(updateModelConfigToMldev, "updateModelConfigToMldev");
-    __name(updateModelConfigToVertex, "updateModelConfigToVertex");
-    __name(updateModelParametersToMldev, "updateModelParametersToMldev");
-    __name(updateModelParametersToVertex, "updateModelParametersToVertex");
-    __name(upscaleImageAPIConfigInternalToVertex, "upscaleImageAPIConfigInternalToVertex");
-    __name(upscaleImageAPIParametersInternalToVertex, "upscaleImageAPIParametersInternalToVertex");
-    __name(upscaleImageResponseFromVertex, "upscaleImageResponseFromVertex");
-    __name(videoFromMldev, "videoFromMldev");
-    __name(videoFromVertex, "videoFromVertex");
-    __name(videoGenerationMaskToVertex, "videoGenerationMaskToVertex");
-    __name(videoGenerationReferenceImageToMldev, "videoGenerationReferenceImageToMldev");
-    __name(videoGenerationReferenceImageToVertex, "videoGenerationReferenceImageToVertex");
-    __name(videoToMldev, "videoToMldev");
-    __name(videoToVertex, "videoToVertex");
-    __name(voiceConfigToVertex, "voiceConfigToVertex");
-    __name(createFileSearchStoreConfigToMldev, "createFileSearchStoreConfigToMldev");
-    __name(createFileSearchStoreParametersToMldev, "createFileSearchStoreParametersToMldev");
-    __name(deleteFileSearchStoreConfigToMldev, "deleteFileSearchStoreConfigToMldev");
-    __name(deleteFileSearchStoreParametersToMldev, "deleteFileSearchStoreParametersToMldev");
-    __name(getFileSearchStoreParametersToMldev, "getFileSearchStoreParametersToMldev");
-    __name(importFileConfigToMldev, "importFileConfigToMldev");
-    __name(importFileOperationFromMldev, "importFileOperationFromMldev");
-    __name(importFileParametersToMldev, "importFileParametersToMldev");
-    __name(importFileResponseFromMldev, "importFileResponseFromMldev");
-    __name(listFileSearchStoresConfigToMldev, "listFileSearchStoresConfigToMldev");
-    __name(listFileSearchStoresParametersToMldev, "listFileSearchStoresParametersToMldev");
-    __name(listFileSearchStoresResponseFromMldev, "listFileSearchStoresResponseFromMldev");
-    __name(uploadToFileSearchStoreConfigToMldev, "uploadToFileSearchStoreConfigToMldev");
-    __name(uploadToFileSearchStoreParametersToMldev, "uploadToFileSearchStoreParametersToMldev");
-    __name(uploadToFileSearchStoreResumableResponseFromMldev, "uploadToFileSearchStoreResumableResponseFromMldev");
+    __name2(audioTranscriptionConfigToMldev$1, "audioTranscriptionConfigToMldev$1");
+    __name2(authConfigToMldev$2, "authConfigToMldev$2");
+    __name2(blobToMldev$2, "blobToMldev$2");
+    __name2(codeExecutionResultToVertex$2, "codeExecutionResultToVertex$2");
+    __name2(computerUseToVertex$1, "computerUseToVertex$1");
+    __name2(contentToMldev$2, "contentToMldev$2");
+    __name2(contentToVertex$2, "contentToVertex$2");
+    __name2(executableCodeToVertex$2, "executableCodeToVertex$2");
+    __name2(fileDataToMldev$2, "fileDataToMldev$2");
+    __name2(functionCallToMldev$2, "functionCallToMldev$2");
+    __name2(generationConfigToVertex$1, "generationConfigToVertex$1");
+    __name2(googleMapsToMldev$2, "googleMapsToMldev$2");
+    __name2(googleSearchToMldev$2, "googleSearchToMldev$2");
+    __name2(liveConnectConfigToMldev$1, "liveConnectConfigToMldev$1");
+    __name2(liveConnectConfigToVertex, "liveConnectConfigToVertex");
+    __name2(liveConnectParametersToMldev, "liveConnectParametersToMldev");
+    __name2(liveConnectParametersToVertex, "liveConnectParametersToVertex");
+    __name2(liveMusicSetConfigParametersToMldev, "liveMusicSetConfigParametersToMldev");
+    __name2(liveMusicSetWeightedPromptsParametersToMldev, "liveMusicSetWeightedPromptsParametersToMldev");
+    __name2(liveSendRealtimeInputParametersToMldev, "liveSendRealtimeInputParametersToMldev");
+    __name2(liveSendRealtimeInputParametersToVertex, "liveSendRealtimeInputParametersToVertex");
+    __name2(liveServerMessageFromVertex, "liveServerMessageFromVertex");
+    __name2(mcpServerToVertex$1, "mcpServerToVertex$1");
+    __name2(multiSpeakerVoiceConfigToVertex$1, "multiSpeakerVoiceConfigToVertex$1");
+    __name2(partToMldev$2, "partToMldev$2");
+    __name2(partToVertex$2, "partToVertex$2");
+    __name2(replicatedVoiceConfigToVertex$1, "replicatedVoiceConfigToVertex$1");
+    __name2(safetySettingToMldev$2, "safetySettingToMldev$2");
+    __name2(sessionResumptionConfigToMldev$1, "sessionResumptionConfigToMldev$1");
+    __name2(speakerVoiceConfigToVertex$1, "speakerVoiceConfigToVertex$1");
+    __name2(speechConfigToVertex$1, "speechConfigToVertex$1");
+    __name2(toolToMldev$2, "toolToMldev$2");
+    __name2(toolToVertex$1, "toolToVertex$1");
+    __name2(usageMetadataFromVertex, "usageMetadataFromVertex");
+    __name2(voiceActivityFromVertex, "voiceActivityFromVertex");
+    __name2(voiceConfigToVertex$1, "voiceConfigToVertex$1");
+    __name2(authConfigToMldev$1, "authConfigToMldev$1");
+    __name2(blobToMldev$1, "blobToMldev$1");
+    __name2(candidateFromMldev, "candidateFromMldev");
+    __name2(citationMetadataFromMldev, "citationMetadataFromMldev");
+    __name2(codeExecutionResultToVertex$1, "codeExecutionResultToVertex$1");
+    __name2(computeTokensParametersToVertex, "computeTokensParametersToVertex");
+    __name2(computeTokensResponseFromVertex, "computeTokensResponseFromVertex");
+    __name2(computerUseToVertex, "computerUseToVertex");
+    __name2(contentEmbeddingFromVertex, "contentEmbeddingFromVertex");
+    __name2(contentEmbeddingStatisticsFromVertex, "contentEmbeddingStatisticsFromVertex");
+    __name2(contentToMldev$1, "contentToMldev$1");
+    __name2(contentToVertex$1, "contentToVertex$1");
+    __name2(controlReferenceConfigToVertex, "controlReferenceConfigToVertex");
+    __name2(countTokensConfigToMldev, "countTokensConfigToMldev");
+    __name2(countTokensConfigToVertex, "countTokensConfigToVertex");
+    __name2(countTokensParametersToMldev, "countTokensParametersToMldev");
+    __name2(countTokensParametersToVertex, "countTokensParametersToVertex");
+    __name2(countTokensResponseFromMldev, "countTokensResponseFromMldev");
+    __name2(countTokensResponseFromVertex, "countTokensResponseFromVertex");
+    __name2(deleteModelParametersToMldev, "deleteModelParametersToMldev");
+    __name2(deleteModelParametersToVertex, "deleteModelParametersToVertex");
+    __name2(deleteModelResponseFromMldev, "deleteModelResponseFromMldev");
+    __name2(deleteModelResponseFromVertex, "deleteModelResponseFromVertex");
+    __name2(editImageConfigToVertex, "editImageConfigToVertex");
+    __name2(editImageParametersInternalToVertex, "editImageParametersInternalToVertex");
+    __name2(editImageResponseFromVertex, "editImageResponseFromVertex");
+    __name2(embedContentConfigToMldev, "embedContentConfigToMldev");
+    __name2(embedContentConfigToVertex, "embedContentConfigToVertex");
+    __name2(embedContentParametersPrivateToMldev, "embedContentParametersPrivateToMldev");
+    __name2(embedContentParametersPrivateToVertex, "embedContentParametersPrivateToVertex");
+    __name2(embedContentResponseFromMldev, "embedContentResponseFromMldev");
+    __name2(embedContentResponseFromVertex, "embedContentResponseFromVertex");
+    __name2(endpointFromVertex, "endpointFromVertex");
+    __name2(executableCodeToVertex$1, "executableCodeToVertex$1");
+    __name2(fileDataToMldev$1, "fileDataToMldev$1");
+    __name2(functionCallToMldev$1, "functionCallToMldev$1");
+    __name2(functionCallingConfigToMldev, "functionCallingConfigToMldev");
+    __name2(generateContentConfigToMldev, "generateContentConfigToMldev");
+    __name2(generateContentConfigToVertex, "generateContentConfigToVertex");
+    __name2(generateContentParametersToMldev, "generateContentParametersToMldev");
+    __name2(generateContentParametersToVertex, "generateContentParametersToVertex");
+    __name2(generateContentResponseFromMldev, "generateContentResponseFromMldev");
+    __name2(generateContentResponseFromVertex, "generateContentResponseFromVertex");
+    __name2(generateImagesConfigToMldev, "generateImagesConfigToMldev");
+    __name2(generateImagesConfigToVertex, "generateImagesConfigToVertex");
+    __name2(generateImagesParametersToMldev, "generateImagesParametersToMldev");
+    __name2(generateImagesParametersToVertex, "generateImagesParametersToVertex");
+    __name2(generateImagesResponseFromMldev, "generateImagesResponseFromMldev");
+    __name2(generateImagesResponseFromVertex, "generateImagesResponseFromVertex");
+    __name2(generateVideosConfigToMldev, "generateVideosConfigToMldev");
+    __name2(generateVideosConfigToVertex, "generateVideosConfigToVertex");
+    __name2(generateVideosOperationFromMldev, "generateVideosOperationFromMldev");
+    __name2(generateVideosOperationFromVertex, "generateVideosOperationFromVertex");
+    __name2(generateVideosParametersToMldev, "generateVideosParametersToMldev");
+    __name2(generateVideosParametersToVertex, "generateVideosParametersToVertex");
+    __name2(generateVideosResponseFromMldev, "generateVideosResponseFromMldev");
+    __name2(generateVideosResponseFromVertex, "generateVideosResponseFromVertex");
+    __name2(generateVideosSourceToMldev, "generateVideosSourceToMldev");
+    __name2(generateVideosSourceToVertex, "generateVideosSourceToVertex");
+    __name2(generatedImageFromMldev, "generatedImageFromMldev");
+    __name2(generatedImageFromVertex, "generatedImageFromVertex");
+    __name2(generatedImageMaskFromVertex, "generatedImageMaskFromVertex");
+    __name2(generatedVideoFromMldev, "generatedVideoFromMldev");
+    __name2(generatedVideoFromVertex, "generatedVideoFromVertex");
+    __name2(generationConfigToVertex, "generationConfigToVertex");
+    __name2(getModelParametersToMldev, "getModelParametersToMldev");
+    __name2(getModelParametersToVertex, "getModelParametersToVertex");
+    __name2(googleMapsToMldev$1, "googleMapsToMldev$1");
+    __name2(googleSearchToMldev$1, "googleSearchToMldev$1");
+    __name2(imageConfigToMldev, "imageConfigToMldev");
+    __name2(imageConfigToVertex, "imageConfigToVertex");
+    __name2(imageFromMldev, "imageFromMldev");
+    __name2(imageFromVertex, "imageFromVertex");
+    __name2(imageToMldev, "imageToMldev");
+    __name2(imageToVertex, "imageToVertex");
+    __name2(listModelsConfigToMldev, "listModelsConfigToMldev");
+    __name2(listModelsConfigToVertex, "listModelsConfigToVertex");
+    __name2(listModelsParametersToMldev, "listModelsParametersToMldev");
+    __name2(listModelsParametersToVertex, "listModelsParametersToVertex");
+    __name2(listModelsResponseFromMldev, "listModelsResponseFromMldev");
+    __name2(listModelsResponseFromVertex, "listModelsResponseFromVertex");
+    __name2(maskReferenceConfigToVertex, "maskReferenceConfigToVertex");
+    __name2(mcpServerToVertex, "mcpServerToVertex");
+    __name2(modelFromMldev, "modelFromMldev");
+    __name2(modelFromVertex, "modelFromVertex");
+    __name2(multiSpeakerVoiceConfigToVertex, "multiSpeakerVoiceConfigToVertex");
+    __name2(partToMldev$1, "partToMldev$1");
+    __name2(partToVertex$1, "partToVertex$1");
+    __name2(productImageToVertex, "productImageToVertex");
+    __name2(recontextImageConfigToVertex, "recontextImageConfigToVertex");
+    __name2(recontextImageParametersToVertex, "recontextImageParametersToVertex");
+    __name2(recontextImageResponseFromVertex, "recontextImageResponseFromVertex");
+    __name2(recontextImageSourceToVertex, "recontextImageSourceToVertex");
+    __name2(referenceImageAPIInternalToVertex, "referenceImageAPIInternalToVertex");
+    __name2(replicatedVoiceConfigToVertex, "replicatedVoiceConfigToVertex");
+    __name2(safetyAttributesFromMldev, "safetyAttributesFromMldev");
+    __name2(safetyAttributesFromVertex, "safetyAttributesFromVertex");
+    __name2(safetySettingToMldev$1, "safetySettingToMldev$1");
+    __name2(scribbleImageToVertex, "scribbleImageToVertex");
+    __name2(segmentImageConfigToVertex, "segmentImageConfigToVertex");
+    __name2(segmentImageParametersToVertex, "segmentImageParametersToVertex");
+    __name2(segmentImageResponseFromVertex, "segmentImageResponseFromVertex");
+    __name2(segmentImageSourceToVertex, "segmentImageSourceToVertex");
+    __name2(speakerVoiceConfigToVertex, "speakerVoiceConfigToVertex");
+    __name2(speechConfigToVertex, "speechConfigToVertex");
+    __name2(toolConfigToMldev, "toolConfigToMldev");
+    __name2(toolConfigToVertex, "toolConfigToVertex");
+    __name2(toolToMldev$1, "toolToMldev$1");
+    __name2(toolToVertex, "toolToVertex");
+    __name2(tunedModelInfoFromMldev, "tunedModelInfoFromMldev");
+    __name2(tunedModelInfoFromVertex, "tunedModelInfoFromVertex");
+    __name2(updateModelConfigToMldev, "updateModelConfigToMldev");
+    __name2(updateModelConfigToVertex, "updateModelConfigToVertex");
+    __name2(updateModelParametersToMldev, "updateModelParametersToMldev");
+    __name2(updateModelParametersToVertex, "updateModelParametersToVertex");
+    __name2(upscaleImageAPIConfigInternalToVertex, "upscaleImageAPIConfigInternalToVertex");
+    __name2(upscaleImageAPIParametersInternalToVertex, "upscaleImageAPIParametersInternalToVertex");
+    __name2(upscaleImageResponseFromVertex, "upscaleImageResponseFromVertex");
+    __name2(videoFromMldev, "videoFromMldev");
+    __name2(videoFromVertex, "videoFromVertex");
+    __name2(videoGenerationMaskToVertex, "videoGenerationMaskToVertex");
+    __name2(videoGenerationReferenceImageToMldev, "videoGenerationReferenceImageToMldev");
+    __name2(videoGenerationReferenceImageToVertex, "videoGenerationReferenceImageToVertex");
+    __name2(videoToMldev, "videoToMldev");
+    __name2(videoToVertex, "videoToVertex");
+    __name2(voiceConfigToVertex, "voiceConfigToVertex");
+    __name2(createFileSearchStoreConfigToMldev, "createFileSearchStoreConfigToMldev");
+    __name2(createFileSearchStoreParametersToMldev, "createFileSearchStoreParametersToMldev");
+    __name2(deleteFileSearchStoreConfigToMldev, "deleteFileSearchStoreConfigToMldev");
+    __name2(deleteFileSearchStoreParametersToMldev, "deleteFileSearchStoreParametersToMldev");
+    __name2(getFileSearchStoreParametersToMldev, "getFileSearchStoreParametersToMldev");
+    __name2(importFileConfigToMldev, "importFileConfigToMldev");
+    __name2(importFileOperationFromMldev, "importFileOperationFromMldev");
+    __name2(importFileParametersToMldev, "importFileParametersToMldev");
+    __name2(importFileResponseFromMldev, "importFileResponseFromMldev");
+    __name2(listFileSearchStoresConfigToMldev, "listFileSearchStoresConfigToMldev");
+    __name2(listFileSearchStoresParametersToMldev, "listFileSearchStoresParametersToMldev");
+    __name2(listFileSearchStoresResponseFromMldev, "listFileSearchStoresResponseFromMldev");
+    __name2(uploadToFileSearchStoreConfigToMldev, "uploadToFileSearchStoreConfigToMldev");
+    __name2(uploadToFileSearchStoreParametersToMldev, "uploadToFileSearchStoreParametersToMldev");
+    __name2(uploadToFileSearchStoreResumableResponseFromMldev, "uploadToFileSearchStoreResumableResponseFromMldev");
     CONTENT_TYPE_HEADER = "Content-Type";
     SERVER_TIMEOUT_HEADER = "X-Server-Timeout";
     USER_AGENT_HEADER = "User-Agent";
@@ -17460,6 +18382,9 @@ var init_web = __esm({
     ApiClient = class {
       static {
         __name(this, "ApiClient");
+      }
+      static {
+        __name2(this, "ApiClient");
       }
       constructor(opts) {
         var _a2, _b, _c;
@@ -17718,7 +18643,7 @@ var init_web = __esm({
         });
       }
       processStreamResponse(response) {
-        return __asyncGenerator(this, arguments, /* @__PURE__ */ __name(function* processStreamResponse_1() {
+        return __asyncGenerator(this, arguments, /* @__PURE__ */ __name2(/* @__PURE__ */ __name(function* processStreamResponse_1() {
           var _a2;
           const reader = (_a2 = response === null || response === void 0 ? void 0 : response.body) === null || _a2 === void 0 ? void 0 : _a2.getReader();
           const decoder = new TextDecoder("utf-8");
@@ -17796,7 +18721,7 @@ var init_web = __esm({
           } finally {
             reader.releaseLock();
           }
-        }, "processStreamResponse_1"));
+        }, "processStreamResponse_1"), "processStreamResponse_1"));
       }
       async apiCall(url, requestInit) {
         var _a2;
@@ -17804,7 +18729,7 @@ var init_web = __esm({
           return fetch(url, requestInit);
         }
         const retryOptions = this.clientOptions.httpOptions.retryOptions;
-        const runFetch = /* @__PURE__ */ __name(async () => {
+        const runFetch = /* @__PURE__ */ __name2(async () => {
           const response = await fetch(url, requestInit);
           if (response.ok) {
             return response;
@@ -17955,17 +18880,20 @@ var init_web = __esm({
         return uploadUrl;
       }
     };
-    __name(throwErrorIfNotOK, "throwErrorIfNotOK");
-    __name(includeExtraBodyToRequestInit, "includeExtraBodyToRequestInit");
+    __name2(throwErrorIfNotOK, "throwErrorIfNotOK");
+    __name2(includeExtraBodyToRequestInit, "includeExtraBodyToRequestInit");
     MCP_LABEL = "mcp_used/unknown";
     hasMcpToolUsageFromMcpToTool = false;
-    __name(hasMcpToolUsage, "hasMcpToolUsage");
-    __name(setMcpUsageHeader, "setMcpUsageHeader");
-    __name(isMcpCallableTool, "isMcpCallableTool");
-    __name(listAllTools, "listAllTools");
+    __name2(hasMcpToolUsage, "hasMcpToolUsage");
+    __name2(setMcpUsageHeader, "setMcpUsageHeader");
+    __name2(isMcpCallableTool, "isMcpCallableTool");
+    __name2(listAllTools, "listAllTools");
     McpCallableTool = class _McpCallableTool {
       static {
-        __name(this, "McpCallableTool");
+        __name(this, "_McpCallableTool");
+      }
+      static {
+        __name2(this, "McpCallableTool");
       }
       constructor(mcpClients = [], config) {
         this.mcpTools = [];
@@ -18056,10 +18984,13 @@ var init_web = __esm({
         return functionCallResponseParts;
       }
     };
-    __name(handleWebSocketMessage$1, "handleWebSocketMessage$1");
+    __name2(handleWebSocketMessage$1, "handleWebSocketMessage$1");
     LiveMusic = class {
       static {
         __name(this, "LiveMusic");
+      }
+      static {
+        __name2(this, "LiveMusic");
       }
       constructor(apiClient, auth, webSocketFactory) {
         this.apiClient = apiClient;
@@ -18107,19 +19038,19 @@ var init_web = __esm({
         const headers = mapToHeaders$1(this.apiClient.getDefaultHeaders());
         const apiKey = this.apiClient.getApiKey();
         const url = `${websocketBaseUrl}/ws/google.ai.generativelanguage.${apiVersion}.GenerativeService.BidiGenerateMusic?key=${apiKey}`;
-        let onopenResolve = /* @__PURE__ */ __name(() => {
+        let onopenResolve = /* @__PURE__ */ __name2(() => {
         }, "onopenResolve");
         const onopenPromise = new Promise((resolve) => {
           onopenResolve = resolve;
         });
         const callbacks = params.callbacks;
-        const onopenAwaitedCallback = /* @__PURE__ */ __name(function() {
+        const onopenAwaitedCallback = /* @__PURE__ */ __name2(function() {
           onopenResolve({});
         }, "onopenAwaitedCallback");
         const apiClient = this.apiClient;
         const websocketCallbacks = {
           onopen: onopenAwaitedCallback,
-          onmessage: /* @__PURE__ */ __name((event) => {
+          onmessage: /* @__PURE__ */ __name2((event) => {
             void handleWebSocketMessage$1(apiClient, callbacks.onmessage, event);
           }, "onmessage"),
           onerror: (_a2 = callbacks === null || callbacks === void 0 ? void 0 : callbacks.onerror) !== null && _a2 !== void 0 ? _a2 : function(e) {
@@ -18140,6 +19071,9 @@ var init_web = __esm({
     LiveMusicSession = class {
       static {
         __name(this, "LiveMusicSession");
+      }
+      static {
+        __name2(this, "LiveMusicSession");
       }
       constructor(conn, apiClient) {
         this.conn = conn;
@@ -18229,13 +19163,16 @@ var init_web = __esm({
         this.conn.close();
       }
     };
-    __name(headersToMap$1, "headersToMap$1");
-    __name(mapToHeaders$1, "mapToHeaders$1");
+    __name2(headersToMap$1, "headersToMap$1");
+    __name2(mapToHeaders$1, "mapToHeaders$1");
     FUNCTION_RESPONSE_REQUIRES_ID = "FunctionResponse request must have an `id` field from the response of a ToolCall.FunctionalCalls in Google AI.";
-    __name(handleWebSocketMessage, "handleWebSocketMessage");
+    __name2(handleWebSocketMessage, "handleWebSocketMessage");
     Live = class {
       static {
         __name(this, "Live");
+      }
+      static {
+        __name2(this, "Live");
       }
       constructor(apiClient, auth, webSocketFactory) {
         this.apiClient = apiClient;
@@ -18323,13 +19260,13 @@ var init_web = __esm({
           }
           url = `${websocketBaseUrl}/ws/google.ai.generativelanguage.${apiVersion}.GenerativeService.${method}?${keyName}=${apiKey}`;
         }
-        let onopenResolve = /* @__PURE__ */ __name(() => {
+        let onopenResolve = /* @__PURE__ */ __name2(() => {
         }, "onopenResolve");
         const onopenPromise = new Promise((resolve) => {
           onopenResolve = resolve;
         });
         const callbacks = params.callbacks;
-        const onopenAwaitedCallback = /* @__PURE__ */ __name(function() {
+        const onopenAwaitedCallback = /* @__PURE__ */ __name2(function() {
           var _a3;
           (_a3 = callbacks === null || callbacks === void 0 ? void 0 : callbacks.onopen) === null || _a3 === void 0 ? void 0 : _a3.call(callbacks);
           onopenResolve({});
@@ -18337,14 +19274,14 @@ var init_web = __esm({
         const apiClient = this.apiClient;
         let sessionResolved = false;
         const messageQueue = [];
-        let setupCompleteResolve = /* @__PURE__ */ __name(() => {
+        let setupCompleteResolve = /* @__PURE__ */ __name2(() => {
         }, "setupCompleteResolve");
         const setupCompletePromise = new Promise((resolve) => {
           setupCompleteResolve = resolve;
         });
         const websocketCallbacks = {
           onopen: onopenAwaitedCallback,
-          onmessage: /* @__PURE__ */ __name((event) => {
+          onmessage: /* @__PURE__ */ __name2((event) => {
             void handleWebSocketMessage(apiClient, (msg) => {
               if (msg.setupComplete && !session.setupComplete) {
                 session.setupComplete = msg.setupComplete;
@@ -18428,6 +19365,9 @@ var init_web = __esm({
     Session = class {
       static {
         __name(this, "Session");
+      }
+      static {
+        __name2(this, "Session");
       }
       constructor(conn, apiClient) {
         this.conn = conn;
@@ -18615,17 +19555,20 @@ var init_web = __esm({
         this.conn.close();
       }
     };
-    __name(headersToMap, "headersToMap");
-    __name(mapToHeaders, "mapToHeaders");
+    __name2(headersToMap, "headersToMap");
+    __name2(mapToHeaders, "mapToHeaders");
     DEFAULT_MAX_REMOTE_CALLS = 10;
-    __name(shouldDisableAfc, "shouldDisableAfc");
-    __name(isCallableTool, "isCallableTool");
-    __name(hasCallableTools, "hasCallableTools");
-    __name(findAfcIncompatibleToolIndexes, "findAfcIncompatibleToolIndexes");
-    __name(shouldAppendAfcHistory, "shouldAppendAfcHistory");
+    __name2(shouldDisableAfc, "shouldDisableAfc");
+    __name2(isCallableTool, "isCallableTool");
+    __name2(hasCallableTools, "hasCallableTools");
+    __name2(findAfcIncompatibleToolIndexes, "findAfcIncompatibleToolIndexes");
+    __name2(shouldAppendAfcHistory, "shouldAppendAfcHistory");
     Models = class extends BaseModule {
       static {
         __name(this, "Models");
+      }
+      static {
+        __name2(this, "Models");
       }
       constructor(apiClient) {
         super();
@@ -19912,6 +20855,9 @@ var init_web = __esm({
       static {
         __name(this, "Operations");
       }
+      static {
+        __name2(this, "Operations");
+      }
       constructor(apiClient) {
         super();
         this.apiClient = apiClient;
@@ -20060,27 +21006,30 @@ var init_web = __esm({
         }
       }
     };
-    __name(audioTranscriptionConfigToMldev, "audioTranscriptionConfigToMldev");
-    __name(authConfigToMldev, "authConfigToMldev");
-    __name(blobToMldev, "blobToMldev");
-    __name(contentToMldev, "contentToMldev");
-    __name(createAuthTokenConfigToMldev, "createAuthTokenConfigToMldev");
-    __name(createAuthTokenParametersToMldev, "createAuthTokenParametersToMldev");
-    __name(fileDataToMldev, "fileDataToMldev");
-    __name(functionCallToMldev, "functionCallToMldev");
-    __name(googleMapsToMldev, "googleMapsToMldev");
-    __name(googleSearchToMldev, "googleSearchToMldev");
-    __name(liveConnectConfigToMldev, "liveConnectConfigToMldev");
-    __name(liveConnectConstraintsToMldev, "liveConnectConstraintsToMldev");
-    __name(partToMldev, "partToMldev");
-    __name(safetySettingToMldev, "safetySettingToMldev");
-    __name(sessionResumptionConfigToMldev, "sessionResumptionConfigToMldev");
-    __name(toolToMldev, "toolToMldev");
-    __name(getFieldMasks, "getFieldMasks");
-    __name(convertBidiSetupToTokenSetup, "convertBidiSetupToTokenSetup");
+    __name2(audioTranscriptionConfigToMldev, "audioTranscriptionConfigToMldev");
+    __name2(authConfigToMldev, "authConfigToMldev");
+    __name2(blobToMldev, "blobToMldev");
+    __name2(contentToMldev, "contentToMldev");
+    __name2(createAuthTokenConfigToMldev, "createAuthTokenConfigToMldev");
+    __name2(createAuthTokenParametersToMldev, "createAuthTokenParametersToMldev");
+    __name2(fileDataToMldev, "fileDataToMldev");
+    __name2(functionCallToMldev, "functionCallToMldev");
+    __name2(googleMapsToMldev, "googleMapsToMldev");
+    __name2(googleSearchToMldev, "googleSearchToMldev");
+    __name2(liveConnectConfigToMldev, "liveConnectConfigToMldev");
+    __name2(liveConnectConstraintsToMldev, "liveConnectConstraintsToMldev");
+    __name2(partToMldev, "partToMldev");
+    __name2(safetySettingToMldev, "safetySettingToMldev");
+    __name2(sessionResumptionConfigToMldev, "sessionResumptionConfigToMldev");
+    __name2(toolToMldev, "toolToMldev");
+    __name2(getFieldMasks, "getFieldMasks");
+    __name2(convertBidiSetupToTokenSetup, "convertBidiSetupToTokenSetup");
     Tokens = class extends BaseModule {
       static {
         __name(this, "Tokens");
+      }
+      static {
+        __name2(this, "Tokens");
       }
       constructor(apiClient) {
         super();
@@ -20200,15 +21149,18 @@ var init_web = __esm({
         }
       }
     };
-    __name(deleteDocumentConfigToMldev, "deleteDocumentConfigToMldev");
-    __name(deleteDocumentParametersToMldev, "deleteDocumentParametersToMldev");
-    __name(getDocumentParametersToMldev, "getDocumentParametersToMldev");
-    __name(listDocumentsConfigToMldev, "listDocumentsConfigToMldev");
-    __name(listDocumentsParametersToMldev, "listDocumentsParametersToMldev");
-    __name(listDocumentsResponseFromMldev, "listDocumentsResponseFromMldev");
+    __name2(deleteDocumentConfigToMldev, "deleteDocumentConfigToMldev");
+    __name2(deleteDocumentParametersToMldev, "deleteDocumentParametersToMldev");
+    __name2(getDocumentParametersToMldev, "getDocumentParametersToMldev");
+    __name2(listDocumentsConfigToMldev, "listDocumentsConfigToMldev");
+    __name2(listDocumentsParametersToMldev, "listDocumentsParametersToMldev");
+    __name2(listDocumentsResponseFromMldev, "listDocumentsResponseFromMldev");
     Documents = class extends BaseModule {
       static {
         __name(this, "Documents");
+      }
+      static {
+        __name2(this, "Documents");
       }
       constructor(apiClient) {
         super();
@@ -20313,6 +21265,9 @@ var init_web = __esm({
     FileSearchStores = class extends BaseModule {
       static {
         __name(this, "FileSearchStores");
+      }
+      static {
+        __name2(this, "FileSearchStores");
       }
       constructor(apiClient, documents = new Documents(apiClient)) {
         super();
@@ -20600,13 +21555,16 @@ var init_web = __esm({
         }
       }
     };
-    __name(isDeno, "isDeno");
+    __name2(isDeno, "isDeno");
     envMemo = void 0;
-    __name(env, "env");
-    __name(fillGlobals, "fillGlobals");
+    __name2(env, "env");
+    __name2(fillGlobals, "fillGlobals");
     GoogleGenAISecurityProvider = class {
       static {
         __name(this, "GoogleGenAISecurityProvider");
+      }
+      static {
+        __name2(this, "GoogleGenAISecurityProvider");
       }
       constructor(options) {
         this.options = options;
@@ -20621,6 +21579,9 @@ var init_web = __esm({
     GoogleGenAIAuthHook = class {
       static {
         __name(this, "GoogleGenAIAuthHook");
+      }
+      static {
+        __name2(this, "GoogleGenAIAuthHook");
       }
       beforeCreateRequest(_hookCtx, input) {
         return Object.assign(Object.assign({}, input), { url: decodeSDKLevelAPIVersionPath(input.url) });
@@ -20637,22 +21598,25 @@ var init_web = __esm({
         return request;
       }
     };
-    __name(decodeSDKLevelAPIVersionPath, "decodeSDKLevelAPIVersionPath");
-    __name(resolveSecurity$1, "resolveSecurity$1");
-    __name(getStaticDefaultHeaders, "getStaticDefaultHeaders");
-    __name(withEnvSecurity, "withEnvSecurity");
-    __name(securityFromHeaders, "securityFromHeaders");
-    __name(applyDefaultHeaders, "applyDefaultHeaders");
-    __name(applyUserProject, "applyUserProject");
-    __name(applyAuth, "applyAuth");
-    __name(hasAuthHeaders, "hasAuthHeaders");
-    __name(bearer, "bearer");
-    __name(isSecurity, "isSecurity");
-    __name(isSecurityResolver, "isSecurityResolver");
-    __name(hasSecurityValue, "hasSecurityValue");
+    __name2(decodeSDKLevelAPIVersionPath, "decodeSDKLevelAPIVersionPath");
+    __name2(resolveSecurity$1, "resolveSecurity$1");
+    __name2(getStaticDefaultHeaders, "getStaticDefaultHeaders");
+    __name2(withEnvSecurity, "withEnvSecurity");
+    __name2(securityFromHeaders, "securityFromHeaders");
+    __name2(applyDefaultHeaders, "applyDefaultHeaders");
+    __name2(applyUserProject, "applyUserProject");
+    __name2(applyAuth, "applyAuth");
+    __name2(hasAuthHeaders, "hasAuthHeaders");
+    __name2(bearer, "bearer");
+    __name2(isSecurity, "isSecurity");
+    __name2(isSecurityResolver, "isSecurityResolver");
+    __name2(hasSecurityValue, "hasSecurityValue");
     HTTPClientError = class extends Error {
       static {
         __name(this, "HTTPClientError");
+      }
+      static {
+        __name2(this, "HTTPClientError");
       }
       constructor(message, opts) {
         let msg = message;
@@ -20670,6 +21634,9 @@ var init_web = __esm({
       static {
         __name(this, "UnexpectedClientError");
       }
+      static {
+        __name2(this, "UnexpectedClientError");
+      }
       constructor() {
         super(...arguments);
         this.name = "UnexpectedClientError";
@@ -20678,6 +21645,9 @@ var init_web = __esm({
     InvalidRequestError = class extends HTTPClientError {
       static {
         __name(this, "InvalidRequestError");
+      }
+      static {
+        __name2(this, "InvalidRequestError");
       }
       constructor() {
         super(...arguments);
@@ -20688,6 +21658,9 @@ var init_web = __esm({
       static {
         __name(this, "RequestAbortedError");
       }
+      static {
+        __name2(this, "RequestAbortedError");
+      }
       constructor() {
         super(...arguments);
         this.name = "RequestAbortedError";
@@ -20696,6 +21669,9 @@ var init_web = __esm({
     RequestTimeoutError = class extends HTTPClientError {
       static {
         __name(this, "RequestTimeoutError");
+      }
+      static {
+        __name2(this, "RequestTimeoutError");
       }
       constructor() {
         super(...arguments);
@@ -20706,6 +21682,9 @@ var init_web = __esm({
       static {
         __name(this, "ConnectionError");
       }
+      static {
+        __name2(this, "ConnectionError");
+      }
       constructor() {
         super(...arguments);
         this.name = "ConnectionError";
@@ -20714,6 +21693,9 @@ var init_web = __esm({
     GoogleGenAiError = class extends Error {
       static {
         __name(this, "GoogleGenAiError");
+      }
+      static {
+        __name2(this, "GoogleGenAiError");
       }
       constructor(message, httpMeta) {
         var _a2, _b, _c, _d;
@@ -20730,10 +21712,16 @@ var init_web = __esm({
       static {
         __name(this, "GeminiNextGenAPIClientError");
       }
+      static {
+        __name2(this, "GeminiNextGenAPIClientError");
+      }
     };
     APIError = class _APIError extends GeminiNextGenAPIClientError {
       static {
-        __name(this, "APIError");
+        __name(this, "_APIError");
+      }
+      static {
+        __name2(this, "APIError");
       }
       constructor(status, error, message, headers) {
         super(_APIError.makeMessage(status, error, message));
@@ -20794,6 +21782,9 @@ var init_web = __esm({
       static {
         __name(this, "APIUserAbortError");
       }
+      static {
+        __name2(this, "APIUserAbortError");
+      }
       constructor({ message } = {}) {
         super(void 0, void 0, message || "Request was aborted.", void 0);
       }
@@ -20801,6 +21792,9 @@ var init_web = __esm({
     APIConnectionError = class extends APIError {
       static {
         __name(this, "APIConnectionError");
+      }
+      static {
+        __name2(this, "APIConnectionError");
       }
       constructor({ message, cause }) {
         super(void 0, void 0, message || "Connection error.", void 0);
@@ -20810,6 +21804,9 @@ var init_web = __esm({
     APIConnectionTimeoutError = class extends APIConnectionError {
       static {
         __name(this, "APIConnectionTimeoutError");
+      }
+      static {
+        __name2(this, "APIConnectionTimeoutError");
       }
       constructor({ message } = {}) {
         super({
@@ -20821,55 +21818,82 @@ var init_web = __esm({
       static {
         __name(this, "BadRequestError");
       }
+      static {
+        __name2(this, "BadRequestError");
+      }
     };
     AuthenticationError = class extends APIError {
       static {
         __name(this, "AuthenticationError");
+      }
+      static {
+        __name2(this, "AuthenticationError");
       }
     };
     PermissionDeniedError = class extends APIError {
       static {
         __name(this, "PermissionDeniedError");
       }
+      static {
+        __name2(this, "PermissionDeniedError");
+      }
     };
     NotFoundError = class extends APIError {
       static {
         __name(this, "NotFoundError");
+      }
+      static {
+        __name2(this, "NotFoundError");
       }
     };
     ConflictError = class extends APIError {
       static {
         __name(this, "ConflictError");
       }
+      static {
+        __name2(this, "ConflictError");
+      }
     };
     UnprocessableEntityError = class extends APIError {
       static {
         __name(this, "UnprocessableEntityError");
+      }
+      static {
+        __name2(this, "UnprocessableEntityError");
       }
     };
     RateLimitError = class extends APIError {
       static {
         __name(this, "RateLimitError");
       }
+      static {
+        __name2(this, "RateLimitError");
+      }
     };
     InternalServerError = class extends APIError {
       static {
         __name(this, "InternalServerError");
       }
+      static {
+        __name2(this, "InternalServerError");
+      }
     };
-    __name(wrapSDKError, "wrapSDKError");
-    __name(wrapAPIError, "wrapAPIError");
-    __name(wrapHTTPClientError, "wrapHTTPClientError");
-    __name(getErrorPayload, "getErrorPayload");
-    __name(getObjectProperty, "getObjectProperty");
-    __name(stringifyErrorBody, "stringifyErrorBody");
-    __name(isPlainObject$2, "isPlainObject$2");
-    __name(isCompatAPIErrorInstance, "isCompatAPIErrorInstance");
-    __name(defineReadonly, "defineReadonly");
-    __name(initHooks, "initHooks");
+    __name2(wrapSDKError, "wrapSDKError");
+    __name2(wrapAPIError, "wrapAPIError");
+    __name2(wrapHTTPClientError, "wrapHTTPClientError");
+    __name2(getErrorPayload, "getErrorPayload");
+    __name2(getObjectProperty, "getObjectProperty");
+    __name2(stringifyErrorBody, "stringifyErrorBody");
+    __name2(isPlainObject$2, "isPlainObject$2");
+    __name2(isCompatAPIErrorInstance, "isCompatAPIErrorInstance");
+    __name2(defineReadonly, "defineReadonly");
+    __name2(initHooks, "initHooks");
     SDKHooks = class {
       static {
         __name(this, "SDKHooks");
+      }
+      static {
+        __name2(this, "SDKHooks");
       }
       constructor() {
         this.sdkInitHooks = [];
@@ -20947,40 +21971,40 @@ var init_web = __esm({
         return { response: res, error: err };
       }
     };
-    __name(OK, "OK");
-    __name(ERR, "ERR");
-    __name(bytesToBase64, "bytesToBase64");
-    __name(stringToBytes, "stringToBytes");
-    __name(stringToBase64, "stringToBase64");
+    __name2(OK, "OK");
+    __name2(ERR, "ERR");
+    __name2(bytesToBase64, "bytesToBase64");
+    __name2(stringToBytes, "stringToBytes");
+    __name2(stringToBase64, "stringToBase64");
     hasOwn = Object.prototype.hasOwnProperty;
-    __name(pathToFunc, "pathToFunc");
+    __name2(pathToFunc, "pathToFunc");
     ServerList = [
       /**
        * Global Endpoint
        */
       "https://generativelanguage.googleapis.com"
     ];
-    __name(serverURLFromOptions, "serverURLFromOptions");
+    __name2(serverURLFromOptions, "serverURLFromOptions");
     SDK_METADATA = {
       userAgent: "speakeasy-sdk/typescript 2.4.1-preview.4 2.913.3 v1beta @google/genai"
     };
-    __name(combineSignals, "combineSignals");
-    __name(abortSignalAny, "abortSignalAny");
-    __name(compactMap, "compactMap");
-    __name(isPlainObject$1, "isPlainObject$1");
-    __name(formEncoder, "formEncoder");
+    __name2(combineSignals, "combineSignals");
+    __name2(abortSignalAny, "abortSignalAny");
+    __name2(compactMap, "compactMap");
+    __name2(isPlainObject$1, "isPlainObject$1");
+    __name2(formEncoder, "formEncoder");
     encodeForm = formEncoder(",");
-    __name(encodeJSON, "encodeJSON");
-    encodeSimple = /* @__PURE__ */ __name((key, value, options) => {
+    __name2(encodeJSON, "encodeJSON");
+    encodeSimple = /* @__PURE__ */ __name2((key, value, options) => {
       let out = "";
       const pairs = (options === null || options === void 0 ? void 0 : options.explode) ? explode(key, value) : [[key, value]];
       if (pairs.every(([_, v]) => v == null)) {
         return;
       }
-      const encodeString = /* @__PURE__ */ __name((v) => {
+      const encodeString = /* @__PURE__ */ __name2((v) => {
         return (options === null || options === void 0 ? void 0 : options.charEncoding) === "percent" ? encodeURIComponent(v) : v;
       }, "encodeString");
-      const encodeValue = /* @__PURE__ */ __name((v) => encodeString(serializeValue(v)), "encodeValue");
+      const encodeValue = /* @__PURE__ */ __name2((v) => encodeString(serializeValue(v)), "encodeValue");
       pairs.forEach(([pk, pv]) => {
         var _a2;
         let tmp = "";
@@ -21001,15 +22025,15 @@ var init_web = __esm({
       });
       return out.slice(1);
     }, "encodeSimple");
-    __name(explode, "explode");
-    __name(serializeValue, "serializeValue");
-    __name(jsonReplacer, "jsonReplacer");
-    __name(mapDefined, "mapDefined");
-    __name(mapDefinedEntries, "mapDefinedEntries");
-    __name(queryJoin, "queryJoin");
-    __name(queryEncoder, "queryEncoder");
+    __name2(explode, "explode");
+    __name2(serializeValue, "serializeValue");
+    __name2(jsonReplacer, "jsonReplacer");
+    __name2(mapDefined, "mapDefined");
+    __name2(mapDefinedEntries, "mapDefinedEntries");
+    __name2(queryJoin, "queryJoin");
+    __name2(queryEncoder, "queryEncoder");
     encodeFormQuery = queryEncoder(encodeForm);
-    DEFAULT_FETCHER = /* @__PURE__ */ __name((input, init) => {
+    DEFAULT_FETCHER = /* @__PURE__ */ __name2((input, init) => {
       if (init == null) {
         return fetch(input);
       } else {
@@ -21018,7 +22042,10 @@ var init_web = __esm({
     }, "DEFAULT_FETCHER");
     HTTPClient = class _HTTPClient {
       static {
-        __name(this, "HTTPClient");
+        __name(this, "_HTTPClient");
+      }
+      static {
+        __name2(this, "HTTPClient");
       }
       constructor(options = {}) {
         this.options = options;
@@ -21086,13 +22113,13 @@ var init_web = __esm({
       }
     };
     mediaParamSeparator = /\s*;\s*/g;
-    __name(matchContentType, "matchContentType");
+    __name2(matchContentType, "matchContentType");
     codeRangeRE$1 = new RegExp("^[0-9]xx$", "i");
-    __name(matchStatusCode, "matchStatusCode");
-    __name(matchResponse, "matchResponse");
-    __name(isConnectionError, "isConnectionError");
-    __name(isTimeoutError, "isTimeoutError");
-    __name(isAbortError, "isAbortError");
+    __name2(matchStatusCode, "matchStatusCode");
+    __name2(matchResponse, "matchResponse");
+    __name2(isConnectionError, "isConnectionError");
+    __name2(isTimeoutError, "isTimeoutError");
+    __name2(isAbortError, "isAbortError");
     defaultBackoff = {
       initialInterval: 500,
       maxInterval: 6e4,
@@ -21101,7 +22128,10 @@ var init_web = __esm({
     };
     PermanentError = class _PermanentError extends Error {
       static {
-        __name(this, "PermanentError");
+        __name(this, "_PermanentError");
+      }
+      static {
+        __name2(this, "PermanentError");
       }
       constructor(message, options) {
         let msg = message;
@@ -21118,7 +22148,10 @@ var init_web = __esm({
     };
     TemporaryError = class _TemporaryError extends Error {
       static {
-        __name(this, "TemporaryError");
+        __name(this, "_TemporaryError");
+      }
+      static {
+        __name2(this, "TemporaryError");
       }
       constructor(message, response) {
         super(message);
@@ -21127,20 +22160,23 @@ var init_web = __esm({
         Object.setPrototypeOf(this, _TemporaryError.prototype);
       }
     };
-    __name(retry, "retry");
-    __name(wrapFetcher, "wrapFetcher");
+    __name2(retry, "retry");
+    __name2(wrapFetcher, "wrapFetcher");
     codeRangeRE = new RegExp("^[0-9]xx$", "i");
-    __name(isRetryableResponse, "isRetryableResponse");
-    __name(retryBackoff, "retryBackoff");
-    __name(retryAttemptCountBackoff, "retryAttemptCountBackoff");
-    __name(retryIntervalFromResponse, "retryIntervalFromResponse");
-    __name(delay, "delay");
+    __name2(isRetryableResponse, "isRetryableResponse");
+    __name2(retryBackoff, "retryBackoff");
+    __name2(retryAttemptCountBackoff, "retryAttemptCountBackoff");
+    __name2(retryIntervalFromResponse, "retryIntervalFromResponse");
+    __name2(delay, "delay");
     gt = typeof globalThis === "undefined" ? null : globalThis;
     webWorkerLike = typeof gt === "object" && gt != null && "importScripts" in gt && typeof gt["importScripts"] === "function";
     isBrowserLike = webWorkerLike || typeof navigator !== "undefined" && "serviceWorker" in navigator || typeof window === "object" && typeof window.document !== "undefined";
     ClientSDK = class {
       static {
         __name(this, "ClientSDK");
+      }
+      static {
+        __name2(this, "ClientSDK");
       }
       constructor(options = {}) {
         const opt = options;
@@ -21183,7 +22219,7 @@ var init_web = __esm({
           reqURL = baseURL;
         }
         reqURL.hash = "";
-        const mergeQuery = /* @__PURE__ */ __name((current, additions) => {
+        const mergeQuery = /* @__PURE__ */ __name2((current, additions) => {
           if (!additions) {
             return current;
           }
@@ -21197,7 +22233,7 @@ var init_web = __esm({
           });
           return [...kept, additions].join("&");
         }, "mergeQuery");
-        const encodeQueryRecord = /* @__PURE__ */ __name((record) => {
+        const encodeQueryRecord = /* @__PURE__ */ __name2((record) => {
           return Object.entries(record).map(([k, v]) => {
             if (v == null) {
               return void 0;
@@ -21340,11 +22376,14 @@ var init_web = __esm({
     };
     jsonLikeContentTypeRE = /^(application|text)\/([^+]+\+)*json.*/;
     jsonlLikeContentTypeRE = /^(application|text)\/([^+]+\+)*(jsonl|x-ndjson)\b.*/;
-    __name(logRequest, "logRequest");
-    __name(logResponse, "logResponse");
+    __name2(logRequest, "logRequest");
+    __name2(logResponse, "logResponse");
     GoogleGenAiDefaultError = class extends GoogleGenAiError {
       static {
         __name(this, "GoogleGenAiDefaultError");
+      }
+      static {
+        __name2(this, "GoogleGenAiDefaultError");
       }
       constructor(message, httpMeta) {
         if (message) {
@@ -21369,11 +22408,14 @@ var init_web = __esm({
         this.name = "GoogleGenAiDefaultError";
       }
     };
-    __name(tryParseJson, "tryParseJson");
-    __name(wrapEventStreamResponse, "wrapEventStreamResponse");
+    __name2(tryParseJson, "tryParseJson");
+    __name2(wrapEventStreamResponse, "wrapEventStreamResponse");
     Stream = class extends ReadableStream {
       static {
         __name(this, "Stream");
+      }
+      static {
+        __name2(this, "Stream");
       }
       constructor(responseBody, parse2, opts) {
         var _a2;
@@ -21424,7 +22466,7 @@ var init_web = __esm({
               await upstream.cancel(e);
             }
           },
-          cancel: /* @__PURE__ */ __name((reason) => upstream.cancel(reason), "cancel")
+          cancel: /* @__PURE__ */ __name2((reason) => upstream.cancel(reason), "cancel")
         });
       }
       [Symbol.asyncIterator](options) {
@@ -21433,7 +22475,7 @@ var init_web = __esm({
           return fn.call(this, options);
         const reader = this.getReader();
         const iterator = {
-          next: /* @__PURE__ */ __name(async () => {
+          next: /* @__PURE__ */ __name2(async () => {
             const r = await reader.read();
             if (r.done) {
               reader.releaseLock();
@@ -21441,12 +22483,12 @@ var init_web = __esm({
             }
             return { done: false, value: r.value };
           }, "next"),
-          throw: /* @__PURE__ */ __name(async (e) => {
+          throw: /* @__PURE__ */ __name2(async (e) => {
             await reader.cancel(e);
             reader.releaseLock();
             return { done: true, value: void 0 };
           }, "throw"),
-          return: /* @__PURE__ */ __name(async () => {
+          return: /* @__PURE__ */ __name2(async () => {
             await reader.cancel("done");
             reader.releaseLock();
             return { done: true, value: void 0 };
@@ -21489,8 +22531,8 @@ var init_web = __esm({
       // \n\n
     ];
     MAX_BOUNDARY_LEN = BOUNDARIES.reduce((m, b) => Math.max(m, b.length), 0);
-    __name(findBoundary, "findBoundary");
-    __name(parseMessage, "parseMessage");
+    __name2(findBoundary, "findBoundary");
+    __name2(parseMessage, "parseMessage");
     DEFAULT_CONTENT_TYPES = {
       jsonl: "application/jsonl",
       json: "application/json",
@@ -21501,21 +22543,24 @@ var init_web = __esm({
       nil: "*",
       fail: "*"
     };
-    __name(jsonErr, "jsonErr");
-    __name(json, "json");
-    __name(sse, "sse");
-    __name(nil, "nil");
-    __name(fail, "fail");
-    __name(match, "match");
+    __name2(jsonErr, "jsonErr");
+    __name2(json, "json");
+    __name2(sse, "sse");
+    __name2(nil, "nil");
+    __name2(fail, "fail");
+    __name2(match, "match");
     headerValRE = /, */;
-    __name(unpackHeaders, "unpackHeaders");
+    __name2(unpackHeaders, "unpackHeaders");
     (function(SecurityErrorCode2) {
       SecurityErrorCode2["Incomplete"] = "incomplete";
       SecurityErrorCode2["UnrecognisedSecurityType"] = "unrecognized_security_type";
     })(SecurityErrorCode || (SecurityErrorCode = {}));
     SecurityError = class _SecurityError extends Error {
       static {
-        __name(this, "SecurityError");
+        __name(this, "_SecurityError");
+      }
+      static {
+        __name2(this, "SecurityError");
       }
       constructor(code, message) {
         super(message);
@@ -21529,14 +22574,17 @@ var init_web = __esm({
         return new _SecurityError(SecurityErrorCode.UnrecognisedSecurityType, `Unrecognised security type: ${type}`);
       }
     };
-    __name(resolveSecurity, "resolveSecurity");
-    __name(applyBasic, "applyBasic");
-    __name(applyBearer, "applyBearer");
-    __name(resolveGlobalSecurity, "resolveGlobalSecurity");
-    __name(extractSecurity, "extractSecurity");
+    __name2(resolveSecurity, "resolveSecurity");
+    __name2(applyBasic, "applyBasic");
+    __name2(applyBearer, "applyBearer");
+    __name2(resolveGlobalSecurity, "resolveGlobalSecurity");
+    __name2(extractSecurity, "extractSecurity");
     APIPromise = class _APIPromise {
       static {
-        __name(this, "APIPromise");
+        __name(this, "_APIPromise");
+      }
+      static {
+        __name2(this, "APIPromise");
       }
       constructor(p, callSource) {
         this[_a] = "APIPromise";
@@ -21586,18 +22634,21 @@ var init_web = __esm({
       }
     };
     _a = Symbol.toStringTag;
-    __name(unwrapAsAPIPromise, "unwrapAsAPIPromise");
-    __name(agentsCreate, "agentsCreate");
-    __name($do$l, "$do$l");
-    __name(agentsDelete, "agentsDelete");
-    __name($do$k, "$do$k");
-    __name(agentsGet, "agentsGet");
-    __name($do$j, "$do$j");
-    __name(agentsList, "agentsList");
-    __name($do$i, "$do$i");
+    __name2(unwrapAsAPIPromise, "unwrapAsAPIPromise");
+    __name2(agentsCreate, "agentsCreate");
+    __name2($do$l, "$do$l");
+    __name2(agentsDelete, "agentsDelete");
+    __name2($do$k, "$do$k");
+    __name2(agentsGet, "agentsGet");
+    __name2($do$j, "$do$j");
+    __name2(agentsList, "agentsList");
+    __name2($do$i, "$do$i");
     Agents = class extends ClientSDK {
       static {
         __name(this, "Agents");
+      }
+      static {
+        __name2(this, "Agents");
       }
       /**
        * Creates a new Agent (Typed version for SDK).
@@ -21629,6 +22680,9 @@ var init_web = __esm({
       static {
         __name(this, "CancelInteractionByIdServerError");
       }
+      static {
+        __name2(this, "CancelInteractionByIdServerError");
+      }
       constructor(err, httpMeta) {
         var _a2;
         const message = ((_a2 = err.error) === null || _a2 === void 0 ? void 0 : _a2.message) || `API error occurred: ${JSON.stringify(err)}`;
@@ -21641,6 +22695,9 @@ var init_web = __esm({
     CancelInteractionByIdClientError = class extends GoogleGenAiError {
       static {
         __name(this, "CancelInteractionByIdClientError");
+      }
+      static {
+        __name2(this, "CancelInteractionByIdClientError");
       }
       constructor(err, httpMeta) {
         var _a2;
@@ -21655,6 +22712,9 @@ var init_web = __esm({
       static {
         __name(this, "CreateInteractionServerError");
       }
+      static {
+        __name2(this, "CreateInteractionServerError");
+      }
       constructor(err, httpMeta) {
         var _a2;
         const message = ((_a2 = err.error) === null || _a2 === void 0 ? void 0 : _a2.message) || `API error occurred: ${JSON.stringify(err)}`;
@@ -21667,6 +22727,9 @@ var init_web = __esm({
     CreateInteractionClientError = class extends GoogleGenAiError {
       static {
         __name(this, "CreateInteractionClientError");
+      }
+      static {
+        __name2(this, "CreateInteractionClientError");
       }
       constructor(err, httpMeta) {
         var _a2;
@@ -21681,6 +22744,9 @@ var init_web = __esm({
       static {
         __name(this, "DeleteInteractionServerError");
       }
+      static {
+        __name2(this, "DeleteInteractionServerError");
+      }
       constructor(err, httpMeta) {
         var _a2;
         const message = ((_a2 = err.error) === null || _a2 === void 0 ? void 0 : _a2.message) || `API error occurred: ${JSON.stringify(err)}`;
@@ -21693,6 +22759,9 @@ var init_web = __esm({
     DeleteInteractionClientError = class extends GoogleGenAiError {
       static {
         __name(this, "DeleteInteractionClientError");
+      }
+      static {
+        __name2(this, "DeleteInteractionClientError");
       }
       constructor(err, httpMeta) {
         var _a2;
@@ -21707,6 +22776,9 @@ var init_web = __esm({
       static {
         __name(this, "GetInteractionByIdServerError");
       }
+      static {
+        __name2(this, "GetInteractionByIdServerError");
+      }
       constructor(err, httpMeta) {
         var _a2;
         const message = ((_a2 = err.error) === null || _a2 === void 0 ? void 0 : _a2.message) || `API error occurred: ${JSON.stringify(err)}`;
@@ -21720,6 +22792,9 @@ var init_web = __esm({
       static {
         __name(this, "GetInteractionByIdClientError");
       }
+      static {
+        __name2(this, "GetInteractionByIdClientError");
+      }
       constructor(err, httpMeta) {
         var _a2;
         const message = ((_a2 = err.error) === null || _a2 === void 0 ? void 0 : _a2.message) || `API error occurred: ${JSON.stringify(err)}`;
@@ -21729,17 +22804,20 @@ var init_web = __esm({
         this.name = "GetInteractionByIdClientError";
       }
     };
-    __name(interactionsCancel, "interactionsCancel");
-    __name($do$h, "$do$h");
-    __name(interactionsCreate, "interactionsCreate");
-    __name($do$g, "$do$g");
-    __name(interactionsDelete, "interactionsDelete");
-    __name($do$f, "$do$f");
-    __name(interactionsGet, "interactionsGet");
-    __name($do$e, "$do$e");
+    __name2(interactionsCancel, "interactionsCancel");
+    __name2($do$h, "$do$h");
+    __name2(interactionsCreate, "interactionsCreate");
+    __name2($do$g, "$do$g");
+    __name2(interactionsDelete, "interactionsDelete");
+    __name2($do$f, "$do$f");
+    __name2(interactionsGet, "interactionsGet");
+    __name2($do$e, "$do$e");
     Interactions = class extends ClientSDK {
       static {
         __name(this, "Interactions");
+      }
+      static {
+        __name2(this, "Interactions");
       }
       create(params, options) {
         const { api_version } = params, body = __rest(params, ["api_version"]);
@@ -21767,23 +22845,26 @@ var init_web = __esm({
         return unwrapAsAPIPromise(interactionsCancel(this, id, params === null || params === void 0 ? void 0 : params.api_version, options));
       }
     };
-    __name(triggersCreate, "triggersCreate");
-    __name($do$d, "$do$d");
-    __name(triggersDelete, "triggersDelete");
-    __name($do$c, "$do$c");
-    __name(triggersGet, "triggersGet");
-    __name($do$b, "$do$b");
-    __name(triggersListExecutions, "triggersListExecutions");
-    __name($do$a, "$do$a");
-    __name(triggersList, "triggersList");
-    __name($do$9, "$do$9");
-    __name(triggersRun, "triggersRun");
-    __name($do$8, "$do$8");
-    __name(triggersUpdate, "triggersUpdate");
-    __name($do$7, "$do$7");
+    __name2(triggersCreate, "triggersCreate");
+    __name2($do$d, "$do$d");
+    __name2(triggersDelete, "triggersDelete");
+    __name2($do$c, "$do$c");
+    __name2(triggersGet, "triggersGet");
+    __name2($do$b, "$do$b");
+    __name2(triggersListExecutions, "triggersListExecutions");
+    __name2($do$a, "$do$a");
+    __name2(triggersList, "triggersList");
+    __name2($do$9, "$do$9");
+    __name2(triggersRun, "triggersRun");
+    __name2($do$8, "$do$8");
+    __name2(triggersUpdate, "triggersUpdate");
+    __name2($do$7, "$do$7");
     Triggers = class extends ClientSDK {
       static {
         __name(this, "Triggers");
+      }
+      static {
+        __name2(this, "Triggers");
       }
       /**
        * Creates a new trigger that will invoke the specified agent on the given cron schedule.
@@ -21830,23 +22911,26 @@ var init_web = __esm({
         return unwrapAsAPIPromise(triggersListExecutions(this, trigger_id, params === null || params === void 0 ? void 0 : params.api_version, params === null || params === void 0 ? void 0 : params.page_size, params === null || params === void 0 ? void 0 : params.page_token, options));
       }
     };
-    __name(webhooksCreate, "webhooksCreate");
-    __name($do$6, "$do$6");
-    __name(webhooksDelete, "webhooksDelete");
-    __name($do$5, "$do$5");
-    __name(webhooksGet, "webhooksGet");
-    __name($do$4, "$do$4");
-    __name(webhooksList, "webhooksList");
-    __name($do$3, "$do$3");
-    __name(webhooksPing, "webhooksPing");
-    __name($do$2, "$do$2");
-    __name(webhooksRotateSigningSecret, "webhooksRotateSigningSecret");
-    __name($do$1, "$do$1");
-    __name(webhooksUpdate, "webhooksUpdate");
-    __name($do, "$do");
+    __name2(webhooksCreate, "webhooksCreate");
+    __name2($do$6, "$do$6");
+    __name2(webhooksDelete, "webhooksDelete");
+    __name2($do$5, "$do$5");
+    __name2(webhooksGet, "webhooksGet");
+    __name2($do$4, "$do$4");
+    __name2(webhooksList, "webhooksList");
+    __name2($do$3, "$do$3");
+    __name2(webhooksPing, "webhooksPing");
+    __name2($do$2, "$do$2");
+    __name2(webhooksRotateSigningSecret, "webhooksRotateSigningSecret");
+    __name2($do$1, "$do$1");
+    __name2(webhooksUpdate, "webhooksUpdate");
+    __name2($do, "$do");
     Webhooks = class extends ClientSDK {
       static {
         __name(this, "Webhooks");
+      }
+      static {
+        __name2(this, "Webhooks");
       }
       /**
        * Creates a new Webhook.
@@ -21898,6 +22982,9 @@ var init_web = __esm({
       static {
         __name(this, "GoogleGenAI");
       }
+      static {
+        __name2(this, "GoogleGenAI");
+      }
       get interactions() {
         var _a2;
         return (_a2 = this._interactions) !== null && _a2 !== void 0 ? _a2 : this._interactions = new Interactions(this._options);
@@ -21919,12 +23006,15 @@ var init_web = __esm({
       "lyria-3-pro-preview",
       "lyria-3-clip-preview"
     ]);
-    __name(getGoogleGenAIServerURL, "getGoogleGenAIServerURL");
-    __name(getGoogleGenAIAPIVersion, "getGoogleGenAIAPIVersion");
-    __name(buildGoogleGenAIClient, "buildGoogleGenAIClient");
+    __name2(getGoogleGenAIServerURL, "getGoogleGenAIServerURL");
+    __name2(getGoogleGenAIAPIVersion, "getGoogleGenAIAPIVersion");
+    __name2(buildGoogleGenAIClient, "buildGoogleGenAIClient");
     GeminiNextGenInteractions = class {
       static {
         __name(this, "GeminiNextGenInteractions");
+      }
+      static {
+        __name2(this, "GeminiNextGenInteractions");
       }
       constructor(parentClient) {
         this.parentClient = parentClient;
@@ -21968,6 +23058,9 @@ var init_web = __esm({
       static {
         __name(this, "GeminiNextGenAgents");
       }
+      static {
+        __name2(this, "GeminiNextGenAgents");
+      }
       constructor(parentClient) {
         this.parentClient = parentClient;
       }
@@ -21999,6 +23092,9 @@ var init_web = __esm({
     GeminiNextGenWebhooks = class {
       static {
         __name(this, "GeminiNextGenWebhooks");
+      }
+      static {
+        __name2(this, "GeminiNextGenWebhooks");
       }
       constructor(parentClient) {
         this.parentClient = parentClient;
@@ -22039,6 +23135,9 @@ var init_web = __esm({
       static {
         __name(this, "GeminiNextGenTriggers");
       }
+      static {
+        __name2(this, "GeminiNextGenTriggers");
+      }
       constructor(parentClient) {
         this.parentClient = parentClient;
       }
@@ -22078,55 +23177,58 @@ var init_web = __esm({
         return this.sdk;
       }
     };
-    __name(trimSlashes, "trimSlashes");
-    __name(toGoogleGenAIRequestOptions, "toGoogleGenAIRequestOptions");
-    __name(warnIgnoredOption, "warnIgnoredOption");
-    __name(unwrapWithSdkHttpResponse, "unwrapWithSdkHttpResponse");
-    __name(wrapSDKCall, "wrapSDKCall");
-    __name(wrapStreamErrors, "wrapStreamErrors");
-    __name(attachSdkHttpResponse, "attachSdkHttpResponse");
-    __name(createSdkHttpResponse, "createSdkHttpResponse");
-    __name(addOutputPropertiesIfInteraction, "addOutputPropertiesIfInteraction");
-    __name(normalizeInteractionShape, "normalizeInteractionShape");
-    __name(isLegacyLyriaInteraction, "isLegacyLyriaInteraction");
-    __name(isPlainObject, "isPlainObject");
-    __name(addOutputProperties, "addOutputProperties");
-    __name(normalizeInteractionDates, "normalizeInteractionDates");
-    __name(normalizeDateLike, "normalizeDateLike");
-    __name(cancelTuningJobParametersToMldev, "cancelTuningJobParametersToMldev");
-    __name(cancelTuningJobParametersToVertex, "cancelTuningJobParametersToVertex");
-    __name(cancelTuningJobResponseFromMldev, "cancelTuningJobResponseFromMldev");
-    __name(cancelTuningJobResponseFromVertex, "cancelTuningJobResponseFromVertex");
-    __name(codeExecutionResultToVertex, "codeExecutionResultToVertex");
-    __name(contentToVertex, "contentToVertex");
-    __name(createTuningJobConfigToMldev, "createTuningJobConfigToMldev");
-    __name(createTuningJobConfigToVertex, "createTuningJobConfigToVertex");
-    __name(createTuningJobParametersPrivateToMldev, "createTuningJobParametersPrivateToMldev");
-    __name(createTuningJobParametersPrivateToVertex, "createTuningJobParametersPrivateToVertex");
-    __name(distillationHyperParametersFromVertex, "distillationHyperParametersFromVertex");
-    __name(distillationSamplingSpecFromVertex, "distillationSamplingSpecFromVertex");
-    __name(distillationSpecFromVertex, "distillationSpecFromVertex");
-    __name(executableCodeToVertex, "executableCodeToVertex");
-    __name(generationConfigFromVertex, "generationConfigFromVertex");
-    __name(getTuningJobParametersToMldev, "getTuningJobParametersToMldev");
-    __name(getTuningJobParametersToVertex, "getTuningJobParametersToVertex");
-    __name(listTuningJobsConfigToVertex, "listTuningJobsConfigToVertex");
-    __name(listTuningJobsParametersToVertex, "listTuningJobsParametersToVertex");
-    __name(listTuningJobsResponseFromVertex, "listTuningJobsResponseFromVertex");
-    __name(partToVertex, "partToVertex");
-    __name(reinforcementTuningExampleToVertex, "reinforcementTuningExampleToVertex");
-    __name(tunedModelFromMldev, "tunedModelFromMldev");
-    __name(tuningDatasetToMldev, "tuningDatasetToMldev");
-    __name(tuningDatasetToVertex, "tuningDatasetToVertex");
-    __name(tuningJobFromMldev, "tuningJobFromMldev");
-    __name(tuningJobFromVertex, "tuningJobFromVertex");
-    __name(tuningOperationFromMldev, "tuningOperationFromMldev");
-    __name(tuningValidationDatasetToVertex, "tuningValidationDatasetToVertex");
-    __name(validateRewardParametersToVertex, "validateRewardParametersToVertex");
-    __name(validateRewardResponseFromVertex, "validateRewardResponseFromVertex");
+    __name2(trimSlashes, "trimSlashes");
+    __name2(toGoogleGenAIRequestOptions, "toGoogleGenAIRequestOptions");
+    __name2(warnIgnoredOption, "warnIgnoredOption");
+    __name2(unwrapWithSdkHttpResponse, "unwrapWithSdkHttpResponse");
+    __name2(wrapSDKCall, "wrapSDKCall");
+    __name2(wrapStreamErrors, "wrapStreamErrors");
+    __name2(attachSdkHttpResponse, "attachSdkHttpResponse");
+    __name2(createSdkHttpResponse, "createSdkHttpResponse");
+    __name2(addOutputPropertiesIfInteraction, "addOutputPropertiesIfInteraction");
+    __name2(normalizeInteractionShape, "normalizeInteractionShape");
+    __name2(isLegacyLyriaInteraction, "isLegacyLyriaInteraction");
+    __name2(isPlainObject, "isPlainObject");
+    __name2(addOutputProperties, "addOutputProperties");
+    __name2(normalizeInteractionDates, "normalizeInteractionDates");
+    __name2(normalizeDateLike, "normalizeDateLike");
+    __name2(cancelTuningJobParametersToMldev, "cancelTuningJobParametersToMldev");
+    __name2(cancelTuningJobParametersToVertex, "cancelTuningJobParametersToVertex");
+    __name2(cancelTuningJobResponseFromMldev, "cancelTuningJobResponseFromMldev");
+    __name2(cancelTuningJobResponseFromVertex, "cancelTuningJobResponseFromVertex");
+    __name2(codeExecutionResultToVertex, "codeExecutionResultToVertex");
+    __name2(contentToVertex, "contentToVertex");
+    __name2(createTuningJobConfigToMldev, "createTuningJobConfigToMldev");
+    __name2(createTuningJobConfigToVertex, "createTuningJobConfigToVertex");
+    __name2(createTuningJobParametersPrivateToMldev, "createTuningJobParametersPrivateToMldev");
+    __name2(createTuningJobParametersPrivateToVertex, "createTuningJobParametersPrivateToVertex");
+    __name2(distillationHyperParametersFromVertex, "distillationHyperParametersFromVertex");
+    __name2(distillationSamplingSpecFromVertex, "distillationSamplingSpecFromVertex");
+    __name2(distillationSpecFromVertex, "distillationSpecFromVertex");
+    __name2(executableCodeToVertex, "executableCodeToVertex");
+    __name2(generationConfigFromVertex, "generationConfigFromVertex");
+    __name2(getTuningJobParametersToMldev, "getTuningJobParametersToMldev");
+    __name2(getTuningJobParametersToVertex, "getTuningJobParametersToVertex");
+    __name2(listTuningJobsConfigToVertex, "listTuningJobsConfigToVertex");
+    __name2(listTuningJobsParametersToVertex, "listTuningJobsParametersToVertex");
+    __name2(listTuningJobsResponseFromVertex, "listTuningJobsResponseFromVertex");
+    __name2(partToVertex, "partToVertex");
+    __name2(reinforcementTuningExampleToVertex, "reinforcementTuningExampleToVertex");
+    __name2(tunedModelFromMldev, "tunedModelFromMldev");
+    __name2(tuningDatasetToMldev, "tuningDatasetToMldev");
+    __name2(tuningDatasetToVertex, "tuningDatasetToVertex");
+    __name2(tuningJobFromMldev, "tuningJobFromMldev");
+    __name2(tuningJobFromVertex, "tuningJobFromVertex");
+    __name2(tuningOperationFromMldev, "tuningOperationFromMldev");
+    __name2(tuningValidationDatasetToVertex, "tuningValidationDatasetToVertex");
+    __name2(validateRewardParametersToVertex, "validateRewardParametersToVertex");
+    __name2(validateRewardResponseFromVertex, "validateRewardResponseFromVertex");
     Tunings = class extends BaseModule {
       static {
         __name(this, "Tunings");
+      }
+      static {
+        __name2(this, "Tunings");
       }
       constructor(apiClient) {
         super();
@@ -22453,6 +23555,9 @@ var init_web = __esm({
       static {
         __name(this, "BrowserDownloader");
       }
+      static {
+        __name2(this, "BrowserDownloader");
+      }
       async download(_params, _apiClient) {
         throw new Error("Download to file is not supported in the browser, please use a browser compliant download like an <a> tag.");
       }
@@ -22462,14 +23567,17 @@ var init_web = __esm({
     INITIAL_RETRY_DELAY_MS = 1e3;
     DELAY_MULTIPLIER = 2;
     X_GOOG_UPLOAD_STATUS_HEADER_FIELD = "x-goog-upload-status";
-    __name(uploadBlob, "uploadBlob");
-    __name(uploadBlobToFileSearchStore, "uploadBlobToFileSearchStore");
-    __name(uploadBlobInternal, "uploadBlobInternal");
-    __name(getBlobStat, "getBlobStat");
-    __name(sleep, "sleep");
+    __name2(uploadBlob, "uploadBlob");
+    __name2(uploadBlobToFileSearchStore, "uploadBlobToFileSearchStore");
+    __name2(uploadBlobInternal, "uploadBlobInternal");
+    __name2(getBlobStat, "getBlobStat");
+    __name2(sleep, "sleep");
     BrowserUploader = class {
       static {
         __name(this, "BrowserUploader");
+      }
+      static {
+        __name2(this, "BrowserUploader");
       }
       async upload(file, uploadUrl, apiClient, httpOptions) {
         if (typeof file === "string") {
@@ -22495,6 +23603,9 @@ var init_web = __esm({
       static {
         __name(this, "BrowserWebSocketFactory");
       }
+      static {
+        __name2(this, "BrowserWebSocketFactory");
+      }
       create(url, headers, callbacks) {
         return new BrowserWebSocket(url, headers, callbacks);
       }
@@ -22502,6 +23613,9 @@ var init_web = __esm({
     BrowserWebSocket = class {
       static {
         __name(this, "BrowserWebSocket");
+      }
+      static {
+        __name2(this, "BrowserWebSocket");
       }
       constructor(url, headers, callbacks) {
         this.url = url;
@@ -22533,6 +23647,9 @@ var init_web = __esm({
       static {
         __name(this, "WebAuth");
       }
+      static {
+        __name2(this, "WebAuth");
+      }
       constructor(apiKey) {
         this.apiKey = apiKey;
       }
@@ -22553,7 +23670,10 @@ var init_web = __esm({
     LANGUAGE_LABEL_PREFIX = "gl-node/";
     GoogleGenAI2 = class {
       static {
-        __name(this, "GoogleGenAI");
+        __name(this, "GoogleGenAI2");
+      }
+      static {
+        __name2(this, "GoogleGenAI");
       }
       getNextGenClient() {
         const httpOpts = this.httpOptions;
@@ -22649,8 +23769,6 @@ var init_web = __esm({
     };
   }
 });
-
-// ../src/server/blueprint-core.ts
 async function callVeklom(env2, params) {
   const baseUrl = env2.VEKLOM_BASE_URL?.replace(/\/+$/, "") || "https://api.veklom.com";
   const apiKey = env2.VEKLOM_API_KEY || params.apiKey;
@@ -22689,6 +23807,7 @@ async function callVeklom(env2, params) {
   }
   return data.response;
 }
+__name(callVeklom, "callVeklom");
 function buildBlueprintPrompts(input) {
   const { notes, codebaseContext, audioTranscript, targetPlatform, emailToUse, constVersion, constState, jurisdictionProfileName } = input;
   const blueprintJsonSchema = {
@@ -23105,6 +24224,7 @@ User Email for validation:
 ${emailToUse}`;
   return { systemPrompt, userPrompt };
 }
+__name(buildBlueprintPrompts, "buildBlueprintPrompts");
 async function callBlueprintModel(opts, env2) {
   const { selectedProvider, apiKey, modelName, customUrl, authMode, customHeaderName, systemPrompt, userPrompt } = opts;
   let textResult = "";
@@ -23258,6 +24378,7 @@ async function callBlueprintModel(opts, env2) {
   }
   return textResult;
 }
+__name(callBlueprintModel, "callBlueprintModel");
 function parseBlueprintText(textResult) {
   let parsedData;
   try {
@@ -23320,23 +24441,23 @@ function parseBlueprintText(textResult) {
   }
   return parsedData;
 }
+__name(parseBlueprintText, "parseBlueprintText");
 var init_blueprint_core = __esm({
   "../src/server/blueprint-core.ts"() {
-    init_functionsRoutes_0_4909187672132509();
+    init_functionsRoutes_0_8669225902492499();
     init_web();
-    __name(callVeklom, "callVeklom");
-    __name(buildBlueprintPrompts, "buildBlueprintPrompts");
-    __name(callBlueprintModel, "callBlueprintModel");
-    __name(parseBlueprintText, "parseBlueprintText");
+    __name2(callVeklom, "callVeklom");
+    __name2(buildBlueprintPrompts, "buildBlueprintPrompts");
+    __name2(callBlueprintModel, "callBlueprintModel");
+    __name2(parseBlueprintText, "parseBlueprintText");
   }
 });
-
-// ../src/core/plan-ir.ts
 function sha256(ascii) {
   function rightRotate(value, amount) {
     return value >>> amount | value << 32 - amount;
   }
   __name(rightRotate, "rightRotate");
+  __name2(rightRotate, "rightRotate");
   const mathPow = Math.pow;
   const maxWord = mathPow(2, 32);
   const lengthProperty = "length";
@@ -23345,7 +24466,7 @@ function sha256(ascii) {
   const words = [];
   const asciiBitLength = ascii[lengthProperty] * 8;
   const k = [];
-  const primeGenerator = /* @__PURE__ */ __name(function() {
+  const primeGenerator = /* @__PURE__ */ __name2(function() {
     const primes = [];
     let candidate = 2;
     while (primes[lengthProperty] < 64) {
@@ -23414,6 +24535,7 @@ function sha256(ascii) {
   }
   return result;
 }
+__name(sha256, "sha256");
 function stableStringify(val) {
   if (val === null) return "null";
   if (val === void 0) return "undefined";
@@ -23426,6 +24548,7 @@ function stableStringify(val) {
   }
   return JSON.stringify(val);
 }
+__name(stableStringify, "stableStringify");
 function calculateBlueprintHash(blueprint) {
   if (!blueprint) return "";
   const clean = JSON.parse(JSON.stringify(blueprint));
@@ -23437,24 +24560,24 @@ function calculateBlueprintHash(blueprint) {
   delete clean.sekedTriage;
   return sha256(stableStringify(clean));
 }
+__name(calculateBlueprintHash, "calculateBlueprintHash");
 var init_plan_ir = __esm({
   "../src/core/plan-ir.ts"() {
-    init_functionsRoutes_0_4909187672132509();
-    __name(sha256, "sha256");
-    __name(stableStringify, "stableStringify");
-    __name(calculateBlueprintHash, "calculateBlueprintHash");
+    init_functionsRoutes_0_8669225902492499();
+    __name2(sha256, "sha256");
+    __name2(stableStringify, "stableStringify");
+    __name2(calculateBlueprintHash, "calculateBlueprintHash");
   }
 });
-
-// api/generate.ts
-var json2, onRequestPost;
+var json2;
+var onRequestPost;
 var init_generate = __esm({
   "api/generate.ts"() {
-    init_functionsRoutes_0_4909187672132509();
+    init_functionsRoutes_0_8669225902492499();
     init_blueprint_core();
     init_plan_ir();
-    json2 = /* @__PURE__ */ __name((body, status = 200) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } }), "json");
-    onRequestPost = /* @__PURE__ */ __name(async (context) => {
+    json2 = /* @__PURE__ */ __name2((body, status = 200) => new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } }), "json");
+    onRequestPost = /* @__PURE__ */ __name2(async (context) => {
       let data;
       try {
         data = await context.request.json();
@@ -23508,11 +24631,9 @@ var init_generate = __esm({
     }, "onRequestPost");
   }
 });
-
-// ../.wrangler/tmp/pages-Ip8uQo/functionsRoutes-0.4909187672132509.mjs
 var routes;
-var init_functionsRoutes_0_4909187672132509 = __esm({
-  "../.wrangler/tmp/pages-Ip8uQo/functionsRoutes-0.4909187672132509.mjs"() {
+var init_functionsRoutes_0_8669225902492499 = __esm({
+  "../.wrangler/tmp/pages-B56NCQ/functionsRoutes-0.8669225902492499.mjs"() {
     init_generate();
     routes = [
       {
@@ -23525,18 +24646,10 @@ var init_functionsRoutes_0_4909187672132509 = __esm({
     ];
   }
 });
-
-// ../.wrangler/tmp/bundle-ED4yk0/middleware-loader.entry.ts
-init_functionsRoutes_0_4909187672132509();
-
-// ../.wrangler/tmp/bundle-ED4yk0/middleware-insertion-facade.js
-init_functionsRoutes_0_4909187672132509();
-
-// ../../../../tmp/claude-0/-home-user/1976cfd0-859c-5f54-9587-0ed8362b3a70/scratchpad/wr/node_modules/wrangler/templates/pages-template-worker.ts
-init_functionsRoutes_0_4909187672132509();
-
-// ../../../../tmp/claude-0/-home-user/1976cfd0-859c-5f54-9587-0ed8362b3a70/scratchpad/wr/node_modules/path-to-regexp/dist.es2015/index.js
-init_functionsRoutes_0_4909187672132509();
+init_functionsRoutes_0_8669225902492499();
+init_functionsRoutes_0_8669225902492499();
+init_functionsRoutes_0_8669225902492499();
+init_functionsRoutes_0_8669225902492499();
 function lexer(str) {
   var tokens = [];
   var i = 0;
@@ -23621,6 +24734,7 @@ function lexer(str) {
   return tokens;
 }
 __name(lexer, "lexer");
+__name2(lexer, "lexer");
 function parse(str, options) {
   if (options === void 0) {
     options = {};
@@ -23631,18 +24745,18 @@ function parse(str, options) {
   var key = 0;
   var i = 0;
   var path = "";
-  var tryConsume = /* @__PURE__ */ __name(function(type) {
+  var tryConsume = /* @__PURE__ */ __name2(function(type) {
     if (i < tokens.length && tokens[i].type === type)
       return tokens[i++].value;
   }, "tryConsume");
-  var mustConsume = /* @__PURE__ */ __name(function(type) {
+  var mustConsume = /* @__PURE__ */ __name2(function(type) {
     var value2 = tryConsume(type);
     if (value2 !== void 0)
       return value2;
     var _a3 = tokens[i], nextType = _a3.type, index = _a3.index;
     throw new TypeError("Unexpected ".concat(nextType, " at ").concat(index, ", expected ").concat(type));
   }, "mustConsume");
-  var consumeText = /* @__PURE__ */ __name(function() {
+  var consumeText = /* @__PURE__ */ __name2(function() {
     var result2 = "";
     var value2;
     while (value2 = tryConsume("CHAR") || tryConsume("ESCAPED_CHAR")) {
@@ -23650,7 +24764,7 @@ function parse(str, options) {
     }
     return result2;
   }, "consumeText");
-  var isSafe = /* @__PURE__ */ __name(function(value2) {
+  var isSafe = /* @__PURE__ */ __name2(function(value2) {
     for (var _i = 0, delimiter_1 = delimiter; _i < delimiter_1.length; _i++) {
       var char2 = delimiter_1[_i];
       if (value2.indexOf(char2) > -1)
@@ -23658,7 +24772,7 @@ function parse(str, options) {
     }
     return false;
   }, "isSafe");
-  var safePattern = /* @__PURE__ */ __name(function(prefix2) {
+  var safePattern = /* @__PURE__ */ __name2(function(prefix2) {
     var prev = result[result.length - 1];
     var prevText = prefix2 || (prev && typeof prev === "string" ? prev : "");
     if (prev && !prevText) {
@@ -23721,12 +24835,14 @@ function parse(str, options) {
   return result;
 }
 __name(parse, "parse");
+__name2(parse, "parse");
 function match2(str, options) {
   var keys = [];
   var re = pathToRegexp(str, keys, options);
   return regexpToFunction(re, keys, options);
 }
-__name(match2, "match");
+__name(match2, "match2");
+__name2(match2, "match");
 function regexpToFunction(re, keys, options) {
   if (options === void 0) {
     options = {};
@@ -23740,7 +24856,7 @@ function regexpToFunction(re, keys, options) {
       return false;
     var path = m[0], index = m.index;
     var params = /* @__PURE__ */ Object.create(null);
-    var _loop_1 = /* @__PURE__ */ __name(function(i2) {
+    var _loop_1 = /* @__PURE__ */ __name2(function(i2) {
       if (m[i2] === void 0)
         return "continue";
       var key = keys[i2 - 1];
@@ -23759,14 +24875,17 @@ function regexpToFunction(re, keys, options) {
   };
 }
 __name(regexpToFunction, "regexpToFunction");
+__name2(regexpToFunction, "regexpToFunction");
 function escapeString(str) {
   return str.replace(/([.+*?=^!:${}()[\]|/\\])/g, "\\$1");
 }
 __name(escapeString, "escapeString");
+__name2(escapeString, "escapeString");
 function flags(options) {
   return options && options.sensitive ? "" : "i";
 }
 __name(flags, "flags");
+__name2(flags, "flags");
 function regexpToRegexp(path, keys) {
   if (!keys)
     return path;
@@ -23787,6 +24906,7 @@ function regexpToRegexp(path, keys) {
   return path;
 }
 __name(regexpToRegexp, "regexpToRegexp");
+__name2(regexpToRegexp, "regexpToRegexp");
 function arrayToRegexp(paths, keys, options) {
   var parts = paths.map(function(path) {
     return pathToRegexp(path, keys, options).source;
@@ -23794,10 +24914,12 @@ function arrayToRegexp(paths, keys, options) {
   return new RegExp("(?:".concat(parts.join("|"), ")"), flags(options));
 }
 __name(arrayToRegexp, "arrayToRegexp");
+__name2(arrayToRegexp, "arrayToRegexp");
 function stringToRegexp(path, keys, options) {
   return tokensToRegexp(parse(path, options), keys, options);
 }
 __name(stringToRegexp, "stringToRegexp");
+__name2(stringToRegexp, "stringToRegexp");
 function tokensToRegexp(tokens, keys, options) {
   if (options === void 0) {
     options = {};
@@ -23853,6 +24975,7 @@ function tokensToRegexp(tokens, keys, options) {
   return new RegExp(route, flags(options));
 }
 __name(tokensToRegexp, "tokensToRegexp");
+__name2(tokensToRegexp, "tokensToRegexp");
 function pathToRegexp(path, keys, options) {
   if (path instanceof RegExp)
     return regexpToRegexp(path, keys);
@@ -23861,8 +24984,7 @@ function pathToRegexp(path, keys, options) {
   return stringToRegexp(path, keys, options);
 }
 __name(pathToRegexp, "pathToRegexp");
-
-// ../../../../tmp/claude-0/-home-user/1976cfd0-859c-5f54-9587-0ed8362b3a70/scratchpad/wr/node_modules/wrangler/templates/pages-template-worker.ts
+__name2(pathToRegexp, "pathToRegexp");
 var escapeRegex = /[.+?^${}()|[\]\\]/g;
 function* executeRequest(request) {
   const requestPath = new URL(request.url).pathname;
@@ -23913,13 +25035,14 @@ function* executeRequest(request) {
   }
 }
 __name(executeRequest, "executeRequest");
+__name2(executeRequest, "executeRequest");
 var pages_template_worker_default = {
   async fetch(originalRequest, env2, workerContext) {
     let request = originalRequest;
     const handlerIterator = executeRequest(request);
     let data = {};
     let isFailOpen = false;
-    const next = /* @__PURE__ */ __name(async (input, init) => {
+    const next = /* @__PURE__ */ __name2(async (input, init) => {
       if (input !== void 0) {
         let url = input;
         if (typeof input === "string") {
@@ -23946,7 +25069,7 @@ var pages_template_worker_default = {
           },
           env: env2,
           waitUntil: workerContext.waitUntil.bind(workerContext),
-          passThroughOnException: /* @__PURE__ */ __name(() => {
+          passThroughOnException: /* @__PURE__ */ __name2(() => {
             isFailOpen = true;
           }, "passThroughOnException")
         };
@@ -23974,17 +25097,15 @@ var pages_template_worker_default = {
     }
   }
 };
-var cloneResponse = /* @__PURE__ */ __name((response) => (
+var cloneResponse = /* @__PURE__ */ __name2((response) => (
   // https://fetch.spec.whatwg.org/#null-body-status
   new Response(
     [101, 204, 205, 304].includes(response.status) ? null : response.body,
     response
   )
 ), "cloneResponse");
-
-// ../../../../tmp/claude-0/-home-user/1976cfd0-859c-5f54-9587-0ed8362b3a70/scratchpad/wr/node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts
-init_functionsRoutes_0_4909187672132509();
-var drainBody = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx) => {
+init_functionsRoutes_0_8669225902492499();
+var drainBody = /* @__PURE__ */ __name2(async (request, env2, _ctx, middlewareCtx) => {
   try {
     return await middlewareCtx.next(request, env2);
   } finally {
@@ -24000,9 +25121,7 @@ var drainBody = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx
   }
 }, "drainBody");
 var middleware_ensure_req_body_drained_default = drainBody;
-
-// ../../../../tmp/claude-0/-home-user/1976cfd0-859c-5f54-9587-0ed8362b3a70/scratchpad/wr/node_modules/wrangler/templates/middleware/middleware-miniflare3-json-error.ts
-init_functionsRoutes_0_4909187672132509();
+init_functionsRoutes_0_8669225902492499();
 function reduceError(e) {
   return {
     name: e?.name,
@@ -24012,7 +25131,8 @@ function reduceError(e) {
   };
 }
 __name(reduceError, "reduceError");
-var jsonError = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx) => {
+__name2(reduceError, "reduceError");
+var jsonError = /* @__PURE__ */ __name2(async (request, env2, _ctx, middlewareCtx) => {
   try {
     return await middlewareCtx.next(request, env2);
   } catch (e) {
@@ -24030,21 +25150,18 @@ var jsonError = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx
   }
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
-
-// ../.wrangler/tmp/bundle-ED4yk0/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
 ];
 var middleware_insertion_facade_default = pages_template_worker_default;
-
-// ../../../../tmp/claude-0/-home-user/1976cfd0-859c-5f54-9587-0ed8362b3a70/scratchpad/wr/node_modules/wrangler/templates/middleware/common.ts
-init_functionsRoutes_0_4909187672132509();
+init_functionsRoutes_0_8669225902492499();
 var __facade_middleware__ = [];
 function __facade_register__(...args) {
   __facade_middleware__.push(...args.flat());
 }
 __name(__facade_register__, "__facade_register__");
+__name2(__facade_register__, "__facade_register__");
 function __facade_invokeChain__(request, env2, ctx, dispatch, middlewareChain) {
   const [head, ...tail] = middlewareChain;
   const middlewareCtx = {
@@ -24056,6 +25173,7 @@ function __facade_invokeChain__(request, env2, ctx, dispatch, middlewareChain) {
   return head(request, env2, ctx, middlewareCtx);
 }
 __name(__facade_invokeChain__, "__facade_invokeChain__");
+__name2(__facade_invokeChain__, "__facade_invokeChain__");
 function __facade_invoke__(request, env2, ctx, dispatch, finalMiddleware) {
   return __facade_invokeChain__(request, env2, ctx, dispatch, [
     ...__facade_middleware__,
@@ -24063,16 +25181,18 @@ function __facade_invoke__(request, env2, ctx, dispatch, finalMiddleware) {
   ]);
 }
 __name(__facade_invoke__, "__facade_invoke__");
-
-// ../.wrangler/tmp/bundle-ED4yk0/middleware-loader.entry.ts
+__name2(__facade_invoke__, "__facade_invoke__");
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
+  static {
+    __name(this, "___Facade_ScheduledController__");
+  }
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
     this.cron = cron;
     this.#noRetry = noRetry;
   }
   static {
-    __name(this, "__Facade_ScheduledController__");
+    __name2(this, "__Facade_ScheduledController__");
   }
   #noRetry;
   noRetry() {
@@ -24089,7 +25209,7 @@ function wrapExportedHandler(worker) {
   for (const middleware of __INTERNAL_WRANGLER_MIDDLEWARE__) {
     __facade_register__(middleware);
   }
-  const fetchDispatcher = /* @__PURE__ */ __name(function(request, env2, ctx) {
+  const fetchDispatcher = /* @__PURE__ */ __name2(function(request, env2, ctx) {
     if (worker.fetch === void 0) {
       throw new Error("Handler does not export a fetch() function.");
     }
@@ -24098,7 +25218,7 @@ function wrapExportedHandler(worker) {
   return {
     ...worker,
     fetch(request, env2, ctx) {
-      const dispatcher = /* @__PURE__ */ __name(function(type, init) {
+      const dispatcher = /* @__PURE__ */ __name2(function(type, init) {
         if (type === "scheduled" && worker.scheduled !== void 0) {
           const controller = new __Facade_ScheduledController__(
             Date.now(),
@@ -24114,6 +25234,7 @@ function wrapExportedHandler(worker) {
   };
 }
 __name(wrapExportedHandler, "wrapExportedHandler");
+__name2(wrapExportedHandler, "wrapExportedHandler");
 function wrapWorkerEntrypoint(klass) {
   if (__INTERNAL_WRANGLER_MIDDLEWARE__ === void 0 || __INTERNAL_WRANGLER_MIDDLEWARE__.length === 0) {
     return klass;
@@ -24122,7 +25243,7 @@ function wrapWorkerEntrypoint(klass) {
     __facade_register__(middleware);
   }
   return class extends klass {
-    #fetchDispatcher = /* @__PURE__ */ __name((request, env2, ctx) => {
+    #fetchDispatcher = /* @__PURE__ */ __name2((request, env2, ctx) => {
       this.env = env2;
       this.ctx = ctx;
       if (super.fetch === void 0) {
@@ -24130,7 +25251,7 @@ function wrapWorkerEntrypoint(klass) {
       }
       return super.fetch(request);
     }, "#fetchDispatcher");
-    #dispatcher = /* @__PURE__ */ __name((type, init) => {
+    #dispatcher = /* @__PURE__ */ __name2((type, init) => {
       if (type === "scheduled" && super.scheduled !== void 0) {
         const controller = new __Facade_ScheduledController__(
           Date.now(),
@@ -24153,6 +25274,7 @@ function wrapWorkerEntrypoint(klass) {
   };
 }
 __name(wrapWorkerEntrypoint, "wrapWorkerEntrypoint");
+__name2(wrapWorkerEntrypoint, "wrapWorkerEntrypoint");
 var WRAPPED_ENTRY;
 if (typeof middleware_insertion_facade_default === "object") {
   WRAPPED_ENTRY = wrapExportedHandler(middleware_insertion_facade_default);
@@ -24160,9 +25282,185 @@ if (typeof middleware_insertion_facade_default === "object") {
   WRAPPED_ENTRY = wrapWorkerEntrypoint(middleware_insertion_facade_default);
 }
 var middleware_loader_entry_default = WRAPPED_ENTRY;
+
+// ../../../tmp/claude-0/-home-user/1976cfd0-859c-5f54-9587-0ed8362b3a70/scratchpad/wr/node_modules/wrangler/templates/middleware/middleware-ensure-req-body-drained.ts
+var drainBody2 = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx) => {
+  try {
+    return await middlewareCtx.next(request, env2);
+  } finally {
+    try {
+      if (request.body !== null && !request.bodyUsed) {
+        const reader = request.body.getReader();
+        while (!(await reader.read()).done) {
+        }
+      }
+    } catch (e) {
+      console.error("Failed to drain the unused request body.", e);
+    }
+  }
+}, "drainBody");
+var middleware_ensure_req_body_drained_default2 = drainBody2;
+
+// ../../../tmp/claude-0/-home-user/1976cfd0-859c-5f54-9587-0ed8362b3a70/scratchpad/wr/node_modules/wrangler/templates/middleware/middleware-miniflare3-json-error.ts
+function reduceError2(e) {
+  return {
+    name: e?.name,
+    message: e?.message ?? String(e),
+    stack: e?.stack,
+    cause: e?.cause === void 0 ? void 0 : reduceError2(e.cause)
+  };
+}
+__name(reduceError2, "reduceError");
+var jsonError2 = /* @__PURE__ */ __name(async (request, env2, _ctx, middlewareCtx) => {
+  try {
+    return await middlewareCtx.next(request, env2);
+  } catch (e) {
+    const error = reduceError2(e);
+    const body = JSON.stringify(error);
+    const headers = {
+      "Content-Type": "application/json",
+      "MF-Experimental-Error-Stack": "true"
+    };
+    const encoded = encodeURIComponent(body);
+    if (encoded.length <= 8192) {
+      headers["MF-Experimental-Error-Stack-Payload"] = encoded;
+    }
+    return new Response(body, { status: 500, headers });
+  }
+}, "jsonError");
+var middleware_miniflare3_json_error_default2 = jsonError2;
+
+// .wrangler/tmp/bundle-tiHNzo/middleware-insertion-facade.js
+var __INTERNAL_WRANGLER_MIDDLEWARE__2 = [
+  middleware_ensure_req_body_drained_default2,
+  middleware_miniflare3_json_error_default2
+];
+var middleware_insertion_facade_default2 = middleware_loader_entry_default;
+
+// ../../../tmp/claude-0/-home-user/1976cfd0-859c-5f54-9587-0ed8362b3a70/scratchpad/wr/node_modules/wrangler/templates/middleware/common.ts
+var __facade_middleware__2 = [];
+function __facade_register__2(...args) {
+  __facade_middleware__2.push(...args.flat());
+}
+__name(__facade_register__2, "__facade_register__");
+function __facade_invokeChain__2(request, env2, ctx, dispatch, middlewareChain) {
+  const [head, ...tail] = middlewareChain;
+  const middlewareCtx = {
+    dispatch,
+    next(newRequest, newEnv) {
+      return __facade_invokeChain__2(newRequest, newEnv, ctx, dispatch, tail);
+    }
+  };
+  return head(request, env2, ctx, middlewareCtx);
+}
+__name(__facade_invokeChain__2, "__facade_invokeChain__");
+function __facade_invoke__2(request, env2, ctx, dispatch, finalMiddleware) {
+  return __facade_invokeChain__2(request, env2, ctx, dispatch, [
+    ...__facade_middleware__2,
+    finalMiddleware
+  ]);
+}
+__name(__facade_invoke__2, "__facade_invoke__");
+
+// .wrangler/tmp/bundle-tiHNzo/middleware-loader.entry.ts
+var __Facade_ScheduledController__2 = class ___Facade_ScheduledController__2 {
+  constructor(scheduledTime, cron, noRetry) {
+    this.scheduledTime = scheduledTime;
+    this.cron = cron;
+    this.#noRetry = noRetry;
+  }
+  static {
+    __name(this, "__Facade_ScheduledController__");
+  }
+  #noRetry;
+  noRetry() {
+    if (!(this instanceof ___Facade_ScheduledController__2)) {
+      throw new TypeError("Illegal invocation");
+    }
+    this.#noRetry();
+  }
+};
+function wrapExportedHandler2(worker) {
+  if (__INTERNAL_WRANGLER_MIDDLEWARE__2 === void 0 || __INTERNAL_WRANGLER_MIDDLEWARE__2.length === 0) {
+    return worker;
+  }
+  for (const middleware of __INTERNAL_WRANGLER_MIDDLEWARE__2) {
+    __facade_register__2(middleware);
+  }
+  const fetchDispatcher = /* @__PURE__ */ __name(function(request, env2, ctx) {
+    if (worker.fetch === void 0) {
+      throw new Error("Handler does not export a fetch() function.");
+    }
+    return worker.fetch(request, env2, ctx);
+  }, "fetchDispatcher");
+  return {
+    ...worker,
+    fetch(request, env2, ctx) {
+      const dispatcher = /* @__PURE__ */ __name(function(type, init) {
+        if (type === "scheduled" && worker.scheduled !== void 0) {
+          const controller = new __Facade_ScheduledController__2(
+            Date.now(),
+            init.cron ?? "",
+            () => {
+            }
+          );
+          return worker.scheduled(controller, env2, ctx);
+        }
+      }, "dispatcher");
+      return __facade_invoke__2(request, env2, ctx, dispatcher, fetchDispatcher);
+    }
+  };
+}
+__name(wrapExportedHandler2, "wrapExportedHandler");
+function wrapWorkerEntrypoint2(klass) {
+  if (__INTERNAL_WRANGLER_MIDDLEWARE__2 === void 0 || __INTERNAL_WRANGLER_MIDDLEWARE__2.length === 0) {
+    return klass;
+  }
+  for (const middleware of __INTERNAL_WRANGLER_MIDDLEWARE__2) {
+    __facade_register__2(middleware);
+  }
+  return class extends klass {
+    #fetchDispatcher = /* @__PURE__ */ __name((request, env2, ctx) => {
+      this.env = env2;
+      this.ctx = ctx;
+      if (super.fetch === void 0) {
+        throw new Error("Entrypoint class does not define a fetch() function.");
+      }
+      return super.fetch(request);
+    }, "#fetchDispatcher");
+    #dispatcher = /* @__PURE__ */ __name((type, init) => {
+      if (type === "scheduled" && super.scheduled !== void 0) {
+        const controller = new __Facade_ScheduledController__2(
+          Date.now(),
+          init.cron ?? "",
+          () => {
+          }
+        );
+        return super.scheduled(controller);
+      }
+    }, "#dispatcher");
+    fetch(request) {
+      return __facade_invoke__2(
+        request,
+        this.env,
+        this.ctx,
+        this.#dispatcher,
+        this.#fetchDispatcher
+      );
+    }
+  };
+}
+__name(wrapWorkerEntrypoint2, "wrapWorkerEntrypoint");
+var WRAPPED_ENTRY2;
+if (typeof middleware_insertion_facade_default2 === "object") {
+  WRAPPED_ENTRY2 = wrapExportedHandler2(middleware_insertion_facade_default2);
+} else if (typeof middleware_insertion_facade_default2 === "function") {
+  WRAPPED_ENTRY2 = wrapWorkerEntrypoint2(middleware_insertion_facade_default2);
+}
+var middleware_loader_entry_default2 = WRAPPED_ENTRY2;
 export {
-  __INTERNAL_WRANGLER_MIDDLEWARE__,
-  middleware_loader_entry_default as default
+  __INTERNAL_WRANGLER_MIDDLEWARE__2 as __INTERNAL_WRANGLER_MIDDLEWARE__,
+  middleware_loader_entry_default2 as default
 };
 /*! Bundled license information:
 
@@ -24180,4 +25478,4 @@ export {
    * g3-prettier-ignore-file
    *)
 */
-//# sourceMappingURL=functionsWorker-0.2462235813217919.mjs.map
+//# sourceMappingURL=functionsWorker-0.31685303164826917.js.map

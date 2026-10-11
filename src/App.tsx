@@ -2527,7 +2527,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                       <span className="w-0.5 h-2 bg-[#222]" />
                       <div className="px-3 py-2 bg-[#111] border border-[#222] text-[10px] font-mono text-[#888] w-4/5 uppercase font-bold flex items-center justify-center gap-1.5">
                         <BookOpen size={10} className="text-[#00F0FF]" />
-                        <span>Academic Refiner & Validator</span>
+                        <span>Academic References (model-suggested)</span>
                       </div>
                       <span className="w-0.5 h-2 bg-[#222]" />
                       <div className="px-3 py-2 bg-[#111] border border-[#222] text-[10px] font-mono text-[#888] w-4/5 uppercase font-bold">
@@ -2543,10 +2543,10 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                   <div className="p-4 bg-[#0A0A0A] border-l-2 border-[#00F0FF] text-xs leading-relaxed">
                     <p className="font-bold text-[#E0E0E0] mb-1 flex items-center gap-1 uppercase tracking-tight">
                       <Lock size={12} className="text-[#00F0FF]" />
-                      <span>Security & Sovereignty Check</span>
+                      <span>Privacy &amp; Integrity Note</span>
                     </p>
                     <span className="text-[#666] font-mono text-[11px]">
-                      Every compilation signs the compiled blueprints with SHA-256 validation digests. Fully secure to prevent concept leakage during workspace transitions.
+                      Each result gets a SHA-256 hash of its content so you can tell if it changed. This is not a signature. Your notes are sent to the AI provider you select under LLM Engine.
                     </span>
                   </div>
                 </motion.div>
