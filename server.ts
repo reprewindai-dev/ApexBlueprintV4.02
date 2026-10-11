@@ -25,6 +25,9 @@ import { executeZkAttestationPipeline, verifyGroth16Pairing, verifyPlonkOrStarkC
 import { enterpriseRouter } from "./src/services/enterprise-runtime";
 import { DurableJobQueueService } from "./src/services/durable-job-queue";
 import { buildBlueprintPrompts, callBlueprintModel, parseBlueprintText } from "./src/server/blueprint-core";
+import { testProviderConnection, generateBlueprintTests } from "./src/server/llm-tasks";
+import { searchAcademic } from "./src/server/academic-search";
+import { analyzeRepository } from "./src/server/github-analysis";
 
 dotenv.config();
 
@@ -1070,268 +1073,28 @@ function generateFallbackBlueprint(
 
 // Endpoint to verify connection to the selected LLM provider with custom authentication headers
 app.post("/api/test-connection", async (req, res) => {
-  const startTime = Date.now();
-  try {
-    const {
-      provider,
-      apiKey,
-      modelName,
-      customUrl,
-      authMode,
-      customHeaderName,
-    } = req.body;
-
-    const selectedProvider = provider || process.env.ABIDE_DEFAULT_PROVIDER || "ollama";
-    const testPrompt = "Respond only with the word 'OK'.";
-
-    if (selectedProvider === "gemini") {
-      const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-      if (!activeApiKey) {
-        throw new Error("Gemini API key is not configured.");
-      }
-
-      const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
-      const aiOptions: any = {
-        apiKey: activeApiKey,
-        httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-      };
-      if (geminiBaseUrl) {
-        aiOptions.baseUrl = geminiBaseUrl;
-      }
-
-      const ai = new GoogleGenAI(aiOptions);
-      const model = modelName || "gemini-3.5-flash";
-      await ai.models.generateContent({
-        model: model,
-        contents: testPrompt,
-        config: {
-          maxOutputTokens: 10,
-          temperature: 0.1,
-        },
-      });
-    } else if (selectedProvider === "openai" || selectedProvider === "llama" || selectedProvider === "ollama" || selectedProvider === "deepseek" || selectedProvider === "custom") {
-      let openAiBaseUrl = "https://api.openai.com/v1";
-      if (customUrl) {
-        openAiBaseUrl = customUrl;
-      } else if (selectedProvider === "llama" || selectedProvider === "ollama") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OLLAMA_BASE_URL || process.env.OLLAMA_BASE_URL || "http://167.233.202.195:11434/v1";
-      } else if (selectedProvider === "deepseek") {
-        openAiBaseUrl = "https://api.deepseek.com/v1";
-      } else if (selectedProvider === "openai") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || "http://localhost:1106/modelfarm/openai";
-      }
-
-      let cleanUrl = openAiBaseUrl.replace(/\/+$/, "");
-      if (!cleanUrl.endsWith("/chat/completions")) {
-        cleanUrl = `${cleanUrl}/chat/completions`;
-      }
-
-      const headers: any = {
-        "Content-Type": "application/json",
-      };
-
-      if (apiKey) {
-        if (authMode === "bearer") {
-          headers.Authorization = `Bearer ${apiKey}`;
-        } else if (authMode === "apiKeyHeader") {
-          headers["x-api-key"] = apiKey;
-        } else if (authMode === "customHeader" && customHeaderName) {
-          headers[customHeaderName] = apiKey;
-        } else if (authMode === "none") {
-          // No auth header
-        } else {
-          headers.Authorization = `Bearer ${apiKey}`;
-        }
-      }
-
-      const payload = {
-        model: modelName || (selectedProvider === "deepseek" ? "deepseek-chat" : selectedProvider === "openai" ? (openAiBaseUrl.includes("11434") || openAiBaseUrl.includes("167.233.202.195") ? "llama3.2:1b" : "gpt-4o") : "llama3.2:latest"),
-        messages: [{ role: "user", content: testPrompt }],
-        max_tokens: 10,
-        temperature: 0.1,
-      };
-
-      const response = await fetch(cleanUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`${selectedProvider.toUpperCase()} failed: ${errorText}`);
-      }
-    } else if (selectedProvider === "anthropic") {
-      const activeApiKey = apiKey;
-      if (!activeApiKey) {
-        throw new Error("Anthropic API key is required.");
-      }
-
-      const anthropicUrl = customUrl || "https://api.anthropic.com/v1/messages";
-      const headers = {
-        "Content-Type": "application/json",
-        "x-api-key": activeApiKey,
-        "anthropic-version": "2023-06-01",
-      };
-
-      const payload = {
-        model: modelName || "claude-3-5-sonnet-20241022",
-        max_tokens: 10,
-        messages: [{ role: "user", content: testPrompt }],
-        temperature: 0.1,
-      };
-
-      const response = await fetch(anthropicUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Anthropic failed: ${errorText}`);
-      }
-    } else {
-      throw new Error(`Unknown provider: ${selectedProvider}`);
-    }
-
-    const latencyMs = Date.now() - startTime;
-    return res.json({
-      success: true,
-      latencyMs,
-      model: modelName || "default",
-    });
-  } catch (error: any) {
-    console.error("Connection test error:", error);
-    let errorMsg = error.message || "Connection test failed.";
-    if (errorMsg.includes("11434") || errorMsg.includes("ECONNREFUSED") || (error.cause && error.cause.toString().includes("11434"))) {
-      errorMsg = `AI Engine connection failed: ${errorMsg}. Please ensure the server (167.233.202.195) is reachable and the model is pulled.`;
-    }
-    return res.status(200).json({
-      success: false,
-      error: errorMsg,
-    });
-  }
+  const result = await testProviderConnection(req.body || {}, process.env);
+  return res.status(200).json(result);
 });
+
 
 // 2. Query Vector DB with Text Embeddings (Semantic Search)
 app.post("/api/academic/search", async (req, res) => {
+  const { query } = req.body || {};
+  if (!query) {
+    return res.status(400).json({ error: "Missing required query string." });
+  }
   try {
-    const { query, apiKey, customUrl } = req.body;
-    if (!query) {
-      return res.status(400).json({ error: "Missing required query string." });
-    }
-
-    const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-    if (!activeApiKey) {
-      throw new Error("Gemini API key is required to calculate search embeddings.");
-    }
-
-    const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
-    const aiOptions: any = {
-      apiKey: activeApiKey,
-      httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-    };
-    if (geminiBaseUrl) {
-      aiOptions.baseUrl = geminiBaseUrl;
-    }
-
-    const ai = new GoogleGenAI(aiOptions);
-
-    // 1. Get embedding for the user search query
-    const queryVector = await getEmbedding(ai, query);
-
-    // 1.5 Optionally query arXiv live to fetch and inject real papers dynamically
-    try {
-      console.log(`[Semantic Search] Merging live arXiv papers for query: "${query}"`);
-      const arxivUrl = `http://export.arxiv.org/api/query?search_query=all:${encodeURIComponent(query)}&max_results=3`;
-      const arxivResponse = await fetch(arxivUrl);
-      if (arxivResponse.ok) {
-        const xmlText = await arxivResponse.text();
-        const entryRegex = /<entry>([\s\S]*?)<\/entry>/g;
-        let match;
-        while ((match = entryRegex.exec(xmlText)) !== null) {
-          const content = match[1];
-          const titleMatch = content.match(/<title>([\s\S]*?)<\/title>/);
-          let title = titleMatch ? titleMatch[1].replace(/\s+/g, " ").trim() : "";
-          title = title.replace(/^Title:\s*/i, "");
-          
-          if (!title) continue;
-
-          // Avoid duplicate titles
-          if (vectorDatabase.some(p => p.title.toLowerCase() === title.toLowerCase())) {
-            continue;
-          }
-
-          const summaryMatch = content.match(/<summary>([\s\S]*?)<\/summary>/);
-          const summary = summaryMatch ? summaryMatch[1].replace(/\s+/g, " ").trim() : "No abstract available.";
-
-          const authorRegex = /<name>([\s\S]*?)<\/name>/g;
-          let authMatch;
-          const authorsList: string[] = [];
-          while ((authMatch = authorRegex.exec(content)) !== null) {
-            authorsList.push(authMatch[1].trim());
-          }
-          const authors = authorsList.length > 0 ? authorsList.join(", ") : "Collaborative Authors";
-
-          const idMatch = content.match(/<id>([\s\S]*?)<\/id>/);
-          const url = idMatch ? idMatch[1].trim() : "https://arxiv.org";
-
-          const digitalSignature = crypto.createHash("sha256").update(title + authors + url).digest("hex");
-
-          const realPaper: AcademicPaper = {
-            title,
-            authors,
-            source: "arXiv Live (Verified)",
-            summary,
-            relevance: `Dynamically searched live peer-reviewed resource matching: "${query}".`,
-            url,
-            resolvableIdentifier: url,
-            retrievalTimestamp: new Date().toISOString(),
-            quotedClaimLocation: "Abstract Summary",
-            verificationStatus: "VERIFIED",
-            digitalSignature
-          };
-
-          // Generate embedding for the new real paper
-          realPaper.vector = await getEmbedding(ai, `${title} ${summary}`);
-          vectorDatabase.push(realPaper);
-        }
-      }
-    } catch (e: any) {
-      console.warn("[Semantic Search] Failed to merge live arXiv papers:", e.message);
-    }
-
-    // 2. Check and generate embeddings lazily for papers that don't have them yet
-    for (const paper of vectorDatabase) {
-      if (!paper.vector) {
-        paper.vector = await getEmbedding(ai, `${paper.title} ${paper.summary}`);
-      }
-    }
-
-    // 3. Compute cosine similarity scores
-    const results = vectorDatabase.map((paper) => {
-      const sim = cosineSimilarity(queryVector, paper.vector || []);
-      return {
-        title: paper.title,
-        authors: paper.authors,
-        source: paper.source,
-        summary: paper.summary,
-        relevance: paper.relevance,
-        url: paper.url,
-        score: Math.round(sim * 1000) / 1000,
-      };
+    const results = await searchAcademic(query, {
+      contactEmail: process.env.CITATION_CONTACT_EMAIL,
+      extraPapers: vectorDatabase.map((p) => ({ title: p.title, authors: p.authors, source: p.source, summary: p.summary, relevance: p.relevance, url: p.url })),
     });
-
-    // 4. Sort by descending similarity score
-    results.sort((a, b) => b.score - a.score);
-
     return res.json({ query, results });
   } catch (err: any) {
-    console.error("Vector DB Search Error:", err);
-    return res.status(500).json({ error: err.message || "Failed to search academic vector database." });
+    return res.status(500).json({ error: err.message || "Academic search failed." });
   }
 });
+
 
 // 2.5 Multi-Source Academic Citation Verifier (arXiv, Semantic Scholar, CrossRef, OpenAlex)
 app.post("/api/academic/verify", async (req, res) => {
@@ -1349,7 +1112,8 @@ app.post("/api/academic/verify", async (req, res) => {
       claimedTitle,
       claimedAuthorsList,
       claimedArxivId,
-      doi
+      doi || (typeof resolvableIdentifier === "string" && /doi\.org\//i.test(resolvableIdentifier) ? resolvableIdentifier : undefined),
+      { semanticScholarApiKey: process.env.SEMANTIC_SCHOLAR_API_KEY, openAlexApiKey: process.env.OPENALEX_API_KEY, contactEmail: process.env.CITATION_CONTACT_EMAIL }
     );
 
     const isMatch = verification.status === VerificationStatus.VERIFIED_MATCH;
@@ -1612,200 +1376,9 @@ app.post("/api/academic/scrape", async (req, res) => {
 // 4. Connect GitHub Repository & Cross-Reference Codebase Alignment
 app.post("/api/github/analyze", async (req, res) => {
   try {
-    const { repoUrl, notes, businessPlanText, apiKey, customToken } = req.body;
-
-    if (!repoUrl) {
-      return res.status(400).json({ error: "Missing required GitHub Repository URL." });
-    }
-
-    // Extract owner and repo
-    const regex = /github\.com\/([^\/]+)\/([^\/]+)/i;
-    const match = repoUrl.match(regex);
-    let owner = "unknown";
-    let repo = "unknown";
-
-    if (match) {
-      owner = match[1];
-      // Strip trailing .git if present
-      repo = match[2].replace(/\.git$/i, "");
-    } else {
-      // Assume owner/repo format was input
-      const parts = repoUrl.split("/");
-      if (parts.length >= 2) {
-        owner = parts[parts.length - 2];
-        repo = parts[parts.length - 1];
-      }
-    }
-
-    let fileList: string[] = [];
-    let isMockReport = false;
-    let technologiesFound: string[] = [];
-
-    try {
-      // Set up real GitHub API call to fetch recursive tree
-      const headers: HeadersInit = {
-        "User-Agent": "APEX-Compiler",
-        Accept: "application/vnd.github.v3+json",
-      };
-      if (customToken) {
-        headers["Authorization"] = `token ${customToken}`;
-      }
-
-      const gitTreeUrl = `https://api.github.com/repos/${owner}/${repo}/git/trees/main?recursive=1`;
-      let gitResponse = await fetch(gitTreeUrl, { headers });
-
-      if (!gitResponse.ok) {
-        // Fallback to master branch
-        const masterUrl = `https://api.github.com/repos/${owner}/${repo}/git/trees/master?recursive=1`;
-        gitResponse = await fetch(masterUrl, { headers });
-      }
-
-      if (gitResponse.ok) {
-        const treeData = await gitResponse.json();
-        if (treeData && Array.isArray(treeData.tree)) {
-          fileList = treeData.tree
-            .filter((node: any) => node.type === "blob")
-            .map((node: any) => node.path);
-
-          // Detect stack based on structures
-          if (fileList.some(p => p.includes("package.json"))) technologiesFound.push("React/Node.js Node");
-          if (fileList.some(p => p.endsWith(".rs") || p.includes("Cargo.toml"))) technologiesFound.push("Rust Ecosystem");
-          if (fileList.some(p => p.endsWith(".py") || p.includes("requirements.txt"))) technologiesFound.push("Python Microservices");
-          if (fileList.some(p => p.endsWith(".sol"))) technologiesFound.push("Solidity Smart Contracts");
-          if (fileList.some(p => p.endsWith(".go"))) technologiesFound.push("Go Cloud CDN Network");
-        }
-      } else {
-        throw new Error("Unreachable or private repository. Launching AI cross-reference simulator...");
-      }
-    } catch (apiErr) {
-      console.warn("GitHub real fetching failed. Falling back to high-fidelity AI simulation:", apiErr);
-      isMockReport = true;
-      // Pre-simulate default list based on repo name
-      fileList = [
-        "README.md",
-        "package.json",
-        "src/App.tsx",
-        "src/server.ts",
-        "src/controllers/vitals.ts",
-        "src/db/schema.ts",
-        "Cargo.toml",
-        "src/main.rs",
-        "src/protocol/x402.rs",
-        "contracts/SovereignEscrow.sol"
-      ];
-      technologiesFound = ["React/Node.js Framework", "Rust Edge Ledger", "Solidity Smart Contracts"];
-    }
-
-    // Build the cross-reference query for Gemini
-    const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-    if (!activeApiKey) {
-      throw new Error("Gemini API Key is missing. Configure it in settings to analyze.");
-    }
-
-    const ai = new GoogleGenAI({
-      apiKey: activeApiKey,
-      httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-    });
-
-    const crossRefPrompt = `You are an elite Software Ingress Analyst.
-We need to analyze the following GitHub codebase structure and cross-reference its alignment with the Proposed Business Logic.
-
-Repository Info:
-- Target Repository: ${owner}/${repo}
-- Verified Technologies: ${technologiesFound.join(", ") || "TypeScript/General Web Stack"}
-- Identified File Paths (truncated/selected for analysis):
-${fileList.slice(0, 40).map(f => `  - ${f}`).join("\n")}
-
-Proposed Business Logic Notes:
-"${notes || "Machine-to-machine X402 payment settlements and high-efficiency prioritizers"}"
-
-Generated Business Plan Blueprint Text:
-"${(businessPlanText || "Integrate pricing matrices for X402, competitive moats, and implementation barriers.").substring(0, 1500)}"
-
-Evaluate how the codebase can implement or currently implements the business logic. Highlight endpoints, missing libraries, security risks, and concrete code blueprints to bridge the gaps.
-
-You must return a valid JSON object matching this schema exactly:
-{
-  "repoName": "${owner}/${repo}",
-  "techStack": ["Stack names (e.g. React, Rust)"],
-  "endpoints": [
-    { "path": "/api/route", "method": "GET/POST", "purpose": "Explanation of purpose" }
-  ],
-  "alignments": [
-    { "feature": "Feature Title", "status": "Fully Supported / Partially Supported / Missing", "details": "How the code aligns" }
-  ],
-  "gaps": [
-    { "system": "Subsystem", "missing": "Details of what is missing", "severity": "Critical / Medium" }
-  ],
-  "expansionSteps": [
-    { "filePath": "path/to/create.ext", "instructions": "Copy-pasteable directions to build this file and its dependencies" }
-  ],
-  "authPatterns": "Details of authentication structures, credentials flow, token scopes, or zero-knowledge handshakes found or required",
-  "dtos": [
-    { "name": "DTO / Struct Name", "fields": ["field_name: type"], "purpose": "Request/Response serialization boundary role" }
-  ],
-  "databaseModels": [
-    { "modelName": "Model Name", "fields": ["field: type"], "purpose": "Table schema or state representation details" }
-  ],
-  "migrations": [
-    { "name": "Migration Name/ID", "status": "Executed / Required", "details": "DB schema alterations or state conversions required" }
-  ],
-  "backgroundJobs": [
-    { "name": "Job Name", "interval": "e.g. Hourly / Every 10s", "purpose": "Asynchronous background routine role" }
-  ],
-  "queuesEvents": [
-    { "name": "Queue/Event Name", "purpose": "Asynchronous messaging or inter-module event trigger" }
-  ],
-  "testsPresent": [
-    { "name": "Test Suite Name", "status": "Present / Absent", "type": "Unit / Integration / SLA Verification" }
-  ],
-  "envVars": [
-    { "name": "ENV_VAR_NAME", "required": true, "purpose": "Usage role in the application runtime config" }
-  ],
-  "externalDependencies": [
-    { "name": "Dependency Name", "purpose": "Third party library or API role in compilation" }
-  ],
-  "serviceBoundaries": [
-    { "name": "Service Name", "responsibilities": "Sovereign boundary limits" }
-  ],
-  "inferredCapabilities": [
-    { "id": "capability-id", "name": "Capability Name", "alignment": "How the repository maps to this Capability ID" }
-  ],
-  "inferredMonetizableSurfaces": [
-    { "name": "Monetized Flow", "unit": "Billing unit", "floorPrice": 0.005, "rationale": "Why this surface is billable via X402" }
-  ],
-  "inferredMissingControls": [
-    { "system": "Control System", "missing": "Details of missing security, budget limits, or audit guardrails in the repository codebase" }
-  ]
-}`;
-
-    const aiResponse = await ai.models.generateContent({
-      model: "gemini-3.5-flash",
-      contents: crossRefPrompt,
-      config: {
-        responseMimeType: "application/json",
-        temperature: 0.1,
-      },
-    });
-
-    const aiText = aiResponse.text || "{}";
-    let parsedCrossRef;
-    try {
-      parsedCrossRef = JSON.parse(aiText);
-    } catch (e) {
-      const matchJson = aiText.match(/\{[\s\S]*\}/);
-      parsedCrossRef = matchJson ? JSON.parse(matchJson[0]) : { error: "Failed to compile alignment JSON." };
-    }
-
-    return res.json({
-      ...parsedCrossRef,
-      isRealConnection: !isMockReport,
-      totalFilesCount: fileList.length
-    });
-
+    return res.json(await analyzeRepository(req.body || {}, process.env));
   } catch (err: any) {
-    console.error("GitHub Analysis Error:", err);
-    return res.status(500).json({ error: err.message || "Failed to compile repository cross-reference alignment." });
+    return res.status(500).json({ error: err.message || "Repository analysis failed." });
   }
 });
 
@@ -2214,152 +1787,17 @@ app.get("/api/zk/status", (req, res) => {
 
 // POST to generate Jest/Vitest test suites using the active LLM or high-fidelity fallback
 app.post("/api/test-harness/generate", async (req, res) => {
-  const {
-    targetSpec,
-    testFramework = "jest",
-    blueprint,
-    provider,
-    apiKey,
-    modelName,
-    customUrl,
-    authMode,
-    customHeaderName
-  } = req.body;
-
-  if (!blueprint) {
+  const body = req.body || {};
+  if (!body.blueprint) {
     return res.status(400).json({ error: "Missing compiled blueprint required for generating test suites." });
   }
-
-  const selectedSpecName = targetSpec || "Unified Call Client & Lane Router";
-
-  // System prompt to generate realistic test suites based on the provided PDF blueprints
-  const testHarnessSystemPrompt = `You are the APEX test-generation agent. Your goal is to produce 100% production-ready, highly technical, syntactic, non-mock Jest or Vitest test suites that align perfectly with the Veklom Canonical Architecture (v2.0).
-The user is writing tests for the: "${selectedSpecName}" component.
-
-RELEVANT ARCHITECTURAL PARAMS:
-- TrustConnection Lifecycle States: PROPOSED -> NEGOTIATING -> ACTIVE -> DEGRADED/SUSPENDED -> TERMINATING -> TERMINATED
-- Execution Lifecycle: REQUESTED -> VALIDATING -> HELD/AUTHORIZED -> EXECUTING -> WAITING_EVENT/WAITING_PAYMENT -> ATTESTING -> SETTLING -> SEALED
-- Unified Call: connection.call({ capability: 'connection.external_api.invoke', input, planId, idempotencyKey })
-- Required Headers:
-  Authorization, X-Veklom-Connection-Id, X-Veklom-Connection-Version, X-Veklom-Operation-Id, X-Veklom-Operation-Hash, X-Veklom-Capability-Id, X-Veklom-Schema-Version, Idempotency-Key, traceparent
-- Backends: veklom-byos-backend, cappo-backend, gnomeledger, veklom-vnp
-
-OUTPUT FORMAT:
-Generate a complete, syntactically correct TypeScript unit test file. Avoid any introductory or formatting text. Start directly with the TypeScript imports and describe blocks. Use either 'jest' or 'vitest' based on the requested framework: "${testFramework}".`;
-
-  const testHarnessUserPrompt = `Generate the complete unit tests for target: ${selectedSpecName}.
-Here is the active compiled sovereign blueprint:
-${JSON.stringify(blueprint, null, 2)}`;
-
   try {
-    const selectedProvider = provider || process.env.ABIDE_DEFAULT_PROVIDER || "ollama";
-    let generatedCode = "";
-
-    if (selectedProvider === "gemini") {
-      const activeApiKey = apiKey || process.env.GEMINI_API_KEY;
-      if (!activeApiKey) {
-        throw new Error("Gemini API key is not configured.");
-      }
-
-      const geminiBaseUrl = customUrl || process.env.AI_INTEGRATIONS_GEMINI_BASE_URL;
-      const aiOptions: any = {
-        apiKey: activeApiKey,
-        httpOptions: { headers: { "User-Agent": "aistudio-build" } },
-      };
-      if (geminiBaseUrl) {
-        aiOptions.baseUrl = geminiBaseUrl;
-      }
-
-      const ai = new GoogleGenAI(aiOptions);
-      const model = modelName || "gemini-3.5-flash";
-      const response = await ai.models.generateContent({
-        model: model,
-        contents: [testHarnessSystemPrompt, testHarnessUserPrompt],
-        config: {
-          temperature: 0.2,
-          maxOutputTokens: 2500
-        }
-      });
-      generatedCode = response.text || "";
-    } else if (selectedProvider === "openai" || selectedProvider === "llama" || selectedProvider === "ollama" || selectedProvider === "deepseek" || selectedProvider === "custom") {
-      // OpenAI/Ollama compatible endpoint
-      let openAiBaseUrl = "https://api.openai.com/v1";
-      if (customUrl) {
-        openAiBaseUrl = customUrl;
-      } else if (selectedProvider === "llama" || selectedProvider === "ollama") {
-        openAiBaseUrl = process.env.AI_INTEGRATIONS_OLLAMA_BASE_URL || process.env.OLLAMA_BASE_URL || "http://167.233.202.195:11434/v1";
-      } else if (selectedProvider === "deepseek") {
-        openAiBaseUrl = "https://api.deepseek.com/v1";
-      }
-
-      const activeApiKey = apiKey || (selectedProvider === "openai" ? process.env.OPENAI_API_KEY : "ollama");
-      const model = modelName || (selectedProvider === "deepseek" ? "deepseek-chat" : selectedProvider === "openai" ? (openAiBaseUrl && (openAiBaseUrl.includes("11434") || openAiBaseUrl.includes("167.233.202.195")) ? "llama3.2:1b" : "gpt-4o") : (selectedProvider === "llama" || selectedProvider === "ollama") ? "llama3.2:latest" : "llama3.2:latest");
-
-      const fetchHeaders: any = {
-        "Content-Type": "application/json"
-      };
-
-      if (authMode === "bearer" && activeApiKey) {
-        fetchHeaders["Authorization"] = `Bearer ${activeApiKey}`;
-      } else if (authMode === "custom-header" && customHeaderName && activeApiKey) {
-        fetchHeaders[customHeaderName] = activeApiKey;
-      } else if (activeApiKey) {
-        fetchHeaders["Authorization"] = `Bearer ${activeApiKey}`;
-      }
-
-      const response = await fetch(`${openAiBaseUrl}/chat/completions`, {
-        method: "POST",
-        headers: fetchHeaders,
-        body: JSON.stringify({
-          model: model,
-          messages: [
-            { role: "system", content: testHarnessSystemPrompt },
-            { role: "user", content: testHarnessUserPrompt }
-          ],
-          temperature: 0.2,
-          max_tokens: 2500
-        })
-      });
-
-      if (!response.ok) {
-        const errText = await response.text();
-        throw new Error(`Local provider returned error: ${response.statusText}. Response: ${errText}`);
-      }
-
-      const resData = await response.json();
-      generatedCode = resData.choices?.[0]?.message?.content || "";
-    } else {
-      throw new Error(`Unsupported LLM provider requested: ${selectedProvider}`);
-    }
-
-    // Clean up any markdown code fence wrappers (e.g. ```typescript ... ```)
-    if (generatedCode.includes("```")) {
-      generatedCode = generatedCode.replace(/```typescript/gi, "").replace(/```javascript/gi, "").replace(/```ts/gi, "").replace(/```/g, "").trim();
-    }
-
-    return res.json({
-      success: true,
-      specName: selectedSpecName,
-      framework: testFramework,
-      code: generatedCode,
-      source: "llm"
-    });
-
+    return res.json(await generateBlueprintTests(body, process.env));
   } catch (error: any) {
-    console.warn("LLM API failed or quota exhausted, generating local high-fidelity fallback test suite:", error);
-    
-    // Create spectacular, highly-aligned, detailed fallback test suite to ensure an incredibly successful UX!
-    const fallbackTestCode = generateLocalFallbackTestSuite(selectedSpecName, testFramework, blueprint);
-    return res.json({
-      success: true,
-      specName: selectedSpecName,
-      framework: testFramework,
-      code: fallbackTestCode,
-      source: "local-compiler",
-      fallbackWarning: "The AI model call failed, so this is a generic local template"
-    });
+    return res.status(500).json({ error: `Test generation failed: ${error?.message || String(error)}` });
   }
 });
+
 
 // POST to execute a validated Plan IR using Covenant and CAPPO
 app.post("/api/covenant/execute", async (req, res) => {
