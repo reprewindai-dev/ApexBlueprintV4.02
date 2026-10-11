@@ -432,7 +432,7 @@ ${pkt.files.map(f => `- ${f}`).join("\n")}
 ${pkt.contracts}
 
 #### 5. ALLOWED SYSTEM DEPENDENCIES
-${pkt.dependencies.map(d => `- \`${d}\``).join("\n")}
+${pkt.dependencies.map(d => `- \`${typeof d === 'string' ? d : `${d.name}@${d.version}`}\``).join("\n")}
 
 #### 6. REQUIRED TEST COVERAGE MATRIX
 ${pkt.tests.map(t => `- ${t}`).join("\n")}
@@ -477,7 +477,7 @@ ${pkt.rollbackNotes}
             <h3 className="text-xl font-black text-white uppercase tracking-tight">Agent Execution Packets</h3>
           </div>
           <p className="text-xs font-mono text-[#666] uppercase mt-1">
-            Deterministic work orders designed to hand off directly to coding agents (Cursor, Windsurf, Anti-Gravity)
+            Deterministic work orders designed to hand off directly to ANY coding agent (Cursor, Windsurf, Claude Code, Codex, Aider, OpenHands, Antigravity, GitHub Copilot, etc.)
           </p>
         </div>
 
@@ -505,7 +505,7 @@ ${pkt.rollbackNotes}
           <h3 className="text-xl font-black text-white uppercase tracking-tight">Agent Execution Packets</h3>
         </div>
         <p className="text-xs font-mono text-[#666] uppercase mt-1">
-          Deterministic work orders designed to hand off directly to coding agents (Cursor, Windsurf, Anti-Gravity)
+          Deterministic work orders designed to hand off directly to ANY coding agent (Cursor, Windsurf, Claude Code, Codex, Aider, OpenHands, Antigravity, GitHub Copilot, etc.)
         </p>
       </div>
 
@@ -611,8 +611,8 @@ ${pkt.rollbackNotes}
             <div className="space-y-1.5 p-4 border border-[#111] bg-[#0A0A0A]">
               <span className="text-white font-black">5. Allowed Dependencies</span>
               <div className="space-y-1 text-gray-500 font-black text-[10px]">
-                {selectedPacket.dependencies.map((d, i) => (
-                  <div key={i} className="normal-case font-mono block">- {d}</div>
+                {selectedPacket.dependencies.map((d: any, i: number) => (
+                  <div key={i} className="normal-case font-mono block">- {typeof d === 'string' ? d : `${d.name}@${d.version}`}</div>
                 ))}
               </div>
             </div>
@@ -1980,10 +1980,10 @@ If switching tools or resuming a suspended session:
                           `\\documentclass[12pt]{article}\n\\usepackage{times}\n\\title{Apex Blueprint V4.02: Deterministic Trust Spine}\n\\author{Apex AI Foundation}\n\\begin{document}\n\\maketitle\n\\begin{abstract}\nThis paper outlines the CDAD, SEKED-spec math, and Fenton-Wilkinson mathematical sum approximations governing the deterministic trust spine for autonomous IDEs.\n\\end{abstract}\n\\end{document}`
                         ], {type: 'text/plain'});
                         element.href = URL.createObjectURL(file);
-                        element.download = "apex_blueprint_v4_02_manuscript.tex";
+                        element.download = "abide_blueprint_v4_02_manuscript.tex";
                         document.body.appendChild(element);
                         element.click();
-                        setSsrnDownloadLog("SUCCESS: LaTeX Package 'apex_blueprint_v4_02_manuscript.tex' downloaded.");
+                        setSsrnDownloadLog("SUCCESS: LaTeX Package 'abide_blueprint_v4_02_manuscript.tex' downloaded.");
                       }, 1000);
                     }}
                     className="w-full py-2.5 bg-[#111] hover:bg-white text-white hover:text-black border border-[#222] transition-all font-black text-[9px] tracking-widest flex items-center justify-center gap-2"
@@ -2001,7 +2001,7 @@ If switching tools or resuming a suspended session:
                           `<article xmlns:mml="http://www.w3.org/1998/Math/MathML" xmlns:xlink="http://www.w3.org/1999/xlink">\n  <front>\n    <article-meta>\n      <title-group>\n        <article-title>Apex Blueprint V4.02: The Deterministic Trust Spine for Autonomous Multi-Agent IDEs</article-title>\n      </title-group>\n    </article-meta>\n  </front>\n</article>`
                         ], {type: 'text/plain'});
                         element.href = URL.createObjectURL(file);
-                        element.download = "apex_manuscript_jats_xml_metadata.txt";
+                        element.download = "abide_manuscript_jats_xml_metadata.txt";
                         document.body.appendChild(element);
                         element.click();
                         setSsrnDownloadLog("SUCCESS: JATS XML Metadata file downloaded.");
@@ -2022,7 +2022,7 @@ If switching tools or resuming a suspended session:
                           `%PDF-1.4\n% APEX BLUEPRINT SCHOLARLY MANUSCRIPT PDF EXPORT %`
                         ], {type: 'application/pdf'});
                         element.href = URL.createObjectURL(file);
-                        element.download = "apex_blueprint_v4_02_academic_paper.pdf";
+                        element.download = "abide_blueprint_v4_02_academic_paper.pdf";
                         document.body.appendChild(element);
                         element.click();
                         setSsrnDownloadLog("SUCCESS: Scholarly PDF file downloaded.");

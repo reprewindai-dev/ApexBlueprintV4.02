@@ -1,17 +1,10 @@
-import fs from "fs";
-import path from "path";
 import crypto from "crypto";
 import { CheckpointSchema } from "./validation";
-
-function resolveCheckpointDbPath(): string {
-  if (process.env.CHECKPOINT_DB_PATH) {
-    return process.env.CHECKPOINT_DB_PATH;
-  }
-  if (process.env.NODE_ENV === "test") {
-    return path.join(process.cwd(), ".tmp-tests", "checkpoints_db.json");
-  }
-  return path.join(process.cwd(), "checkpoints_db.json");
-}
+import {
+  getCheckpointFromDatabase,
+  loadAllCheckpoints as loadAllCheckpointsFromDatabase,
+  saveCheckpoint as saveCheckpointToDatabase
+} from "../db/repositories";
 
 export interface Checkpoint {
   checkpointId: string;
@@ -26,42 +19,11 @@ export interface Checkpoint {
   timestamp: string;
 }
 
-/**
- * Loads all checkpoints from durable disk storage.
- */
-export function loadAllCheckpoints(): Checkpoint[] {
-  try {
-    const dbPath = resolveCheckpointDbPath();
-    if (!fs.existsSync(dbPath)) {
-      return [];
-    }
-    const data = fs.readFileSync(dbPath, "utf8");
-    const list = JSON.parse(data);
-    if (!Array.isArray(list)) return [];
-    return list;
-  } catch (err) {
-    console.error("Failed to load checkpoints from disk:", err);
-    return [];
-  }
+export async function loadAllCheckpoints(): Promise<Checkpoint[]> {
+  return loadAllCheckpointsFromDatabase() as Promise<Checkpoint[]>;
 }
 
-/**
- * Saves a list of checkpoints to durable disk storage.
- */
-function saveAllCheckpoints(checkpoints: Checkpoint[]): void {
-  try {
-    const dbPath = resolveCheckpointDbPath();
-    fs.mkdirSync(path.dirname(dbPath), { recursive: true });
-    fs.writeFileSync(dbPath, JSON.stringify(checkpoints, null, 2), "utf8");
-  } catch (err) {
-    console.error("Failed to save checkpoints to disk:", err);
-  }
-}
-
-/**
- * Validates and records a new checkpoint.
- */
-export function createCheckpoint(input: Omit<Checkpoint, "checkpointId" | "timestamp">): Checkpoint {
+export async function createCheckpoint(input: Omit<Checkpoint, "checkpointId" | "timestamp">): Promise<Checkpoint> {
   const checkpointId = "chk-" + crypto.randomBytes(8).toString("hex");
   const timestamp = new Date().toISOString();
   
@@ -76,17 +38,19 @@ export function createCheckpoint(input: Omit<Checkpoint, "checkpointId" | "times
     throw new Error(`Checkpoint validation failed: ${parsed.error.issues.map(e => e.path.join(".") + ": " + e.message).join(", ")}`);
   }
 
-  const checkpoints = loadAllCheckpoints();
-  checkpoints.push(checkpoint);
-  saveAllCheckpoints(checkpoints);
+  if (process.env.DATABASE_URL) {
+    try {
+      await saveCheckpointToDatabase(checkpoint);
+    } catch (err: any) {
+      console.error("[PG Checkpoint] Failed to save checkpoint:", err.message);
+    }
+  } else {
+    throw new Error("CAPPO HALT - DATABASE_URL is required for checkpoint persistence.");
+  }
 
   return checkpoint;
 }
 
-/**
- * Retrieves a single checkpoint by its unique ID.
- */
-export function getCheckpoint(checkpointId: string): Checkpoint | null {
-  const checkpoints = loadAllCheckpoints();
-  return checkpoints.find(c => c.checkpointId === checkpointId) || null;
+export async function getCheckpoint(checkpointId: string): Promise<Checkpoint | null> {
+  return getCheckpointFromDatabase(checkpointId) as Promise<Checkpoint | null>;
 }

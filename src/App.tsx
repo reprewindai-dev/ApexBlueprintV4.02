@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, { useState, useMemo, useEffect, useRef, Component } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Cpu,
@@ -41,7 +41,12 @@ import {
   ArrowRight,
   ArrowUpRight,
   Send,
-  Check
+  Check,
+  Key,
+  UserCheck,
+  User,
+  Server,
+  Plug
 } from "lucide-react";
 import JSZip from "jszip";
 import { TEMPLATES } from "./data/templates";
@@ -54,24 +59,23 @@ import GovernanceSimulator from "./components/GovernanceSimulator";
 import { GapsDuplicates } from "./components/GapsDuplicates";
 import { SystemRoadmap } from "./components/SystemRoadmap";
 import { AgentPackets } from "./components/AgentPackets";
+import { TrustLayerHub } from "./components/TrustLayerHub";
 import { SovereignConstitution } from "./components/SovereignConstitution";
 import BuildExecutionAttestation from "./components/BuildExecutionAttestation";
 import PresentationDeck from "./components/PresentationDeck";
 import GovernedViewContainer from "./components/GovernedViewContainer";
-import { CodeDiffViewer } from "./components/CodeDiffViewer";
-import { BlueprintFileChart } from "./components/BlueprintFileChart";
+import CognitiveIde from "./components/CognitiveIde";
+import CavemanGuide from "./components/CavemanGuide";
+import { EinsteinRouterDashboard } from "./components/EinsteinRouterDashboard";
+import { ComputeCacheOptimizer } from "./components/ComputeCacheOptimizer";
+import { SovereignIngestSystem } from "./components/SovereignIngestSystem";
+import { ExportConfirmModal } from "./components/ExportConfirmModal";
+import { VnpAuthHub } from "./components/VnpAuthHub";
+import { VnpAnalyticsCards } from "./components/VnpAnalyticsCards";
+import EnterpriseHostController from "./components/EnterpriseHostController";
+import EnterpriseProtocolManuals from "./components/EnterpriseProtocolManuals";
+import VioMarketplace from "./components/VioMarketplace";
 
-const clientEnv = (import.meta as any).env ?? {};
-
-function readClientEnv(...names: string[]): string | undefined {
-  for (const name of names) {
-    const value = clientEnv[name] ?? (typeof process !== "undefined" ? process.env?.[name] : undefined);
-    if (typeof value === "string" && value.trim()) {
-      return value.trim();
-    }
-  }
-  return undefined;
-}
 
 interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -83,13 +87,11 @@ interface ErrorBoundaryState {
 }
 
 // A resilient class-based React Error Boundary to capture any unexpected downstream component runtime errors.
-class ErrorBoundary extends (React.Component as any) {
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   public state: ErrorBoundaryState = { hasError: false, error: null };
-  public props: ErrorBoundaryProps;
 
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.props = props;
   }
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
@@ -117,7 +119,7 @@ class ErrorBoundary extends (React.Component as any) {
             </pre>
           )}
           <button
-            onClick={() => this.setState({ hasError: false, error: null })}
+            onClick={() => (this as any).setState({ hasError: false, error: null })}
             className="px-3.5 py-2 bg-red-900/40 hover:bg-red-800/50 border border-red-700/50 text-red-200 text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
           >
             Attempt Recover & Reset View
@@ -125,7 +127,7 @@ class ErrorBoundary extends (React.Component as any) {
         </div>
       );
     }
-    return this.props.children;
+    return (this as any).props.children;
   }
 }
 
@@ -341,7 +343,7 @@ export default function App() {
   const [notes, setNotes] = useState("");
   const [codebaseContext, setCodebaseContext] = useState("");
   const [targetPlatform, setTargetPlatform] = useState("Multi-platform Mobile & Web");
-  const [userEmail, setUserEmail] = useState("pluggedfinds41@gmail.com");
+  const [userEmail, setUserEmail] = useState("");
 
   // Model selection configurations
   const [config, setConfig] = useState<ModelConfig>({
@@ -361,13 +363,55 @@ export default function App() {
     model?: string;
   } | null>(null);
 
+  // Performance and Ollama cache states
+  const [cacheStats, setCacheStats] = useState<any>(null);
+  const [isLoadingCacheStats, setIsLoadingCacheStats] = useState(false);
+  const [ollamaResult, setOllamaResult] = useState<{
+    success: boolean;
+    latencyMs?: number;
+    models?: Array<{ name: string; size?: number; details?: any }>;
+    error?: string;
+  } | null>(null);
+  const [isQueryingOllama, setIsQueryingOllama] = useState(false);
+
   // UI interaction states
+  const [abideMode, setAbideMode] = useState<"learning" | "auto" | "custom">("auto");
+  const [isDemoMode, setIsDemoMode] = useState(true);
   const [isCompiling, setIsCompiling] = useState(false);
   const [compilationStep, setCompilationStep] = useState(0);
   const [compileError, setCompileError] = useState<string | null>(null);
+  const [compileWarning, setCompileWarning] = useState<{ contradictions: string[] } | null>(null);
   const [result, setResult] = useState<BlueprintResult | null>(DEFAULT_BLUEPRINT);
+  const [vnpAuthUser, setVnpAuthUser] = useState<any | null>(null);
+
+  useEffect(() => {
+    const checkUser = async () => {
+      const t = localStorage.getItem("vnp_jwt_token");
+      if (!t) {
+        setVnpAuthUser(null);
+        return;
+      }
+      try {
+        const res = await fetch("/api/vnp/auth/profile", { headers: { Authorization: `Bearer ${t}` } });
+        if (res.ok) {
+          const data = await res.json();
+          setVnpAuthUser(data.user);
+        } else {
+          setVnpAuthUser(null);
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
+    checkUser();
+    const interval = setInterval(checkUser, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   const [activeTab, setActiveTab] = useState<
     | "overview"
+    | "vnpAuth"
+    | "vnpAnalytics"
     | "sovereignConstitution"
     | "capabilityGraph"
     | "productsBundles"
@@ -381,20 +425,37 @@ export default function App() {
     | "agentPackets"
     | "explorer"
     | "testHarness"
+    | "enterpriseControl"
+    | "protocolManuals"
   >("overview");
+  const [overviewMode, setOverviewMode] = useState<"caveman" | "pitch">("caveman");
   const [showConfigPanel, setShowConfigPanel] = useState(false);
+
+  // Export Modal confirmation state
+  const [exportConfirmModal, setExportConfirmModal] = useState<{
+    isOpen: boolean;
+    type: "diagnostics" | "zip";
+    metadata: {
+      title?: string;
+      fileCount?: number;
+      targetPlatform?: string;
+      backendCount?: number;
+      testStatus?: string;
+      notesLength?: number;
+      reportId?: string;
+      hash?: string;
+    };
+  }>({
+    isOpen: false,
+    type: "diagnostics",
+    metadata: {}
+  });
 
   // Slideshow States
   const [currentSlide, setCurrentSlide] = useState(0);
 
   // Assumption & Grounding Ledger State
-  const [assumptions, setAssumptions] = useState([
-    { id: "asm-1", claim: "M2M Stable Settlements will perform under high latency network environments", status: "VERIFIED", confidence: 92, reference: "Dr. Evelyn Vance (SSRN)" },
-    { id: "asm-2", claim: "Sub-15ms local latency in decentralized liquidity pool handshakes", status: "VERIFIED", confidence: 95, reference: "Nakagawa (arXiv:2403)" },
-    { id: "asm-3", claim: "Hardware enclaves (TPM / SGX) can isolate decryption keys inside browser sandboxes", status: "ASSUMED", confidence: 45, reference: "Local simulation trials" },
-    { id: "asm-4", claim: "Layer-2 mainnet gas-optimized batched rollups can reduce fees to under $0.001", status: "PROJECTED", confidence: 72, reference: "Rollup contract assumptions" },
-    { id: "asm-5", claim: "High-frequency task routing Einstein algorithms can forecast node packet drop clusters", status: "VERIFIED", confidence: 88, reference: "Albert Chen (SSRN)" }
-  ]);
+  const [assumptions, setAssumptions] = useState<{ id: string; claim: string; status: string; confidence: number; reference: string }[]>([]);
 
   // GitHub Integration States
   const [githubRepoUrl, setGithubRepoUrl] = useState("");
@@ -402,10 +463,25 @@ export default function App() {
   const [isAnalyzingGithub, setIsAnalyzingGithub] = useState(false);
   const [githubAnalysisResult, setGithubAnalysisResult] = useState<any>(null);
   const [githubError, setGithubError] = useState<string | null>(null);
-  const [githubPushBranch, setGithubPushBranch] = useState("apex-blueprint-alignment");
+  const [githubPushBranch, setGithubPushBranch] = useState("abide-blueprint-alignment");
   const [isPushingGithub, setIsPushingGithub] = useState(false);
   const [githubPushSuccess, setGithubPushSuccess] = useState<any>(null);
   const [githubPushError, setGithubPushError] = useState<string | null>(null);
+  const [lastGithubAnalysisSync, setLastGithubAnalysisSync] = useState<{
+    status: "idle" | "success" | "failed" | "syncing";
+    timestamp: string | null;
+    repoUrl: string | null;
+  }>(() => {
+    try {
+      const saved = localStorage.getItem("last_github_analysis_sync");
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      // Ignore
+    }
+    return { status: "idle", timestamp: null, repoUrl: null };
+  });
 
   // Academic Vector DB & arXiv Scraper States
   const [academicQuery, setAcademicQuery] = useState("");
@@ -416,10 +492,66 @@ export default function App() {
   const [scrapeKeyword, setScrapeKeyword] = useState("");
   const [isScraping, setIsScraping] = useState(false);
   const [scrapeMessage, setScrapeMessage] = useState<string | null>(null);
+  
+  const [verifyingIndex, setVerifyingIndex] = useState<number | null>(null);
+
+  const handleVerifyPaper = async (paper: any, listIdx: number, isSearchResult: boolean) => {
+    setVerifyingIndex(listIdx);
+    try {
+      const response = await fetch("/api/academic/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: paper.title,
+          resolvableIdentifier: paper.resolvableIdentifier || paper.url
+        })
+      });
+      const data = await response.json();
+      if (data.success) {
+        const updatedPaper = {
+          ...paper,
+          title: data.paper.title,
+          authors: data.paper.authors,
+          summary: data.paper.summary,
+          url: data.paper.url,
+          verificationStatus: "VERIFIED",
+          digitalSignature: data.paper.digitalSignature,
+          source: data.paper.source
+        };
+        
+        if (isSearchResult) {
+          setAcademicResults(prev => prev.map((p, i) => i === listIdx ? updatedPaper : p));
+        } else {
+          setResult(prev => {
+            if (!prev) return prev;
+            const updatedGrounding = prev.academicGrounding.map((p, i) => i === listIdx ? {
+              ...p,
+              title: data.paper.title,
+              author: data.paper.authors,
+              summary: data.paper.summary,
+              url: data.paper.url,
+              verificationStatus: "VERIFIED",
+              digitalSignature: data.paper.digitalSignature,
+              source: data.paper.source
+            } : p);
+            return {
+              ...prev,
+              academicGrounding: updatedGrounding
+            };
+          });
+        }
+      } else {
+        alert(data.message || "Failed to verify paper on arXiv.");
+      }
+    } catch (err: any) {
+      alert(`Verification error: ${err.message}`);
+    } finally {
+      setVerifyingIndex(null);
+    }
+  };
 
   // File explorer states
   const [selectedFilePath, setSelectedFilePath] = useState<string | null>("README.md");
-  const [explorerViewMode, setExplorerViewMode] = useState<"preview" | "diff">("preview");
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
     root: true,
     docs: true,
@@ -478,13 +610,17 @@ export default function App() {
 
   // Veklom Plural Backends Status & Test Harness States
   // CANONICAL — replaced from http://localhost:8081
-  const [byosUrl, setByosUrl] = useState(() => readClientEnv("VITE_VEKLOM_API_URL", "VEKLOM_API_URL") || "https://api.veklom.com");
+  const [byosUrl, setByosUrl] = useState(() => (typeof process !== "undefined" ? process.env.VEKLOM_API_URL : undefined) || "https://api.veklom.com");
   // CANONICAL — replaced from http://localhost:8082
-  const [cappoUrl, setCappoUrl] = useState(() => readClientEnv("VITE_CAPPO_URL", "CAPPO_URL") || "https://cappo.veklom.com");
+  const [cappoUrl, setCappoUrl] = useState(() => (typeof process !== "undefined" ? process.env.CAPPO_URL : undefined) || "https://cappo.veklom.com");
   // CANONICAL — replaced from http://localhost:8083
-  const [gnomeledgerUrl, setGnomeledgerUrl] = useState(() => readClientEnv("VITE_GNOMELEDGER_URL", "GNOMELEDGER_URL") || "https://pgl.veklom.com");
+  const [gnomeledgerUrl, setGnomeledgerUrl] = useState(() => (typeof process !== "undefined" ? process.env.GNOMELEDGER_URL : undefined) || "https://pgl.veklom.com");
+  // CANONICAL — replaced from http://localhost:8085
+  const [delynUrl, setDelynUrl] = useState(() => (typeof process !== "undefined" ? process.env.DELYN_URL : undefined) || "https://delyn.veklom.com");
+  // CANONICAL — replaced from http://localhost:8086
+  const [cipherUrl, setCipherUrl] = useState(() => (typeof process !== "undefined" ? process.env.CIPHER_URL : undefined) || "https://cipher.veklom.com");
   // CANONICAL — replaced from http://localhost:8084
-  const [vnpUrl, setVnpUrl] = useState(() => readClientEnv("VITE_VNP_URL", "VNP_URL") || "https://vnp.veklom.com");
+  const [vnpUrl, setVnpUrl] = useState(() => (typeof process !== "undefined" ? process.env.VNP_URL : undefined) || "https://vnp.veklom.com");
   const [backendStatuses, setBackendStatuses] = useState<any[]>([]);
   const [isPingingBackends, setIsPingingBackends] = useState(false);
   const [isVerifyingSync, setIsVerifyingSync] = useState(false);
@@ -546,6 +682,17 @@ export default function App() {
   const [testConsoleLogs, setTestConsoleLogs] = useState<string[]>([]);
   const [testPassState, setTestPassState] = useState<null | "PASSED" | "FAILED">(null);
   
+  const [hasReviewedChanges, setHasReviewedChanges] = useState(false);
+  const [hasRunSandbox, setHasRunSandbox] = useState(false);
+  const [hasViewedEvidence, setHasViewedEvidence] = useState(false);
+  const [hasExported, setHasExported] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === "explorer") setHasReviewedChanges(true);
+    if (activeTab === "testHarness") setHasRunSandbox(true);
+    if (activeTab === "agentPackets") setHasViewedEvidence(true);
+  }, [activeTab]);
+  
   // Repositories Alignment Live On-Disk Tree Browser state
   const [selectedOnDiskFile, setSelectedOnDiskFile] = useState<string | null>("/package.json");
   const [onDiskVerifiedFile, setOnDiskVerifiedFile] = useState<Record<string, boolean>>({});
@@ -576,14 +723,14 @@ export default function App() {
   // References for printing / rendering certificate PDF
   const printAreaRef = useRef<HTMLDivElement>(null);
 
-  // Loading indicator logs/steps mimicking Hierarchical Reasoning layers
+  // Sections the model is asked to write in a single request (shown while waiting; not live progress)
   const HRM_STEPS = [
-    { label: "High-Level Controller Activated", desc: "Evaluating abstract vision, scope constraints, and decomposing target capabilities." },
-    { label: "Academic Grounding Search", desc: "Simulating validation checks across open repositories (arXiv, SSRN, OpenAI) for peer-reviewed alignment." },
-    { label: "Einstein Probability Weighting", desc: "Calculating priority indices and success trend coefficients for resource routing." },
-    { label: "X402 Sovereign Ledger Modeling", desc: "Drafting decentralized payment topologies and micro-settlement latency boundaries." },
-    { label: "Lower-Level Execution Compiler", desc: "Compiling file-and-folder tree templates and full-scale markdown assets." },
-    { label: "Assembling Final Verified Blueprint", desc: "Attaching SHA-256 validation proof and minting owner certificate." }
+    { label: "Goals, moat and capability map", desc: "" },
+    { label: "Suggested academic references (unverified)", desc: "" },
+    { label: "Probability-weighted priorities (model estimate)", desc: "" },
+    { label: "Business model and offerings", desc: "" },
+    { label: "Project files and agent work packets", desc: "" },
+    { label: "Content hash of the result", desc: "" }
   ];
 
   // Search the Vector Database with actual text embeddings via the backend API
@@ -656,6 +803,13 @@ export default function App() {
     }
     setIsAnalyzingGithub(true);
     setGithubError(null);
+    setLastGithubAnalysisSync(prev => {
+      const next = { ...prev, status: "syncing" as const };
+      try {
+        localStorage.setItem("last_github_analysis_sync", JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
     try {
       const bizPlanFile = result?.files.find(f => f.path.includes("business_plan.md"));
       const bizPlanText = bizPlanFile ? bizPlanFile.content : "";
@@ -677,8 +831,24 @@ export default function App() {
       }
       const data = await response.json();
       setGithubAnalysisResult(data);
+      const nextSync = {
+        status: "success" as const,
+        timestamp: new Date().toISOString(),
+        repoUrl: githubRepoUrl
+      };
+      setLastGithubAnalysisSync(nextSync);
+      try {
+        localStorage.setItem("last_github_analysis_sync", JSON.stringify(nextSync));
+      } catch (e) {}
     } catch (err: any) {
       setGithubError(err.message || "Failed to analyze repository.");
+      setLastGithubAnalysisSync(prev => {
+        const next = { ...prev, status: "failed" as const };
+        try {
+          localStorage.setItem("last_github_analysis_sync", JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
     } finally {
       setIsAnalyzingGithub(false);
     }
@@ -734,7 +904,7 @@ export default function App() {
   const handleFetchBackendStatuses = async () => {
     setIsPingingBackends(true);
     try {
-      const response = await fetch(`/api/backends/status?byosUrl=${encodeURIComponent(byosUrl)}&cappoUrl=${encodeURIComponent(cappoUrl)}&gnomeledgerUrl=${encodeURIComponent(gnomeledgerUrl)}&vnpUrl=${encodeURIComponent(vnpUrl)}`);
+      const response = await fetch(`/api/backends/status?byosUrl=${encodeURIComponent(byosUrl)}&cappoUrl=${encodeURIComponent(cappoUrl)}&gnomeledgerUrl=${encodeURIComponent(gnomeledgerUrl)}&vnpUrl=${encodeURIComponent(vnpUrl)}&delynUrl=${encodeURIComponent(delynUrl)}&cipherUrl=${encodeURIComponent(cipherUrl)}`);
       if (!response.ok) {
         throw new Error("Failed to query decentralised backend routers.");
       }
@@ -756,13 +926,17 @@ export default function App() {
 
     const standardServices = [
       // CANONICAL — replaced from http://localhost:8081
-      { id: "byos", name: "Veklom BYOS Workspace Backend", url: readClientEnv("VITE_VEKLOM_API_URL", "VEKLOM_API_URL") || "https://api.veklom.com", port: 8081, setter: setByosUrl },
+      { id: "byos", name: "Veklom BYOS Workspace Backend", url: (typeof process !== "undefined" ? process.env.VEKLOM_API_URL : undefined) || "https://api.veklom.com", port: 8081, setter: setByosUrl },
       // CANONICAL — replaced from http://localhost:8082
-      { id: "cappo", name: "CAPPO Core Authorization Backend", url: readClientEnv("VITE_CAPPO_URL", "CAPPO_URL") || "https://cappo.veklom.com", port: 8082, setter: setCappoUrl },
+      { id: "cappo", name: "CAPPO Core Authorization Backend", url: (typeof process !== "undefined" ? process.env.CAPPO_URL : undefined) || "https://cappo.veklom.com", port: 8082, setter: setCappoUrl },
+      // CANONICAL — replaced from http://localhost:8085
+      { id: "delyn", name: "DELYN Sovereign Intelligence Backend", url: (typeof process !== "undefined" ? process.env.DELYN_URL : undefined) || "https://delyn.veklom.com", port: 8085, setter: setDelynUrl },
+      // CANONICAL — replaced from http://localhost:8086
+      { id: "cipher", name: "LOCK THE CIPHER Cryptographic Engine", url: (typeof process !== "undefined" ? process.env.CIPHER_URL : undefined) || "https://cipher.veklom.com", port: 8086, setter: setCipherUrl },
       // CANONICAL — replaced from http://localhost:8083
-      { id: "gnomeledger", name: "Gnome Ledger Receipts Store", url: readClientEnv("VITE_GNOMELEDGER_URL", "GNOMELEDGER_URL") || "https://pgl.veklom.com", port: 8083, setter: setGnomeledgerUrl },
+      { id: "gnomeledger", name: "Gnome Ledger Receipts Store", url: (typeof process !== "undefined" ? process.env.GNOMELEDGER_URL : undefined) || "https://pgl.veklom.com", port: 8083, setter: setGnomeledgerUrl },
       // CANONICAL — replaced from http://localhost:8084
-      { id: "vnp", name: "veklom-vnp Node", url: readClientEnv("VITE_VNP_URL", "VNP_URL") || "https://vnp.veklom.com", port: 8084, setter: setVnpUrl }
+      { id: "vnp", name: "veklom-vnp Node", url: (typeof process !== "undefined" ? process.env.VNP_URL : undefined) || "https://vnp.veklom.com", port: 8084, setter: setVnpUrl }
     ];
 
     for (const service of standardServices) {
@@ -797,7 +971,7 @@ export default function App() {
       );
     } else {
       setSyncLogs(prev => [
-        `[${new Date().toLocaleTimeString()}] [DISCOVERY SUCCESS] All local Veklom services on standard ports (8081-8084) detected and verified!`,
+        `[${new Date().toLocaleTimeString()}] [DISCOVERY] Probe requests sent to ports 8081-8084 (no-cors: a response only means something answered; service health is not verified).`,
         ...prev
       ]);
     }
@@ -819,6 +993,8 @@ export default function App() {
         body: JSON.stringify({
           byosUrl,
           cappoUrl,
+          delynUrl,
+          cipherUrl,
           gnomeledgerUrl,
           vnpUrl,
           connectionId: result?.hash ? `conn-${result.hash.slice(0, 10)}` : "conn-default-402",
@@ -917,7 +1093,9 @@ export default function App() {
       }
 
       const data = await response.json();
-      setGeneratedTestSuiteCode(data.code);
+      // The server returns a canned template when the model call fails; label it instead of presenting it as generated.
+      const warning = data.fallbackWarning || (data.source && data.source !== "llm" ? `Source: ${data.source}` : "");
+      setGeneratedTestSuiteCode(warning ? `// NOTE: ${warning}. This is a template, not generated from your blueprint.\n${data.code}` : data.code);
     } catch (err: any) {
       setTestGenerationError(err.message || "An unexpected error occurred while generating test suites.");
     } finally {
@@ -927,50 +1105,42 @@ export default function App() {
 
   // Run the test runner console simulation
   const handleRunTestsLocally = () => {
-    setIsTestConsoleRunning(true);
+    // Tests cannot be executed from the browser; say so instead of printing a simulated run.
+    setIsTestConsoleRunning(false);
     setTestPassState(null);
     setTestConsoleLogs([
-      `$ npm run test -- --selectSpec="${selectedTargetSpec}"`,
-      `[INFO] Locating local ${selectedTestFramework} test suites...`,
-      `[INFO] Target spec matched: ${selectedTargetSpec}`,
-      `[RUN] Executing Veklom Canonical Alignment validations...`
+      `[NOT RUN] Tests cannot be executed inside the browser.`,
+      `Download the generated test file, add it to your project, and run your test command locally (e.g. npm test).`
     ]);
+  };
 
-    setTimeout(() => {
-      setTestConsoleLogs(prev => [
-        ...prev,
-        `RUNS  src/__tests__/${selectedTargetSpec.replace(/[^a-zA-Z0-9]/g, "")}.spec.ts`,
-        `  ✓ Milestone 1: Hardened Persistent PGL Agent Identity authentication (34ms)`,
-        `  ✓ Milestone 2: TrustConnection Lifecycle Sagas & RLS Gates (22ms)`,
-        `  ✓ Milestone 3: Unified Call Contract & CAPPO Final Authority constraints (45ms)`,
-        `  ✓ Milestone 7: Execution-Bound X402 micro-settlements integration with Gnome Ledger (15ms)`,
-      ]);
-    }, 1000);
-
-    setTimeout(() => {
-      setTestConsoleLogs(prev => [
-        ...prev,
-        `\nTest Suites: 1 passed, 1 total`,
-        `Tests:       4 passed, 4 total`,
-        `Snapshots:   0 total`,
-        `Time:        1.42s, estimated cpu usage 12%`,
-        `Ran all unit tests for target spec matching alignment specifications.`
-      ]);
-      setTestPassState("PASSED");
-      setIsTestConsoleRunning(false);
-    }, 2500);
+  // Trigger confirmation modal for diagnostics export
+  const triggerExportDiagnostics = () => {
+    const reportId = "VEKLOM-APEX-DIAG-" + Math.floor(Math.random() * 900000 + 100000);
+    setExportConfirmModal({
+      isOpen: true,
+      type: "diagnostics",
+      metadata: {
+        reportId,
+        backendCount: 4,
+        testStatus: testPassState || "NOT_RUN",
+        hash: result?.hash || "0x8f2a...10b"
+      }
+    });
   };
 
   // Export diagnostic report JSON to trigger download
-  const handleExportDiagnostics = () => {
-    const reportId = "VEKLOM-APEX-DIAG-" + Math.floor(Math.random() * 900000 + 100000);
+  const handleExportDiagnostics = (reportId: string) => {
+    const finalReportId = reportId || "VEKLOM-APEX-DIAG-" + Math.floor(Math.random() * 900000 + 100000);
     const reportData = {
       report_timestamp: new Date().toISOString(),
-      report_id: reportId,
+      report_id: finalReportId,
       sovereign_blueprint: result || { warning: "No active blueprint compiled yet" },
       configured_backend_routers: {
         veklom_byos_backend: byosUrl,
         cappo_backend: cappoUrl,
+        delyn_backend: delynUrl,
+        cipher_backend: cipherUrl,
         gnomeledger: gnomeledgerUrl,
         veklom_vnp: vnpUrl
       },
@@ -995,7 +1165,7 @@ export default function App() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(reportData, null, 2));
     const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `veklom_diagnostics_report_${reportId}.json`);
+    downloadAnchor.setAttribute("download", `veklom_diagnostics_report_${finalReportId}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -1013,11 +1183,18 @@ export default function App() {
     localStorage.setItem("veklom_auto_verify", autoVerifyEnabled.toString());
   }, [autoVerifyEnabled]);
 
-  // Refs for stable 60-second interval dependencies
-  const autoVerifyParamsRef = useRef({ byosUrl, cappoUrl, gnomeledgerUrl, vnpUrl, resultHash: result?.hash, backendStatuses });
+  // Fetch cache stats when config panel is shown
   useEffect(() => {
-    autoVerifyParamsRef.current = { byosUrl, cappoUrl, gnomeledgerUrl, vnpUrl, resultHash: result?.hash, backendStatuses };
-  }, [byosUrl, cappoUrl, gnomeledgerUrl, vnpUrl, result?.hash, backendStatuses]);
+    if (showConfigPanel) {
+      fetchCacheStats();
+    }
+  }, [showConfigPanel]);
+
+  // Refs for stable 60-second interval dependencies
+  const autoVerifyParamsRef = useRef({ byosUrl, cappoUrl, delynUrl, cipherUrl, gnomeledgerUrl, vnpUrl, resultHash: result?.hash, backendStatuses });
+  useEffect(() => {
+    autoVerifyParamsRef.current = { byosUrl, cappoUrl, delynUrl, cipherUrl, gnomeledgerUrl, vnpUrl, resultHash: result?.hash, backendStatuses };
+  }, [byosUrl, cappoUrl, delynUrl, cipherUrl, gnomeledgerUrl, vnpUrl, result?.hash, backendStatuses]);
 
   // Periodic background execution when auto-verify is enabled
   useEffect(() => {
@@ -1027,7 +1204,7 @@ export default function App() {
       const triggerVerification = async () => {
         const timestampStr = new Date().toISOString();
         const randId = "evt-" + Math.floor(Math.random() * 9000 + 1000);
-        const { byosUrl, cappoUrl, gnomeledgerUrl, vnpUrl, resultHash, backendStatuses } = autoVerifyParamsRef.current;
+        const { byosUrl, cappoUrl, delynUrl, cipherUrl, gnomeledgerUrl, vnpUrl, resultHash, backendStatuses } = autoVerifyParamsRef.current;
         
         try {
           const response = await fetch("/api/backends/verify-sync", {
@@ -1036,6 +1213,8 @@ export default function App() {
             body: JSON.stringify({
               byosUrl,
               cappoUrl,
+              delynUrl,
+              cipherUrl,
               gnomeledgerUrl,
               vnpUrl,
               connectionId: resultHash ? `conn-${resultHash.slice(0, 10)}` : "conn-default-402",
@@ -1106,15 +1285,10 @@ export default function App() {
   useEffect(() => {
     let interval: NodeJS.Timeout;
     if (isCompiling) {
+      // Elapsed seconds while waiting for the model; the request is a single call with no partial progress.
       interval = setInterval(() => {
-        setCompilationStep((prev) => {
-          if (prev >= HRM_STEPS.length - 1) {
-            clearInterval(interval);
-            return prev;
-          }
-          return prev + 1;
-        });
-      }, 3500);
+        setCompilationStep((prev) => prev + 1);
+      }, 1000);
     } else {
       setCompilationStep(0);
     }
@@ -1160,15 +1334,64 @@ export default function App() {
     }
   };
 
-  // Secure API Compiler Call
-  const handleCompile = async () => {
-    if (!notes.trim()) {
-      setCompileError("Please enter some messy notes or ideas to compile first.");
-      return;
+  // Fetch and manage compile cache statistics
+  const fetchCacheStats = async () => {
+    setIsLoadingCacheStats(true);
+    try {
+      const response = await fetch("/api/cache/stats");
+      if (response.ok) {
+        const data = await response.json();
+        setCacheStats(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch cache statistics:", err);
+    } finally {
+      setIsLoadingCacheStats(false);
     }
+  };
 
+  const handleClearCache = async () => {
+    try {
+      const response = await fetch("/api/cache/clear", { method: "POST" });
+      if (response.ok) {
+        await fetchCacheStats();
+      }
+    } catch (err) {
+      console.error("Failed to clear cache:", err);
+    }
+  };
+
+  // Check Ollama models locally on the server side
+  const handleQueryOllama = async () => {
+    setIsQueryingOllama(true);
+    setOllamaResult(null);
+    try {
+      const response = await fetch("/api/ollama/models", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ customUrl: config.customUrl })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setOllamaResult(data);
+      } else {
+        throw new Error(`Server returned status ${response.status}`);
+      }
+    } catch (err: any) {
+      setOllamaResult({
+        success: false,
+        error: err.message || "Failed to reach local Ollama agent."
+      });
+    } finally {
+      setIsQueryingOllama(false);
+    }
+  };
+
+  // Secure API Compiler Call with Validation Checker
+  const executeCompilation = async () => {
     setIsCompiling(true);
     setCompileError(null);
+    setCompileWarning(null);
     setResult(null);
     setCompilationStep(0);
 
@@ -1239,9 +1462,56 @@ export default function App() {
     }
   };
 
+  const handleCompile = (forceProceed?: boolean | any) => {
+    setIsDemoMode(false);
+    const isForced = forceProceed === true;
+    if (!notes.trim()) {
+      setCompileError("Please enter some messy notes or ideas to compile first.");
+      return;
+    }
+
+    if (!isForced) {
+      const contradictions: string[] = [];
+      const isRepoInspected = githubAnalysisResult && githubAnalysisResult.isRealConnection;
+      
+      // Check 1: Contradictory 'Verified' status on uninspected repositories
+      const hasVerifiedClaims = notes.toLowerCase().includes("verified") || 
+                                codebaseContext.toLowerCase().includes("verified") ||
+                                assumptions.some(a => a.status === "VERIFIED");
+      if (!isRepoInspected && hasVerifiedClaims) {
+        contradictions.push(
+          "Contradictory Label Detected: Found 'Verified' status or claims on an uninspected/unconnected repository. All repository claims must remain UNVERIFIED until physical codebase inspection occurs."
+        );
+      }
+
+      // Check 2: 'Production Ready' or 'Zero Drift' without repository inspection
+      if (!isRepoInspected && (notes.toLowerCase().includes("production ready") || notes.toLowerCase().includes("production eligible") || notes.toLowerCase().includes("zero drift"))) {
+        contradictions.push(
+          "Contradictory Label Detected: Claiming 'Production Ready/Eligible' or 'Zero Drift' status while operating in simulated/uninspected workspace mode."
+        );
+      }
+
+      // Check 3: Explicit '[PROVEN]' claims before formal academic grounding
+      if (notes.toLowerCase().includes("[proven]") || notes.toLowerCase().includes("100% proven")) {
+        contradictions.push(
+          "Contradictory Label Detected: Explicit '[PROVEN]' label found in raw intent feed prior to formal academic citation validation."
+        );
+      }
+
+      if (contradictions.length > 0) {
+        setCompileWarning({ contradictions });
+        return;
+      }
+    }
+
+    executeCompilation();
+  };
+
   // Unified, reactive file list that includes dynamic Sovereign compliance manifest files
   const combinedFiles = useMemo(() => {
     if (!result || !result.files) return [];
+    
+    // We no longer block files for quota_fallback
     
     // Create the dynamic constitution manifest and jurisdiction policy files
     const manifestPath = "00_workspace_manifest/constitution_manifest.json";
@@ -1260,23 +1530,7 @@ export default function App() {
         "Global Sovereign Standards Core",
         "M2M Cryptographic Evidence Standard"
       ],
-      verificationClaims: [
-        {
-          claim: "All model enclaves pin databases to regional hosts (e.g. AWS ca-central-1 for Canada).",
-          status: "UNVERIFIED_DESIGN_INTENT",
-          evidence: "None (No active enclaves or source code present in export)"
-        },
-        {
-          claim: "Sub-millisecond payment settlement latency below 15ms limit.",
-          status: "PROJECTED_BUSINESS_ASSUMPTION",
-          evidence: "X402 Ledger design parameters"
-        },
-        {
-          claim: "Hardware enclaves verify local key storage.",
-          status: "UNVERIFIED_DESIGN_INTENT",
-          evidence: "Pending local TPM sandbox runs"
-        }
-      ]
+      verificationClaims: []
     }, null, 2);
 
     // Dynamic Exported Governance Manifests (User Requested Refinements)
@@ -1378,10 +1632,10 @@ export default function App() {
         name: cap.name,
         downstreamImpact: cap.downstreamImpact || {
           affectedInterfaces: cap.exposedInterfaces ? [...(cap.exposedInterfaces.rest || []), ...(cap.exposedInterfaces.mcp || [])].slice(0, 3) : [],
-          staleAgentPackets: [`Packet 01: Systems Alignment for ${cap.name}`],
-          reposNeedingMigration: [cap.canonicalRepoImplementation || "main-repo"],
-          affectedPricingBundles: ["Sovereign Edge Standard Pack"],
-          affectedJurisdictionPolicies: ["EU GDPR Overlay Thresholds"]
+          staleAgentPackets: [],
+          reposNeedingMigration: cap.canonicalRepoImplementation ? [cap.canonicalRepoImplementation] : [],
+          affectedPricingBundles: [],
+          affectedJurisdictionPolicies: []
         }
       }))
     }, null, 2);
@@ -1391,7 +1645,8 @@ export default function App() {
 
     if (selectedJurisdiction === "canada") {
       policyPath = "00_workspace_manifest/canada_ised_compliance_profile.yaml";
-      policyContent = `profile: "Canada Sovereign 'AI for All' Compliance Pack"
+      policyContent = `# GENERIC TEMPLATE for the selected jurisdiction. Not generated from your notes and not a compliance assessment.
+profile: "Canada Sovereign 'AI for All' Compliance Pack"
 jurisdiction: "CA / Federal ISED"
 data_residency: "AWS ca-central-1"
 export_restrictions: "Biometric and neural weights export capped without manual override"
@@ -1399,21 +1654,24 @@ cryptography_standard: "FIPS 140-3 Levels 3+"
 sovereign_control: "Mandates real-time capability verification logs anchored to local sovereign nodes"`;
     } else if (selectedJurisdiction === "eu") {
       policyPath = "00_workspace_manifest/eu_ai_act_compliance_profile.yaml";
-      policyContent = `profile: "EU AI Act Compliance Pack"
+      policyContent = `# GENERIC TEMPLATE for the selected jurisdiction. Not generated from your notes and not a compliance assessment.
+profile: "EU AI Act Compliance Pack"
 jurisdiction: "EU / High-Risk Systems Regulation"
 transparency_obligations: "Mandates explicit generative model output labels and continuous drift tracking"
 data_residency: "Strict compliance with GDPR Article 44 cross-border transfers"
 risk_mitigation: "Continuous Einstein scheduler limits to prevent loop cascade congestion"`;
     } else if (selectedJurisdiction === "us") {
       policyPath = "00_workspace_manifest/us_sec_compliance_profile.yaml";
-      policyContent = `profile: "US Enterprise & SEC Security Pack"
+      policyContent = `# GENERIC TEMPLATE for the selected jurisdiction. Not generated from your notes and not a compliance assessment.
+profile: "US Enterprise & SEC Security Pack"
 jurisdiction: "US / Federal SEC + NIST AI Baseline"
 financial_compliance: "Micropayments require instant anti-arbitrage circuit breakers and daily caps"
 sovereign_control: "Federal FIPS enclaves with strict tenant isolation"
 audit_standards: "NIST SP 800-218 Secure Software Development Framework validation logs"`;
     } else {
       policyPath = "00_workspace_manifest/global_baseline_profile.yaml";
-      policyContent = `profile: "Global Sovereign Standards Core"
+      policyContent = `# GENERIC TEMPLATE for the selected jurisdiction. Not generated from your notes and not a compliance assessment.
+profile: "Global Sovereign Standards Core"
 jurisdiction: "Global Decentralized Edge Networks"
 compliance: "Standard X402 microtransaction ledger validation schemas and public auditable Merkle proofs"`;
     }
@@ -1473,24 +1731,6 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 ` + content;
       }
 
-      // Sanitize repo_sync.md of generic filler and populate with active inspected files
-      if (f.path === "08_github_alignment_pack/repo_sync.md") {
-        content = `# Repository Sync & Codebase Alignment
-        
-## Inspected Repository Profile
-- **Repository Directory**: Active Local Workspace Container
-- **Inspected Files**: \`package.json\`, \`server.ts\`, \`src/App.tsx\`, \`src/types.ts\`
-- **Discovered Source Code Tree**: Node/Express fullstack platform on Port 3000
-- **Framework**: React 18 with Vite and Express
-- **Identified Routes**: 
-  - \`POST /api/generate\` (Blueprint Hierarchical Reasoning compilation)
-  - \`POST /api/covenant/execute\` (Secure plan execution)
-  - \`POST /api/covenant/approve\` (PlanIR signing)
-  - \`POST /api/covenant/project\` (IDE context projection)
-- **Inspected Gaps**: This is a planning-phase workspace. It contains no native rust-node binary (\`einstein.rs\`) or Solidity escrow contract implementations (\`X402Escrow.sol\`) yet.
-        `;
-      }
-
       return { path: f.path, content };
     });
 
@@ -1512,6 +1752,22 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
       { path: overridesPath, content: overridesContent },
       { path: downstreamPath, content: downstreamContent }
     );
+
+    // Rule 2: SEKED R score gates confidence labels across all exported documents.
+    // An R: 0 should make it structurally impossible for manifest.md or any pack to say [VERIFIED].
+    const rScore = result.sekedTriage?.R?.score ?? 0;
+    const hasVerifiedCitations = result.academicGrounding && result.academicGrounding.length > 0 && result.academicGrounding.some(p => p.verificationStatus === "VERIFIED" || p.verificationStatus === "RETRIEVED_AND_VALIDATED");
+    if (rScore === 0 || !hasVerifiedCitations) {
+      return filteredList.map(f => {
+        let content = f.content;
+        content = content.replace(/\[VERIFIED\]/gi, "[UNVERIFIED_CITATION_GATED] (SEKED R Score: 0/10 - Peer Review Required)");
+        content = content.replace(/VERIFIED_EXISTING/g, "UNVERIFIED_CITATION_GATED");
+        content = content.replace(/\[PROVEN\]/gi, "[UNVERIFIED_CITATION_GATED]");
+        content = content.replace(/\bVerified\b/g, "Unverified (Citation Gated)");
+        return { path: f.path, content };
+      });
+    }
+
     return filteredList;
   }, [result, selectedJurisdiction, constitutionVersion, constitutionState, userEmail]);
 
@@ -1596,12 +1852,35 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
     setTimeout(() => setCopiedFilePath(null), 2000);
   };
 
+  // Trigger confirmation modal for ZIP download
+  const triggerDownloadZip = () => {
+    if (!result || result.source === "default") {
+      alert("Please compile your own project first before downloading.");
+      return;
+    }
+    // Quota fallback blocking removed
+    const fileCount = (combinedFiles?.length || 0) + 4; // files + manifest/meta leaves
+    setHasExported(true);
+    setExportConfirmModal({
+      isOpen: true,
+      type: "zip",
+      metadata: {
+        title: result.title,
+        fileCount,
+        targetPlatform: targetPlatform,
+        notesLength: notes.length,
+        hash: result.hash
+      }
+    });
+  };
+
   // ZIP Downloader
   const handleDownloadZip = async () => {
     if (!result || result.source === "default") {
       alert("Please compile your own project first before downloading.");
       return;
     }
+    // Quota fallback blocking removed
     if (!combinedFiles) return;
 
     // Direct helper to compute browser-native cryptographic SHA-256 hashes asynchronously
@@ -1613,46 +1892,20 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
     };
 
     const claimClassification = {
-      "system": "Veklom Capability OS",
+      "system": result.title,
       "blueprintHash": result.hash,
       "classifications": [
         {
-          "claim": "X402 sub-millisecond settlement protocol and Escrow contracts",
-          "classification": "UNVERIFIED_DESIGN_INTENT",
-          "description": "Contracts do not exist on disk and have not been deployed to Arbitrum or any testnet."
-        },
-        {
-          "claim": "Einstein priority trend scheduling (reputation routing)",
-          "classification": "PROJECTED_BUSINESS_ASSUMPTION",
-          "description": "Theoretical prioritization model based on probability formulas, no live scheduling active."
-        },
-        {
-          "claim": "50,000 requests per second with sub-15ms latency",
-          "classification": "PROJECTED_BUSINESS_ASSUMPTION",
-          "description": "Design target under ideal edge topologies; not verified by benchmark experiments."
-        },
-        {
-          "claim": "Gnomledger blockchain receipt artifacts (GRAs)",
-          "classification": "UNVERIFIED_DESIGN_INTENT",
-          "description": "Proof indexing blockchain layers are conceptual design drafts only."
-        },
-        {
-          "claim": "Active Owners (Dr. Evelyn Vance, Albert Chen, Satoshi Nakagawa)",
-          "classification": "PROJECTED_BUSINESS_ASSUMPTION",
-          "description": "Fictional actors assigned to role templates inside the documentation."
-        },
-        {
-          "claim": "Workspace Manifest and Capability Registry schemas",
-          "classification": "VERIFIED_EXISTING",
-          "description": "The specification schemas are fully defined and validated using the Zod validation engine."
-        },
-        {
-          "claim": "Express routes and frontend control panel in active repo",
-          "classification": "INFERRED_FROM_REPOSITORY",
-          "description": "Discovered from live container environment static inspection."
+          "claim": "All sections of this blueprint (goals, capabilities, citations, probabilities, files, agent packets)",
+          "classification": isDemoMode ? "BUILT_IN_DEMO_SAMPLE" : "AI_GENERATED_UNVERIFIED",
+          "description": isDemoMode
+            ? "Bundled sample content shipped with the app; not generated from your notes."
+            : `Generated by ${config.provider} (${config.modelName || "default model"}) from the submitted notes. Not independently verified.`
         }
       ]
     };
+
+    const resultPackets: any[] = Array.isArray(result.agentPackets) ? result.agentPackets : [];
 
     const extraFiles = [
       {
@@ -1682,13 +1935,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
           evidenceIndexVersion: "1.0.0",
           blueprintHash: result.hash,
           evidenceVerified: false,
-          evidenceRecords: [
-            {
-              claim: "Sub-millisecond payment settlement latency below 15ms limit.",
-              status: "UNVERIFIED_DESIGN_INTENT",
-              assessedBy: "System Exporter Heuristics"
-            }
-          ]
+          evidenceRecords: []
         }, null, 2)
       },
       {
@@ -1711,46 +1958,6 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
         content: "UNSIGNED_PLANNING_EXPORT_NO_KEY_PROVISIONED"
       },
       {
-        path: "09_agent_execution_pack/packet-001.json",
-        content: JSON.stringify({
-          packetId: "packet-001",
-          title: "Build Einstein Prioritized Scheduler",
-          status: "NOT_STARTED",
-          executionEligibility: "BLOCKED",
-          targetRole: "Scheduler Backend Engineer",
-          objective: "Create Einstein optimized reputation priority router.",
-          files: ["src/scheduler/einstein.rs"]
-        }, null, 2)
-      },
-      {
-        path: "09_agent_execution_pack/packet-001.md",
-        content: `# Agent Execution Packet 001\n## Target Role: Scheduler Backend Engineer\n**STATUS**: NOT_STARTED (EXECUTION_ELIGIBILITY: BLOCKED)\n\nPlease implement the Einstein Prioritized Scheduler in \`src/scheduler/einstein.rs\`.\nSince this is a PLANNING_EXPORT, execution is currently blocked.`
-      },
-      {
-        path: "09_agent_execution_pack/packet-001.signature",
-        content: "UNSIGNED_PACKET"
-      },
-      {
-        path: "09_agent_execution_pack/packet-002.json",
-        content: JSON.stringify({
-          packetId: "packet-002",
-          title: "Deploy Escrow Contracts",
-          status: "NOT_STARTED",
-          executionEligibility: "BLOCKED",
-          targetRole: "Smart Contract Auditor",
-          objective: "Auditing and compiling the Solidity Escrow protocol",
-          files: ["contracts/X402Escrow.sol"]
-        }, null, 2)
-      },
-      {
-        path: "09_agent_execution_pack/packet-002.md",
-        content: `# Agent Execution Packet 002\n## Target Role: Smart Contract Auditor\n**STATUS**: NOT_STARTED (EXECUTION_ELIGIBILITY: BLOCKED)\n\nPlease implement the escrow contract inside \`contracts/X402Escrow.sol\`.\nSince this is a PLANNING_EXPORT, execution is currently blocked.`
-      },
-      {
-        path: "09_agent_execution_pack/packet-002.signature",
-        content: "UNSIGNED_PACKET"
-      },
-      {
         path: "12_checkpoint_pack/checkpoint-genesis.json",
         content: JSON.stringify({
           checkpointId: "chk-genesis",
@@ -1758,33 +1965,18 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
           activeAgentId: "None",
           ledgerSequence: 0,
           lastAction: "Genesis export compiled",
-          pendingTasksCount: 2,
+          pendingTasksCount: resultPackets.length,
           blockHeight: 0
         }, null, 2)
       },
       {
         path: "12_checkpoint_pack/unresolved-work.json",
         content: JSON.stringify({
-          unresolvedWorkItems: [
-            {
-              id: "work-001",
-              description: "Create scheduler source file 'src/scheduler/einstein.rs'",
-              status: "NOT_STARTED"
-            },
-            {
-              id: "work-002",
-              description: "Create Solidity Escrow smart contract 'contracts/X402Escrow.sol'",
-              status: "NOT_STARTED"
-            }
-          ]
-        }, null, 2)
-      },
-      {
-        path: "12_checkpoint_pack/repository-authority.json",
-        content: JSON.stringify({
-          authorityType: "UNVERIFIED_PLANNING",
-          repositoryUrl: "https://github.com/veklom/capability-os",
-          authorityFingerprint: "unsigned-authority-anchor"
+          unresolvedWorkItems: resultPackets.map((pkt: any, i: number) => ({
+            id: pkt.id || pkt.packetId || `work-${String(i + 1).padStart(3, "0")}`,
+            description: pkt.title || pkt.objective || pkt.name || "Agent work packet",
+            status: "NOT_STARTED"
+          }))
         }, null, 2)
       }
     ];
@@ -1917,19 +2109,19 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
   };
 
   return (
-    <div className="h-screen flex flex-col bg-[#050505] text-[#E0E0E0] font-sans selection:bg-[#00F0FF]/30 selection:text-[#00F0FF] relative overflow-hidden border-4 border-[#1A1A1A]">
+    <div className="min-h-screen bg-[#050505] text-[#E0E0E0] font-sans selection:bg-[#00F0FF]/30 selection:text-[#00F0FF] relative overflow-x-hidden border-4 border-[#1A1A1A]">
       
       {/* Background radial grid */}
       <div className="absolute top-0 left-0 w-full h-full theme-grid-bg opacity-20 pointer-events-none" />
 
       {/* Global Header */}
-      <header className="h-16 shrink-0 border-b border-[#222] bg-[#080808] z-40 print:hidden flex items-center justify-between px-6">
+      <header className="h-16 border-b border-[#222] bg-[#080808] sticky top-0 z-40 print:hidden flex items-center justify-between px-6">
         <div className="flex items-center gap-4">
           <div className="w-3.5 h-3.5 rounded-full bg-[#00F0FF] glow-dot-cyan"></div>
           <div>
             <div className="flex items-center gap-3">
               <span className="font-black tracking-tighter text-white text-xl uppercase">
-                APEXBLUEPRINT v4.02
+                APEX BLUEPRINT v4.02
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 bg-[#1A1A1A] text-[#00F0FF] border border-[#333] font-black uppercase">
                 HRM-MODULAR
@@ -1940,12 +2132,30 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 
         {/* Dynamic System Status */}
         <div className="hidden lg:flex gap-8 text-[10px] font-mono tracking-widest uppercase text-[#666]">
-          <div>X402 Node: <span className="text-[#00F0FF] font-bold">Active</span></div>
-          <div>Latency: <span className="text-[#00F0FF] font-bold">0.02ms</span></div>
-          <div>Encryption: <span className="text-[#00F0FF] font-bold">AES-256</span></div>
+          <div>Engine: <span className="text-[#00F0FF] font-bold">{config.provider}</span></div>
+          <div>Model: <span className="text-[#00F0FF] font-bold">{config.modelName || "default"}</span></div>
+          <div>API Key: <span className={config.apiKey ? "text-[#00F0FF] font-bold" : "text-amber-400 font-bold"}>{config.apiKey ? "Entered" : "Not set"}</span></div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setActiveTab("vnpAuth")}
+            className={`px-3 py-1.5 border text-[10px] font-black uppercase transition-all duration-150 tracking-widest flex items-center gap-1.5 ${
+              vnpAuthUser
+                ? "bg-[#00F0FF]/15 border-[#00F0FF] text-[#00F0FF] glow-cyan"
+                : "bg-[#111] border-[#333] hover:border-[#00F0FF] text-white"
+            }`}
+          >
+            <UserCheck size={13} />
+            <span>{vnpAuthUser ? `VNP: ${vnpAuthUser.name.split(" ")[0]}` : "VNP Auth"}</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("vnpAnalytics")}
+            className="px-3 py-1.5 border border-[#10B981]/50 bg-[#10B981]/15 hover:bg-[#10B981]/25 text-[#10B981] text-[10px] font-black uppercase transition-all duration-150 tracking-widest flex items-center gap-1.5 glow-emerald"
+          >
+            <Activity size={13} />
+            <span>VNP Telemetry</span>
+          </button>
           <button
             onClick={() => setShowConfigPanel(true)}
             className="px-3 py-1.5 bg-[#E0E0E0] hover:bg-white text-black text-[10px] font-bold uppercase transition-all duration-150 tracking-widest"
@@ -1956,7 +2166,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
       </header>
 
       {/* Main Page Container */}
-      <main className="flex-1 w-full mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10 print:p-0 overflow-y-auto">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10 print:p-0">
         
         {/* Intro Banner */}
         <section className="max-w-4xl mx-auto mb-12 print:hidden text-center">
@@ -1967,7 +2177,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#1A1A1A] border border-[#333] text-[10px] font-mono uppercase tracking-widest text-[#00F0FF] mb-4">
               <Sparkles size={11} className="text-[#00F0FF]" />
-              <span>Hierarchical abstract plan controller for anti-gravity & cursor agents</span>
+              <span>Universal hierarchical abstract plan controller for ANY coding agent</span>
             </div>
             
             <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase leading-[0.9] text-white my-2">
@@ -1978,10 +2188,32 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
             </h1>
             
             <p className="mt-4 text-xs font-mono uppercase tracking-widest text-[#666] max-w-2xl mx-auto leading-relaxed">
-              Backed by Einstein trend probability model, SSRN academic validator, and fully structured with X402 payment settlements. The ultimate software blueprint planner.
+              Turns your notes into a structured software blueprint and business plan using the AI model you choose under LLM Engine. Output is AI-generated: review it before relying on it.
             </p>
           </motion.div>
         </section>
+
+        {/* Mode Selector */}
+        <div className="flex gap-4 mb-8 print:hidden">
+          <button 
+            onClick={() => setAbideMode("learning")}
+            className={`flex-1 py-3 px-4 font-bold uppercase tracking-wider text-xs border transition-all ${abideMode === "learning" ? "bg-[#00F0FF] text-black border-[#00F0FF]" : "bg-[#0A0A0A] text-[#666] border-[#222] hover:border-[#00F0FF]/50"}`}
+          >
+            Learning Mode
+          </button>
+          <button 
+            onClick={() => setAbideMode("auto")}
+            className={`flex-1 py-3 px-4 font-bold uppercase tracking-wider text-xs border transition-all ${abideMode === "auto" ? "bg-[#00F0FF] text-black border-[#00F0FF]" : "bg-[#0A0A0A] text-[#666] border-[#222] hover:border-[#00F0FF]/50"}`}
+          >
+            Auto Mode
+          </button>
+          <button 
+            onClick={() => setAbideMode("custom")}
+            className={`flex-1 py-3 px-4 font-bold uppercase tracking-wider text-xs border transition-all ${abideMode === "custom" ? "bg-[#00F0FF] text-black border-[#00F0FF]" : "bg-[#0A0A0A] text-[#666] border-[#222] hover:border-[#00F0FF]/50"}`}
+          >
+            Custom Mode
+          </button>
+        </div>
 
         {/* Input & Compiler Section */}
         <section id="input-section" className="grid grid-cols-1 lg:grid-cols-12 gap-8 print:hidden mb-12">
@@ -2019,20 +2251,28 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
             </div>
 
             <div className="space-y-4">
+              {/* Sovereign Ingest System with Drag-and-Drop and Ingestion Pipeline */}
+              <SovereignIngestSystem 
+                notes={notes} 
+                setNotes={setNotes} 
+                targetPlatform={targetPlatform}
+                setTargetPlatform={setTargetPlatform}
+              />
+
               {/* Main notes pad */}
               <div>
                 <label className="block text-[10px] font-mono text-[#666] uppercase tracking-wider mb-2 flex justify-between">
-                  <span>[ Pasted Messy Notes / Transcript / Audio Text ]</span>
+                  <span>[ Active Ingested Input / Pasted Messy Notes ]</span>
                   <span className="text-[#00F0FF]">
-                    {notes.length} bytes Ingested
+                    {notes.length} bytes active
                   </span>
                 </label>
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Paste your chaotic ideas, notes from voice memos, business goals, competitors, list of features, or vitals parameters..."
-                  rows={8}
-                  className="w-full bg-[#0A0A0A] border border-[#222] focus:border-[#00F0FF] p-4 text-xs font-mono text-[#E0E0E0] placeholder-[#444] rounded-none focus:outline-none transition-all"
+                  placeholder="The Sovereign Ingest System will populate your chaotic ideas here, or you can paste notes, competitor lists, feature catalogs, or metrics directly..."
+                  rows={10}
+                  className="w-full bg-[#0A0A0A] border border-[#222] focus:border-[#00F0FF] p-4 text-xs font-mono text-[#E0E0E0] placeholder-[#444] rounded-none focus:outline-none transition-all shadow-inner"
                 />
               </div>
 
@@ -2088,6 +2328,39 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 
               {/* Trigger compiler */}
               <div className="pt-2">
+                {compileWarning && (
+                  <div className="bg-[#151000] border-2 border-amber-500 p-4 mb-4 font-mono animate-in fade-in">
+                    <div className="flex items-center gap-2 text-amber-400 font-black uppercase text-xs mb-2">
+                      <AlertTriangle size={16} className="text-amber-400 shrink-0" />
+                      <span>Validation Checker: Contradictory Labels Detected</span>
+                    </div>
+                    <p className="text-gray-300 text-[11px] mb-3 leading-relaxed normal-case font-sans">
+                      The compiler validation checker detected contradictory labels in your workspace prior to finalized compilation:
+                    </p>
+                    <ul className="list-disc pl-5 space-y-1.5 text-amber-300 text-[11px] mb-4 font-mono">
+                      {compileWarning.contradictions.map((c, idx) => (
+                        <li key={idx}>{c}</li>
+                      ))}
+                    </ul>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => handleCompile(true)}
+                        className="py-2 px-4 bg-amber-500 hover:bg-white text-black font-black text-[10px] uppercase tracking-wider transition-all"
+                      >
+                        Ignore Warning & Proceed
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCompileWarning(null)}
+                        className="py-2 px-4 bg-transparent border border-amber-500/50 hover:border-amber-400 text-amber-400 font-black text-[10px] uppercase tracking-wider transition-all"
+                      >
+                        Cancel & Edit Input
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <button
                   type="button"
                   onClick={handleCompile}
@@ -2106,7 +2379,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                   ) : (
                     <>
                       <Play fill="currentColor" size={12} className="text-black" />
-                      <span>Compile Full Blueprint Package</span>
+                      <span>Compile Production Payload</span>
                     </>
                   )}
                 </button>
@@ -2144,14 +2417,15 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 
                   <div className="space-y-3">
                     <div className="flex justify-between items-center text-[10px] text-[#666] font-mono border-b border-[#222] pb-1">
-                      <span>REASONER SUB-TASK PROGRESS</span>
-                      <span className="text-[#00F0FF] font-black">{Math.round(((compilationStep + 1) / HRM_STEPS.length) * 100)}%</span>
+                      <span>WAITING FOR {config.provider.toUpperCase()} RESPONSE (usually 30-120s)</span>
+                      <span className="text-[#00F0FF] font-black">{compilationStep}s elapsed</span>
                     </div>
 
                     <div className="space-y-2">
+                      <p className="text-[10px] text-[#666] font-mono uppercase">The model is asked to write:</p>
                       {HRM_STEPS.map((step, idx) => {
-                        const isCurrent = idx === compilationStep;
-                        const isCompleted = idx < compilationStep;
+                        const isCurrent = false;
+                        const isCompleted = false;
                         return (
                           <div
                             key={idx}
@@ -2180,6 +2454,40 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         );
                       })}
                     </div>
+                  </div>
+                </motion.div>
+              ) : compileWarning ? (
+                // Warning visual
+                <motion.div
+                  key="warning-visual"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="flex-1 flex flex-col items-center justify-center text-center p-4 my-6"
+                >
+                  <AlertTriangle className="text-amber-500 mb-3 animate-bounce" size={40} />
+                  <h4 className="text-amber-500 font-black mb-2 text-sm uppercase tracking-wider">Validation Checker: Contradictory Labels</h4>
+                  <p className="text-xs font-mono text-[#AAA] max-w-sm leading-relaxed mb-4">
+                    Before finalized compilation, the validation engine detected potential metadata contradictions:
+                  </p>
+                  <div className="bg-[#110D00] border border-amber-500/50 p-3 text-left max-w-md mb-4 font-mono text-[10px] text-amber-300 space-y-1">
+                    {compileWarning.contradictions.map((c, idx) => (
+                      <div key={idx}>• {c}</div>
+                    ))}
+                  </div>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => handleCompile(true)}
+                      className="px-4 py-2 bg-amber-500 hover:bg-white text-black font-black text-[10px] uppercase tracking-wider transition-all"
+                    >
+                      Ignore Warning & Proceed
+                    </button>
+                    <button
+                      onClick={() => setCompileWarning(null)}
+                      className="px-4 py-2 border border-amber-500/40 hover:border-amber-400 text-amber-400 font-bold text-[10px] uppercase tracking-wider transition-all"
+                    >
+                      Cancel & Review
+                    </button>
                   </div>
                 </motion.div>
               ) : compileError ? (
@@ -2219,7 +2527,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                       <span className="w-0.5 h-2 bg-[#222]" />
                       <div className="px-3 py-2 bg-[#111] border border-[#222] text-[10px] font-mono text-[#888] w-4/5 uppercase font-bold flex items-center justify-center gap-1.5">
                         <BookOpen size={10} className="text-[#00F0FF]" />
-                        <span>Academic Refiner & Validator</span>
+                        <span>Academic References (model-suggested)</span>
                       </div>
                       <span className="w-0.5 h-2 bg-[#222]" />
                       <div className="px-3 py-2 bg-[#111] border border-[#222] text-[10px] font-mono text-[#888] w-4/5 uppercase font-bold">
@@ -2235,10 +2543,10 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                   <div className="p-4 bg-[#0A0A0A] border-l-2 border-[#00F0FF] text-xs leading-relaxed">
                     <p className="font-bold text-[#E0E0E0] mb-1 flex items-center gap-1 uppercase tracking-tight">
                       <Lock size={12} className="text-[#00F0FF]" />
-                      <span>Security & Sovereignty Check</span>
+                      <span>Privacy &amp; Integrity Note</span>
                     </p>
                     <span className="text-[#666] font-mono text-[11px]">
-                      Every compilation signs the compiled blueprints with SHA-256 validation digests. Fully secure to prevent concept leakage during workspace transitions.
+                      Each result gets a SHA-256 hash of its content so you can tell if it changed. This is not a signature. Your notes are sent to the AI provider you select under LLM Engine.
                     </span>
                   </div>
                 </motion.div>
@@ -2260,31 +2568,21 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
             transition={{ duration: 0.5 }}
             className="space-y-8 animate-fadeIn"
           >
-            {result.quota_fallback && (
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-4 bg-amber-500/10 border-2 border-amber-500/30 text-amber-200 font-mono text-[11px] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded-none uppercase"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-amber-500 animate-pulse text-lg">⚠️</span>
-                  <div>
-                    <span className="font-black text-amber-500">API QUOTA EXHAUSTED:</span>
-                    <span className="ml-1 text-gray-300">The Gemini API Free Tier rate-limit was reached (250K tokens/min). To keep your testing seamless, our local high-fidelity compiler compiled a fully validated blueprint tailored to your input!</span>
-                  </div>
-                </div>
-                <div className="text-[10px] bg-amber-500/20 text-amber-300 px-2.5 py-1 border border-amber-500/30 whitespace-nowrap font-bold">
-                  APEX COMPILER ACTIVE
-                </div>
-              </motion.div>
-            )}
+    {/* Quota fallback warning removed */}
 
             {/* Header Banner */}
             <div className="p-6 md:p-8 bg-[#080808] border-2 border-[#222] relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6 rounded-none">
               <div className="absolute top-0 right-0 w-80 h-80 bg-[#00F0FF]/1 rounded-full blur-[100px] pointer-events-none" />
               
               <div className="space-y-3 flex-1">
-                <span className="text-[10px] font-mono text-[#00F0FF] font-black tracking-widest uppercase block">[ SYSTEM ARTIFACT UNLOCKED ]</span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-[10px] font-mono text-[#00F0FF] font-black tracking-widest uppercase block">[ SYSTEM ARTIFACT UNLOCKED ]</span>
+                  {result.source === "default" && (
+                    <span className="text-[10px] font-mono text-amber-400 bg-amber-500/10 border border-amber-500/40 px-1.5 py-0.5 font-bold uppercase tracking-wider block">
+                      ⚡ DEMO PURPOSE ONLY / PREVIEW REFERENCE
+                    </span>
+                  )}
+                </div>
                 <h2 className="text-3xl md:text-5xl font-black text-white tracking-tighter uppercase leading-none">{result.title}</h2>
                 <p className="text-xs font-mono uppercase tracking-wider text-[#666]">{result.tagline}</p>
                 <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2 text-[#555] text-[10px] font-mono uppercase">
@@ -2293,8 +2591,8 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     {new Date(result.timestamp).toLocaleString()}
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <Award size={12} className="text-[#00F0FF]" />
-                    Verified Gold Standard
+                    <Award size={12} className={(result as any).partial ? "text-amber-400" : "text-[#00F0FF]"} />
+                    {isDemoMode ? "Built-in demo sample" : (result as any).partial ? "Partial output: some sections were missing from the AI response" : "AI-generated: review before use"}
                   </span>
                 </div>
               </div>
@@ -2302,30 +2600,36 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
               {/* Cryptographic IP Certificate Card */}
               <div className="w-full md:w-96 p-5 border-2 border-[#222] bg-[#0A0A0A] relative rounded-none">
                 <div className="absolute -top-3 -right-3 bg-[#00F0FF] text-black p-1.5 font-black uppercase text-[10px] tracking-wider shadow-[0_0_8px_#00F0FF]">
-                  SECURED
+                  {isDemoMode ? "DEMO" : "COMPILED"}
                 </div>
                 <div className="flex items-center gap-2 border-b border-[#222] pb-3 mb-3">
-                  <span className="text-[10px] font-mono font-black tracking-widest text-[#00F0FF] uppercase">IP PROTECTION REGISTER</span>
+                  <span className="text-[10px] font-mono font-black tracking-widest text-[#00F0FF] uppercase">COMPILE RECORD</span>
                 </div>
                 <div className="space-y-1.5 text-[10px] font-mono uppercase">
                   <div className="flex justify-between">
-                    <span className="text-[#444]">DIGITAL HASH:</span>
+                    <span className="text-[#444]">SHA-256 CONTENT HASH:</span>
                     <span className="text-[#00F0FF] font-black cursor-help truncate w-40 block text-right" title={result.hash}>{result.hash}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#444]">REGISTRANT:</span>
-                    <span className="text-[#E0E0E0]">{userEmail}</span>
+                    <span className="text-[#444]">REQUESTED BY:</span>
+                    <span className="text-[#E0E0E0]">{userEmail || "—"}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-[#444]">MINT SEAL:</span>
-                    <span className="text-[#E0E0E0]">UT_STAMP_CAL_M2M</span>
+                    <span className="text-[#444]">SOURCE:</span>
+                    <span className="text-[#E0E0E0]">{isDemoMode ? "Built-in sample" : `${config.provider} / ${config.modelName || "default"}`}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-[#444]">VERIFICATION:</span>
-                    <span className="text-[#00F0FF] font-black flex items-center gap-0.5">
-                      <CheckCircle2 size={9} /> COMPILER APPROVED
-                    </span>
+                    <span className="text-amber-400 font-black">NOT INDEPENDENTLY VERIFIED</span>
                   </div>
+                  {result.cacheStatus && (
+                    <div className="flex justify-between border-t border-[#222]/50 pt-1.5 mt-1.5">
+                      <span className="text-[#444]">LATENCY LAYER:</span>
+                      <span className={result.cacheStatus.hit ? "text-emerald-400 font-bold" : "text-[#00F0FF] font-bold"}>
+                        {result.cacheStatus.hit ? "⚡ CACHE HIT" : "🌀 COMPILED"} ({result.cacheStatus.latencyMs}ms)
+                      </span>
+                    </div>
+                  )}
                 </div>
                 
                 {/* Print certificate CTA */}
@@ -2338,7 +2642,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     <span>Print PDF</span>
                   </button>
                   <button
-                    onClick={handleDownloadZip}
+                    onClick={triggerDownloadZip}
                     className="flex-1 flex items-center justify-center gap-1.5 px-2.5 py-2 bg-[#00F0FF] hover:bg-white text-black text-[9px] font-black tracking-widest uppercase transition-colors rounded-none"
                   >
                     <Download size={10} />
@@ -2351,9 +2655,13 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
             {/* Tab Navigation */}
             <div className="flex flex-wrap border-b-2 border-[#222] bg-[#050505] p-1 rounded-none print:hidden">
               {[
-                { id: "overview", label: "Overview", icon: Layers },
+                { id: "overview", label: "Blueprint (Overview)", icon: Layers },
+                { id: "enterpriseControl", label: "Enterprise Control", icon: Server },
+                { id: "vnpAuth", label: "VNP Auth & Identity", icon: UserCheck },
+                { id: "vnpAnalytics", label: "VNP Telemetry & Gating", icon: Activity },
                 { id: "sovereignConstitution", label: "Sovereign Constitution", icon: Lock },
-                { id: "capabilityGraph", label: "Capability Graph", icon: Globe },
+                { id: "protocolManuals", label: "Protocol & Security Manuals", icon: BookOpen },
+                { id: "capabilityGraph", label: "Architecture (Graph)", icon: Globe },
                 { id: "productsBundles", label: "Products & Bundles", icon: Coins },
                 { id: "interfaces", label: "Interfaces Inventory", icon: Code },
                 { id: "repositories", label: "Repositories Alignment", icon: Github },
@@ -2362,9 +2670,10 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                 { id: "evidenceVerification", label: "Evidence & Verification", icon: Lock },
                 { id: "gapsDuplicates", label: "Gaps & Duplicates", icon: AlertTriangle },
                 { id: "roadmap", label: "System Roadmap", icon: Clock },
-                { id: "agentPackets", label: "Agent Packets", icon: Cpu },
-                { id: "explorer", label: "File Explorer", icon: FileCode },
-                { id: "testHarness", label: "Test Harness", icon: Sliders }
+                { id: "agentPackets", label: "Agents (Work Orders)", icon: Cpu },
+                { id: "explorer", label: "Cognitive IDE", icon: FileCode },
+                { id: "vioMarketplace", label: "VIO Marketplace & IDE Plugins", icon: Plug },
+                { id: "testHarness", label: "Command Ops (Execution)", icon: Sliders }
               ].map((tab) => {
                 const IconComponent = tab.icon;
                 const isSel = activeTab === tab.id;
@@ -2396,8 +2705,53 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                   setDepthMode={setDepthMode}
                   result={result}
                   userEmail={userEmail}
+                  revisions={revisions}
                 >
               
+              {/* DEMO / PREVIEW REFERENCE SAMPLE NOTICE BANNER */}
+              {result?.source === "default" && (
+                <div className="mb-6 p-4 bg-gradient-to-r from-cyan-950/60 via-blue-950/40 to-neutral-900 border-2 border-[#00F0FF]/80 rounded-none relative shadow-[0_0_20px_rgba(0,240,255,0.15)] animate-fadeIn">
+                  <div className="flex items-start gap-3.5">
+                    <div className="p-2 bg-[#00F0FF]/10 border border-[#00F0FF]/40 shrink-0 text-[#00F0FF]">
+                      <Zap size={20} className="animate-pulse" />
+                    </div>
+                    {isDemoMode && (
+                      <div className="space-y-1.5 mb-6">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="px-2 py-0.5 text-[10px] font-mono font-black bg-[#00F0FF] text-black uppercase tracking-wider">
+                            DEMO PURPOSE ONLY / PREVIEW REFERENCE SAMPLE
+                          </span>
+                          <span className="text-xs font-mono text-cyan-300 font-bold">
+                            Illustrative Pre-Compiled Showcase Blueprint
+                          </span>
+                        </div>
+                        <p className="text-xs font-mono text-neutral-300 leading-relaxed">
+                          This default workspace (featuring Lamport &amp; Nakamoto citation samples, SEKED R-Score triage, and X402 settlement models) is <strong className="text-white underline">literally for demo purposes only</strong>. It is provided so you or a buyer can see what you receive out of this tool when you compile your own architecture.
+                        </p>
+                        <div className="p-2 bg-black/60 border border-cyan-500/30 flex items-center gap-2 text-xs font-mono text-[#00F0FF] font-bold">
+                          <ArrowRight size={14} className="shrink-0" />
+                          <span>Compiling your own notes replaces this sample blueprint with the AI's output for your notes. Some side tools (X402 escrow, Einstein router, telemetry views) are interactive simulations and do not reflect live systems.</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab: VNP Auth & Identity */}
+              {activeTab === "vnpAuth" && (
+                <div className="animate-fadeIn">
+                  <VnpAuthHub />
+                </div>
+              )}
+
+              {/* Tab: VNP Telemetry & Feasibility Gating */}
+              {activeTab === "vnpAnalytics" && (
+                <div className="animate-fadeIn">
+                  <VnpAnalyticsCards />
+                </div>
+              )}
+
               {/* Tab: Sovereign Constitution */}
               {activeTab === "sovereignConstitution" && (
                 <div className="animate-fadeIn">
@@ -2416,17 +2770,71 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                 </div>
               )}
 
+              {/* Tab: Enterprise Control */}
+              {activeTab === "enterpriseControl" && (
+                <div className="animate-fadeIn">
+                  <EnterpriseHostController />
+                </div>
+              )}
+
+              {/* Tab: Protocol & Security Manuals */}
+              {activeTab === "protocolManuals" && (
+                <div className="animate-fadeIn">
+                  <EnterpriseProtocolManuals />
+                </div>
+              )}
+
               {/* Tab 1: Overview */}
               {activeTab === "overview" && (
                 <div className="space-y-6 animate-fadeIn">
-                  {/* Highly polished, premium modular slide deck with interactive sandboxes */}
-                  <PresentationDeck blueprintTitle={result.title} />
+                  {/* Mode Selector Toggle */}
+                  <div className="flex justify-between items-center bg-[#090909] border border-[#222] p-2 rounded-none">
+                    <span className="text-[10px] font-mono text-gray-500 uppercase font-black ml-2">
+                      SELECT VIEW MODE:
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setOverviewMode("caveman")}
+                        className={`px-3 py-1 text-[10px] font-bold uppercase transition-colors rounded-none border ${
+                          overviewMode === "caveman"
+                            ? "border-amber-500 bg-amber-500/10 text-amber-400 font-bold"
+                            : "border-transparent text-gray-500 hover:text-white"
+                        }`}
+                      >
+                        CAVEMAN DEVELOPER CENTER (ACTIVE)
+                      </button>
+                      <button
+                        onClick={() => setOverviewMode("pitch")}
+                        className={`px-3 py-1 text-[10px] font-bold uppercase transition-colors rounded-none border ${
+                          overviewMode === "pitch"
+                            ? "border-[#00F0FF] bg-[#00F0FF]/10 text-[#00F0FF] font-bold"
+                            : "border-transparent text-gray-500 hover:text-white"
+                        }`}
+                      >
+                        SOVEREIGN PITCH DECK
+                      </button>
+                    </div>
+                  </div>
+
+                  {overviewMode === "caveman" ? (
+                    <CavemanGuide 
+                      blueprint={result} 
+                      userEmail={userEmail} 
+                      onSelectTab={(tabId) => setActiveTab(tabId as any)}
+                      hasReviewedChanges={hasReviewedChanges}
+                      hasRunSandbox={hasRunSandbox}
+                      hasViewedEvidence={hasViewedEvidence}
+                      hasExported={hasExported}
+                    />
+                  ) : (
+                    <PresentationDeck blueprintTitle={result.title} />
+                  )}
 
                   {/* Goals matrix row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                  <div className="space-y-6 pt-4">
                     <div className="p-5 border-2 border-[#222] bg-[#0A0A0A] space-y-4 rounded-none">
                       <span className="text-[10px] font-mono font-black text-[#666] uppercase block">SYSTEM LEVEL GOALS</span>
-                      <div className="space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         {result.highLevelGoals.map((goal, idx) => (
                           <div key={idx} className="p-3 bg-[#111] border border-[#222] rounded-none flex items-start gap-3">
                             <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${
@@ -2441,148 +2849,23 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                       </div>
                     </div>
 
-                    <div className="p-5 border-2 border-[#222] bg-[#0A0A0A] space-y-4 rounded-none flex flex-col justify-between">
-                      <div>
-                        <div className="flex justify-between items-center border-b border-[#222] pb-2">
-                          <span className="text-[10px] font-mono font-black text-[#666] uppercase">Einstein Jitter Routing Inspector</span>
-                          <span className="px-1.5 py-0.5 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/20 text-[8px] font-mono uppercase font-black">
-                            Predictive Engine
-                          </span>
-                        </div>
-
-                        {/* Interactive sliders for inputs */}
-                        <div className="space-y-3 pt-2">
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-[9px] font-mono uppercase">
-                              <span className="text-[#888]">1. Node Packet Jitter:</span>
-                              <span className="text-[#00F0FF] font-bold">{einsteinJitter} ms</span>
-                            </div>
-                            <input
-                              type="range"
-                              min="2"
-                              max="40"
-                              value={einsteinJitter}
-                              onChange={(e) => setEinsteinJitter(parseInt(e.target.value))}
-                              className="w-full accent-[#00F0FF] h-1 bg-[#111] rounded-none cursor-pointer"
-                            />
-                          </div>
-
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-[9px] font-mono uppercase">
-                              <span className="text-[#888]">2. Node SLA Integrity:</span>
-                              <span className="text-[#00F0FF] font-bold">{einsteinSla}%</span>
-                            </div>
-                            <input
-                              type="range"
-                              min="80"
-                              max="100"
-                              value={einsteinSla}
-                              onChange={(e) => setEinsteinSla(parseInt(e.target.value))}
-                              className="w-full accent-[#00F0FF] h-1 bg-[#111] rounded-none cursor-pointer"
-                            />
-                          </div>
-
-                          <div className="space-y-1">
-                            <div className="flex justify-between text-[9px] font-mono uppercase">
-                              <span className="text-[#888]">3. Packet Loss Rate:</span>
-                              <span className="text-[#00F0FF] font-bold">{einsteinPacketLoss}%</span>
-                            </div>
-                            <input
-                              type="range"
-                              min="0"
-                              max="5"
-                              step="0.1"
-                              value={einsteinPacketLoss}
-                              onChange={(e) => setEinsteinPacketLoss(parseFloat(e.target.value))}
-                              className="w-full accent-[#00F0FF] h-1 bg-[#111] rounded-none cursor-pointer"
-                            />
-                          </div>
-                        </div>
-
-                        {/* Calculations Display */}
-                        <div className="pt-4 border-t border-[#1C1C1C] mt-3 space-y-3 font-mono">
-                          <div className="grid grid-cols-2 gap-2 text-center text-[10px] uppercase font-bold">
-                            <div className="p-2 bg-[#111] border border-[#222]">
-                              <span className="text-[#666] block text-[8px]">Reputation Score</span>
-                              <span className="text-white font-black text-sm block mt-0.5">
-                                {Math.max(0, Math.min(100, Math.round(
-                                  (einsteinSla * 0.6) - (einsteinJitter * 1.5) - (einsteinPacketLoss * 6.5) + 38
-                                )))}%
-                              </span>
-                            </div>
-                            <div className="p-2 bg-[#111] border border-[#222]">
-                              <span className="text-[#666] block text-[8px]">Predicted Latency</span>
-                              <span className="text-[#00F0FF] font-black text-sm block mt-0.5">
-                                {(8.5 + (einsteinJitter * 0.4) + (einsteinPacketLoss * 3.2)).toFixed(1)} ms
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Confidence Intervals */}
-                          <div className="p-2 bg-[#111] border border-[#222] text-[8.5px] uppercase text-[#888] space-y-1">
-                            <div className="flex justify-between">
-                              <span>95% Confidence Bounds:</span>
-                              <span className="text-white font-bold">
-                                [{(8.5 + (einsteinJitter * 0.4) + (einsteinPacketLoss * 3.2) - (einsteinJitter * 0.15)).toFixed(1)} - {(8.5 + (einsteinJitter * 0.4) + (einsteinPacketLoss * 3.2) + (einsteinJitter * 0.15)).toFixed(1)}] ms
-                              </span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span>Congestion Probability:</span>
-                              <span className="text-red-400 font-bold">
-                                {Math.min(100, Math.max(0, Math.round((einsteinJitter * 2.2) + (einsteinPacketLoss * 14))))}%
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Routing Destination Card */}
-                          <div className="p-2 bg-[#0C121E] border border-[#00F0FF]/20 text-[9px] uppercase">
-                            <span className="text-[#00F0FF] text-[8px] font-black block">Routed Target Destination:</span>
-                            {(() => {
-                              const score = Math.max(0, Math.min(100, Math.round(
-                                (einsteinSla * 0.6) - (einsteinJitter * 1.5) - (einsteinPacketLoss * 6.5) + 38
-                              )));
-                              if (score > 80) {
-                                return (
-                                  <div className="mt-1 flex justify-between items-center">
-                                    <span className="text-emerald-400 font-bold">● Seattle-Edge-Alpha (Active Tokio thread)</span>
-                                    <span className="text-gray-500 font-bold">Prob: {Math.max(50, 100 - einsteinJitter)}%</span>
-                                  </div>
-                                );
-                              } else if (score > 60) {
-                                return (
-                                  <div className="mt-1 flex justify-between items-center">
-                                    <span className="text-amber-400 font-bold font-bold">● London-Vault-Bravo (Secondary Router)</span>
-                                    <span className="text-gray-500 font-bold">Prob: {Math.max(20, einsteinJitter)}%</span>
-                                  </div>
-                                );
-                              } else {
-                                return (
-                                  <div className="mt-1 flex justify-between items-center">
-                                    <span className="text-red-400 font-bold font-bold">● Tokyo-Vessel-Delta (Bypassed Route - High Jitter)</span>
-                                    <span className="text-gray-500 font-bold">Prob: {Math.min(10, einsteinJitter)}%</span>
-                                  </div>
-                                );
-                              }
-                            })()}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="text-[9px] font-mono text-[#444] uppercase text-right pt-2 border-t border-[#111]">
-                        Calculated liveness: {(einsteinSla - (einsteinPacketLoss * 2)).toFixed(1)}% integrity uptime.
-                      </div>
-                    </div>
+                    {/* Dedicated D3 Einstein Priority Router Optimizer Dashboard */}
+                    <EinsteinRouterDashboard
+                      einsteinJitter={einsteinJitter}
+                      setEinsteinJitter={setEinsteinJitter}
+                      einsteinPacketLoss={einsteinPacketLoss}
+                      setEinsteinPacketLoss={setEinsteinPacketLoss}
+                      einsteinSla={einsteinSla}
+                      setEinsteinSla={setEinsteinSla}
+                    />
                   </div>
-
-                  {/* Dynamic Architectural breakdown via BlueprintFileChart */}
-                  <BlueprintFileChart files={combinedFiles} />
                 </div>
               )}
 
               {/* Tab 2: Capability Graph */}
               {activeTab === "capabilityGraph" && (
                 <div className="animate-fadeIn">
-                  <CapabilityGraphComponent companyGraph={result.companyGraph} capabilities={result.capabilities} killedCaps={killedCaps} />
+                  <CapabilityGraphComponent companyGraph={result.companyGraph} capabilities={result.capabilities} killedCaps={killedCaps} setActiveTab={setActiveTab} />
                 </div>
               )}
 
@@ -3023,18 +3306,78 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                   </p>
 
                   <div className="p-5 bg-[#0A0A0A] border-2 border-[#222] space-y-5 rounded-none">
-                    <h4 className="font-bold text-white text-xs uppercase tracking-wider border-b border-[#222] pb-2">Connect Repository</h4>
+                    <div className="flex justify-between items-center border-b border-[#222] pb-2">
+                      <h4 className="font-bold text-white text-xs uppercase tracking-wider flex items-center gap-1.5">
+                        <Github size={13} className="text-[#00F0FF]" />
+                        <span>Connect Repository</span>
+                      </h4>
+                      {/* Sync Status Badge */}
+                      <div className="flex items-center gap-2">
+                        {lastGithubAnalysisSync.status === "syncing" && (
+                          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-[#00F0FF]/10 text-[#00F0FF] border border-[#00F0FF]/30 text-[9px] font-mono font-black uppercase tracking-widest animate-pulse">
+                            <span className="w-1.5 h-1.5 bg-[#00F0FF] rounded-full animate-ping" />
+                            <span>SYNCING...</span>
+                          </div>
+                        )}
+                        {lastGithubAnalysisSync.status === "success" && (
+                          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[9px] font-mono font-black uppercase tracking-widest">
+                            <Check size={10} />
+                            <span>SYNCHRONIZED</span>
+                          </div>
+                        )}
+                        {lastGithubAnalysisSync.status === "failed" && (
+                          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-red-500/10 text-red-400 border border-red-500/30 text-[9px] font-mono font-black uppercase tracking-widest">
+                            <AlertTriangle size={10} />
+                            <span>SYNC FAILED</span>
+                          </div>
+                        )}
+                        {lastGithubAnalysisSync.status === "idle" && (
+                          <div className="flex items-center gap-1.5 px-2 py-0.5 bg-gray-500/10 text-gray-400 border border-gray-500/30 text-[9px] font-mono font-black uppercase tracking-widest">
+                            <Clock size={10} />
+                            <span>NOT CONNECTED</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono uppercase">
                       <div>
-                        <label className="block text-[#666] mb-1.5 font-bold">Repository URL:</label>
+                        <div className="flex justify-between items-center mb-1.5 font-bold">
+                          <label className="block text-[#666]">Repository URL:</label>
+                          <span className="text-[9px] text-[#00F0FF] font-black">[ CORE ALIGNED REPOS ]</span>
+                        </div>
                         <input
                           type="text"
                           value={githubRepoUrl}
                           onChange={(e) => setGithubRepoUrl(e.target.value)}
-                          placeholder="e.g. https://github.com/lucide-react/lucide"
-                          className="w-full bg-[#111] border border-[#222] p-2.5 text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none"
+                          placeholder="e.g. https://github.com/reprewindai-dev/cappo-backend"
+                          className="w-full bg-[#111] border border-[#222] p-2.5 text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none mb-2"
                         />
+                        <div className="flex flex-wrap gap-1.5">
+                          {[
+                            { name: "APEX (Proposer)", url: "https://github.com/reprewindai-dev/APEX" },
+                            { name: "cappo-backend (Disposer)", url: "https://github.com/reprewindai-dev/cappo-backend" },
+                            { name: "veklom-byos-backend", url: "https://github.com/reprewindai-dev/veklom-byos-backend" },
+                            { name: "lockerphycer (Security Layer)", url: "https://github.com/reprewindai-dev/lockerphycer" },
+                            { name: "gnomledger (PGL)", url: "https://github.com/reprewindai-dev/gnomledger" },
+                            { name: "interlink-cAPI (Unified Asset)", url: "https://github.com/reprewindai-dev/interlink-cAPI" },
+                            { name: "UACPV5-TERMINAL", url: "https://github.com/reprewindai-dev/UACPV5-TERMINAL/" },
+                            { name: "delyn-backend (DELYN)", url: "https://github.com/reprewindai-dev/delyn-backend" }
+                          ].map((r) => (
+                            <button
+                              key={r.name}
+                              type="button"
+                              onClick={() => setGithubRepoUrl(r.url)}
+                              className={`px-2 py-1 text-[9px] font-mono border transition-all cursor-pointer ${
+                                githubRepoUrl === r.url
+                                  ? "bg-[#00F0FF]/15 border-[#00F0FF] text-[#00F0FF] font-black"
+                                  : "bg-[#0c0c0c] border-[#222] text-gray-400 hover:text-white"
+                              }`}
+                            >
+                              {r.name}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                       <div>
                         <label className="block text-[#666] mb-1.5 font-bold">GitHub Access Token (Optional for Private Repos):</label>
@@ -3047,6 +3390,36 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         />
                       </div>
                     </div>
+
+                    {lastGithubAnalysisSync.timestamp && (
+                      <div className="p-3 bg-[#0D0D0D] border border-[#1C1C1C] flex flex-col md:flex-row md:items-center justify-between gap-3 text-[10px] font-mono uppercase text-gray-400">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-1.5 font-bold text-[#E0E0E0]">
+                            <span className="text-[#666]">CONNECTED PATH:</span>
+                            <span className="text-white normal-case font-bold">{lastGithubAnalysisSync.repoUrl}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 font-bold">
+                            <span className="text-[#666]">LAST ANALYSIS SYNC:</span>
+                            <span className="text-emerald-400 font-bold">
+                              {new Date(lastGithubAnalysisSync.timestamp).toLocaleString("en-US", {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                second: "2-digit",
+                                hour12: false
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[8px] bg-emerald-500/15 text-emerald-400 px-1.5 py-0.5 font-bold border border-emerald-500/20">
+                            BLUEPRINT ALIGNED
+                          </span>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="pt-2">
                       <button
@@ -3096,7 +3469,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                           type="text"
                           value={githubPushBranch}
                           onChange={(e) => setGithubPushBranch(e.target.value)}
-                          placeholder="e.g. apex-blueprint-alignment"
+                          placeholder="e.g. abide-blueprint-alignment"
                           className="w-full bg-[#111] border border-[#222] p-2.5 text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none"
                         />
                       </div>
@@ -3391,7 +3764,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                                 {onDiskVerifiedFile[path] ? (
                                   <div className="p-3 bg-emerald-950/20 border border-emerald-500/30 text-emerald-400 font-bold text-[10px] flex items-center justify-center gap-1.5">
                                     <ShieldCheck size={14} className="animate-pulse text-emerald-400" />
-                                    <span>ON-DISK INTEGRITY VERIFIED (SHA256 MATCHED)</span>
+                                    <span>SIMULATED CHECK (no file was read or hashed)</span>
                                   </div>
                                 ) : (
                                   <div className="p-3 bg-[#111] border border-[#222] text-gray-500 text-[10px] text-center italic">
@@ -4007,18 +4380,43 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                             <div key={idx} className="p-4 bg-[#0A0A0A] border-2 border-[#222] space-y-3 hover:border-[#00F0FF]/30 transition-all rounded-none">
                               <div className="flex justify-between items-center text-[10px] font-mono uppercase">
                                 <span className="text-[#00F0FF] font-black">{paper.source}</span>
-                                <span className="px-2 py-0.5 bg-[#00F0FF]/10 border border-[#00F0FF]/20 text-[#00F0FF] font-bold">
-                                  Score: {typeof paper.score === "number" ? paper.score.toFixed(4) : paper.score}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                  {paper.verificationStatus === "VERIFIED" ? (
+                                    <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                                      <CheckCircle2 size={11} />
+                                      <span>VERIFIED on arXiv</span>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="text-amber-400 font-bold">● UNVERIFIED SOURCE</span>
+                                      <button
+                                        onClick={() => handleVerifyPaper(paper, idx, true)}
+                                        disabled={verifyingIndex === idx}
+                                        className="px-2 py-0.5 bg-[#00F0FF]/10 hover:bg-[#00F0FF]/20 border border-[#00F0FF]/30 text-[#00F0FF] text-[9px] uppercase font-bold transition-all"
+                                      >
+                                        {verifyingIndex === idx ? "Verifying..." : "Verify Live"}
+                                      </button>
+                                    </div>
+                                  )}
+                                  <span className="px-2 py-0.5 bg-[#00F0FF]/10 border border-[#00F0FF]/20 text-[#00F0FF] font-bold">
+                                    Score: {typeof paper.score === "number" ? paper.score.toFixed(4) : paper.score}
+                                  </span>
+                                </div>
                               </div>
                               <div>
                                 <h4 className="font-bold text-white text-xs uppercase tracking-wider">{paper.title}</h4>
                                 <p className="text-[10px] font-mono text-[#666] uppercase">By {paper.authors || paper.author}</p>
                               </div>
                               <p className="text-xs font-mono text-[#888] leading-relaxed uppercase bg-[#111] p-3 border border-[#222] rounded-none whitespace-pre-line">
-                                <span className="font-bold text-white block mb-1">Abstract Abstract:</span>
+                                <span className="font-bold text-white block mb-1">Abstract:</span>
                                 {paper.summary}
                               </p>
+                              {paper.digitalSignature && (
+                                <div className="p-2 bg-[#020F12]/80 border border-[#00F0FF]/10 font-mono text-[9px] text-[#00F0FF]/70 rounded-none break-all">
+                                  <span className="font-bold text-white uppercase mr-1">digitalSignature:</span>
+                                  {paper.digitalSignature}
+                                </div>
+                              )}
                               <div className="pt-2 flex justify-between items-center border-t border-[#111] text-[10px] font-mono uppercase">
                                 <span className="text-gray-500">Relevance: {paper.relevance}</span>
                                 {paper.url && (
@@ -4035,7 +4433,26 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                             <div key={idx} className="p-4 bg-[#0A0A0A] border-2 border-[#222] space-y-3 hover:border-[#00F0FF]/30 transition-all rounded-none">
                               <div className="flex justify-between items-center text-[10px] font-mono uppercase">
                                 <span className="text-[#00F0FF] font-black">{paper.source}</span>
-                                <span className="text-[#444]">Ref ID: #{idx + 101}</span>
+                                <div className="flex items-center gap-2">
+                                  {paper.verificationStatus === "VERIFIED" ? (
+                                    <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                                      <CheckCircle2 size={11} />
+                                      <span>VERIFIED on arXiv</span>
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="text-amber-400 font-bold">● UNVERIFIED SOURCE</span>
+                                      <button
+                                        onClick={() => handleVerifyPaper(paper, idx, false)}
+                                        disabled={verifyingIndex === idx}
+                                        className="px-2 py-0.5 bg-[#00F0FF]/10 hover:bg-[#00F0FF]/20 border border-[#00F0FF]/30 text-[#00F0FF] text-[9px] uppercase font-bold transition-all"
+                                      >
+                                        {verifyingIndex === idx ? "Verifying..." : "Verify Live"}
+                                      </button>
+                                    </div>
+                                  )}
+                                  <span className="text-[#444]">Ref ID: #{idx + 101}</span>
+                                </div>
                               </div>
                               <div>
                                 <h4 className="font-bold text-white text-xs uppercase tracking-wider">{paper.title}</h4>
@@ -4045,8 +4462,19 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                                 <span className="font-bold text-white block mb-1">Abstract Summary:</span>
                                 {paper.summary}
                               </p>
+                              {paper.digitalSignature && (
+                                <div className="p-2 bg-[#020F12]/80 border border-[#00F0FF]/10 font-mono text-[9px] text-[#00F0FF]/70 rounded-none break-all">
+                                  <span className="font-bold text-white uppercase mr-1">digitalSignature:</span>
+                                  {paper.digitalSignature}
+                                </div>
+                              )}
                               <div className="pt-2 flex justify-between items-center border-t border-[#111] text-[10px] font-mono uppercase">
                                 <span className="text-gray-500">Relevance: {paper.relevance}</span>
+                                {paper.url && (
+                                  <a href={paper.url} target="_blank" rel="noopener noreferrer" className="text-[#00F0FF] hover:underline flex items-center gap-0.5 font-bold">
+                                    <span>View link</span> <ExternalLink size={10} />
+                                  </a>
+                                )}
                               </div>
                             </div>
                           ))
@@ -4071,9 +4499,19 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                 </div>
               )}
 
-              {/* Tab 10: Agent Packets */}
+              {/* Tab 10: Agent Packets & Trust Hub */}
               {activeTab === "agentPackets" && (
-                <div className="animate-fadeIn">
+                <div className="space-y-12 animate-fadeIn">
+                  <TrustLayerHub
+                    selectedJurisdiction={selectedJurisdiction}
+                    constitutionVersion={constitutionVersion}
+                    constitutionState={constitutionState}
+                    blueprintHash={result.hash}
+                    blueprint={result}
+                  />
+
+                  <div className="border-t-2 border-[#222] my-8 pt-8" />
+
                   <AgentPackets
                     selectedJurisdiction={selectedJurisdiction}
                     constitutionVersion={constitutionVersion}
@@ -4087,106 +4525,24 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 
               {/* Tab 4: Workspace Explorer */}
               {activeTab === "explorer" && (
-                <div className="animate-fadeIn grid grid-cols-1 lg:grid-cols-12 gap-8">
-                  
-                  {/* Left Column: Explorer Directory */}
-                  <div className="lg:col-span-4 bg-[#0A0A0A] border-2 border-[#222] p-4 min-h-[350px] rounded-none">
-                    <div className="flex items-center justify-between border-b border-[#222] pb-2.5 mb-4">
-                      <span className="text-xs font-mono font-black tracking-wider text-[#666] uppercase">Compiled File Tree</span>
-                      <span className="text-[10px] font-mono text-[#00F0FF] font-black uppercase">
-                        {combinedFiles.length} files
-                      </span>
-                    </div>
+                <div className="animate-fadeIn">
+                  <CognitiveIde
+                    blueprint={result}
+                    constitutionState={constitutionState}
+                    selectedJurisdiction={selectedJurisdiction}
+                    targetPlatform={targetPlatform}
+                    einsteinJitter={einsteinJitter}
+                    setEinsteinJitter={setEinsteinJitter}
+                    vnpUrl={vnpUrl}
+                    gnomeledgerUrl={gnomeledgerUrl}
+                  />
+                </div>
+              )}
 
-                    <div className="space-y-2">
-                      {renderTreeNodes(fileTree)}
-                    </div>
-                  </div>
-
-                  {/* Right Column: File Content Viewer */}
-                  <div className="lg:col-span-8 bg-[#0A0A0A] border-2 border-[#222] p-5 flex flex-col justify-between rounded-none">
-                    <div>
-                      <div className="flex flex-wrap items-center justify-between border-b border-[#222] pb-3 mb-4 gap-4">
-                        <div className="flex items-center gap-2">
-                          <FileCode size={16} className="text-[#00F0FF]" />
-                          <span className="text-xs font-mono text-white font-black uppercase truncate max-w-[150px] sm:max-w-xs">{selectedFilePath || "No file selected"}</span>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {/* Sub-view toggles for preview vs diff */}
-                          <div className="flex items-center bg-[#111] border border-[#222] p-0.5">
-                            <button
-                              onClick={() => setExplorerViewMode("preview")}
-                              className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition-colors ${
-                                explorerViewMode === "preview"
-                                  ? "bg-[#00F0FF] text-black"
-                                  : "text-gray-400 hover:text-white"
-                              }`}
-                            >
-                              Preview
-                            </button>
-                            <button
-                              onClick={() => setExplorerViewMode("diff")}
-                              className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-wider transition-colors ${
-                                explorerViewMode === "diff"
-                                  ? "bg-[#00F0FF] text-black"
-                                  : "text-gray-400 hover:text-white"
-                              }`}
-                            >
-                              Code Diff
-                            </button>
-                          </div>
-
-                          {selectedFilePath && selectedFileContent && (
-                            <button
-                              onClick={() => handleCopyFileContent(selectedFilePath, selectedFileContent)}
-                              className="flex items-center gap-1.5 px-2.5 py-1 border border-[#333] hover:border-white bg-[#111] text-[10px] font-bold text-[#E0E0E0] hover:text-white uppercase font-mono tracking-wider transition-colors rounded-none"
-                            >
-                              {copiedFilePath === selectedFilePath ? (
-                                <>
-                                  <CheckCircle2 size={12} className="text-emerald-400" />
-                                  <span className="text-emerald-400 font-mono">Copied!</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Copy size={12} />
-                                  <span>Copy</span>
-                                </>
-                              )}
-                            </button>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Document Viewer Render Area */}
-                      <div className="max-h-[500px] overflow-y-auto px-1">
-                        {selectedFilePath ? (
-                          explorerViewMode === "diff" ? (
-                            <CodeDiffViewer
-                              filePath={selectedFilePath}
-                              currentContent={selectedFileContent}
-                              defaultContent={
-                                DEFAULT_BLUEPRINT.files.find((f) => f.path === selectedFilePath)?.content || ""
-                              }
-                            />
-                          ) : (
-                            <MarkdownRenderer content={selectedFileContent} />
-                          )
-                        ) : (
-                          <div className="h-44 flex flex-col items-center justify-center text-[#444] uppercase font-mono">
-                            <FileCode size={30} className="mb-2 text-[#222]" />
-                            <p className="text-xs">Select a blueprint file from the explorer directory tree to preview.</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="border-t border-[#222] pt-4 mt-6 flex justify-between items-center text-[10px] font-mono text-[#444] uppercase tracking-widest">
-                      <span>Vibe-Ready Code Asset</span>
-                      <span>Target Choice: {targetPlatform}</span>
-                    </div>
-                  </div>
-
+              {/* Tab: VIO Marketplace & IDE Plugins */}
+              {activeTab === "vioMarketplace" && (
+                <div className="animate-fadeIn">
+                  <VioMarketplace blueprint={result} />
                 </div>
               )}
 
@@ -4203,6 +4559,8 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                     }
                   `}</style>
                   
+                  <EnterpriseHostController />
+
                   {/* Top Intro Header */}
                   <div className="p-6 bg-[#0A0A0A] border-2 border-[#222] rounded-none relative overflow-hidden">
                     <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-[#00F0FF]/5 to-transparent pointer-events-none" />
@@ -4232,7 +4590,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                           {isPingingBackends ? "Pinging Nodes..." : "Ping Backends"}
                         </button>
                         <button
-                          onClick={handleExportDiagnostics}
+                          onClick={triggerExportDiagnostics}
                           className="px-4 py-2 bg-[#00F0FF] hover:bg-white text-black hover:text-black border border-[#00F0FF] text-[10px] font-black uppercase font-mono tracking-wider transition-all flex items-center gap-1.5"
                         >
                           <Download size={12} />
@@ -4367,15 +4725,21 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                           </button>
 
                           {/* Individual discovery results indicator badges */}
-                          <div className="grid grid-cols-4 gap-1.5 text-[8px] font-mono text-center pt-0.5 font-bold uppercase">
+                          <div className="grid grid-cols-6 gap-1.5 text-[8px] font-mono text-center pt-0.5 font-bold uppercase">
                             <div className={`p-1 border transition-colors ${discoveryResults.byos === "detected" ? "bg-emerald-500/10 border-emerald-500/35 text-emerald-400" : discoveryResults.byos === "missing" ? "bg-red-500/10 border-red-500/35 text-red-400 font-bold" : "bg-[#0c0c0c] border-[#222] text-gray-600"}`}>
                               BYOS:8081
                             </div>
                             <div className={`p-1 border transition-colors ${discoveryResults.cappo === "detected" ? "bg-emerald-500/10 border-emerald-500/35 text-emerald-400" : discoveryResults.cappo === "missing" ? "bg-red-500/10 border-red-500/35 text-red-400 font-bold" : "bg-[#0c0c0c] border-[#222] text-gray-600"}`}>
                               CAPPO:8082
                             </div>
+                            <div className={`p-1 border transition-colors ${discoveryResults.delyn === "detected" ? "bg-emerald-500/10 border-emerald-500/35 text-emerald-400" : discoveryResults.delyn === "missing" ? "bg-red-500/10 border-red-500/35 text-red-400 font-bold" : "bg-[#0c0c0c] border-[#222] text-gray-600"}`}>
+                              DELYN:8085
+                            </div>
+                            <div className={`p-1 border transition-colors ${discoveryResults.cipher === "detected" ? "bg-emerald-500/10 border-emerald-500/35 text-emerald-400" : discoveryResults.cipher === "missing" ? "bg-red-500/10 border-red-500/35 text-red-400 font-bold" : "bg-[#0c0c0c] border-[#222] text-gray-600"}`}>
+                              CIPHER:8086
+                            </div>
                             <div className={`p-1 border transition-colors ${discoveryResults.gnomeledger === "detected" ? "bg-emerald-500/10 border-emerald-500/35 text-emerald-400" : discoveryResults.gnomeledger === "missing" ? "bg-red-500/10 border-red-500/35 text-red-400 font-bold" : "bg-[#0c0c0c] border-[#222] text-gray-600"}`}>
-                              GNOME:8083
+                              PGL:8083
                             </div>
                             <div className={`p-1 border transition-colors ${discoveryResults.vnp === "detected" ? "bg-emerald-500/10 border-emerald-500/35 text-emerald-400" : discoveryResults.vnp === "missing" ? "bg-red-500/10 border-red-500/35 text-red-400 font-bold" : "bg-[#0c0c0c] border-[#222] text-gray-600"}`}>
                               VNP:8084
@@ -4418,6 +4782,34 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                               type="text"
                               value={cappoUrl}
                               onChange={(e) => setCappoUrl(e.target.value)}
+                              className="w-full bg-[#111] border border-[#222] p-2 text-white text-xs font-mono focus:outline-none focus:border-[#00F0FF] rounded-none"
+                            />
+                          </div>
+
+                          {/* DELYN URL */}
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between items-center text-[#666]">
+                              <span className="font-bold">DELYN URL (Sovereign Intelligence):</span>
+                              <span className="text-[8px] text-gray-400">Cognitive &amp; Neurosymbolic</span>
+                            </div>
+                            <input
+                              type="text"
+                              value={delynUrl}
+                              onChange={(e) => setDelynUrl(e.target.value)}
+                              className="w-full bg-[#111] border border-[#222] p-2 text-white text-xs font-mono focus:outline-none focus:border-[#00F0FF] rounded-none"
+                            />
+                          </div>
+
+                          {/* LOCK THE CIPHER URL */}
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between items-center text-[#666]">
+                              <span className="font-bold">LOCK THE CIPHER URL (Crypto Engine):</span>
+                              <span className="text-[8px] text-gray-400">Groth16/PLONK &amp; Enclaves</span>
+                            </div>
+                            <input
+                              type="text"
+                              value={cipherUrl}
+                              onChange={(e) => setCipherUrl(e.target.value)}
                               className="w-full bg-[#111] border border-[#222] p-2 text-white text-xs font-mono focus:outline-none focus:border-[#00F0FF] rounded-none"
                             />
                           </div>
@@ -4603,11 +4995,15 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                             <div className="text-gray-500 font-bold">Repository Gates:</div>
                             <div className="flex flex-col gap-1 pl-2 text-gray-300 select-all leading-normal normal-case">
                               <a href="https://github.com/reprewindai-dev/interlink-cAPI" target="_blank" rel="noreferrer" className="text-[#00F0FF] hover:underline hover:text-white flex items-center gap-1">
-                                <span>[ interlink-cAPI Repository ]</span>
+                                <span>[ interlink-cAPI (Unified MCP &amp; API Asset) ]</span>
                                 <ExternalLink size={10} />
                               </a>
-                              <a href="https://github.com/reprewindai-dev/cAPI" target="_blank" rel="noreferrer" className="text-[#00F0FF] hover:underline hover:text-white flex items-center gap-1">
-                                <span>[ cAPI Core Gateway Repository ]</span>
+                              <a href="https://github.com/reprewindai-dev/UACPV5-TERMINAL/" target="_blank" rel="noreferrer" className="text-[#00F0FF] hover:underline hover:text-white flex items-center gap-1">
+                                <span>[ UACPV5-TERMINAL (Sovereign Command Console) ]</span>
+                                <ExternalLink size={10} />
+                              </a>
+                              <a href="https://github.com/reprewindai-dev/APEX" target="_blank" rel="noreferrer" className="text-[#00F0FF] hover:underline hover:text-white flex items-center gap-1">
+                                <span>[ APEX (Planning &amp; Intent Compiler Layer) ]</span>
                                 <ExternalLink size={10} />
                               </a>
                             </div>
@@ -4796,6 +5192,12 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                       )}
                     </div>
                   </div>
+
+                  {/* Latency and Multi-Tier Acceleration Control Panel */}
+                  <div className="mt-8">
+                    <ComputeCacheOptimizer />
+                  </div>
+
                 </div>
               )}
               
@@ -4862,14 +5264,14 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         dModel = "gpt-4o";
                         dUrl = "";
                       } else if (prov === "anthropic") {
-                        dModel = "claude-3-5-sonnet-20241022";
+                        dModel = "claude-opus-5-5";
                         dUrl = "";
                       } else if (prov === "deepseek") {
                         dModel = "deepseek-chat";
                         dUrl = "";
                       } else if (prov === "llama") {
-                        dModel = "llama-3-8b-instruct";
-                        dUrl = "http://localhost:11434/v1";
+                        dModel = "llama3.2:latest";
+                        dUrl = "http://167.233.202.195:11434/v1";
                       } else if (prov === "custom") {
                         dModel = "custom-model";
                         dUrl = "http://localhost:1234/v1";
@@ -4920,12 +5322,12 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                         : config.provider === "openai"
                         ? "e.g. http://localhost:1106/modelfarm/openai (or leave blank)"
                         : config.provider === "llama"
-                        ? "e.g. http://localhost:11434/v1"
+                        ? "e.g. http://167.233.202.195:11434/v1"
                         : config.provider === "deepseek"
                         ? "e.g. https://api.deepseek.com/v1 (or leave blank)"
                         : config.provider === "custom"
                         ? "e.g. http://localhost:1234/v1"
-                        : "Enter connection URL (e.g. http://localhost:11434/v1)"
+                        : "Enter connection URL (e.g. http://167.233.202.195:11434/v1)"
                     }
                     className="w-full bg-[#0A0A0A] border border-[#222] p-2.5 text-xs text-[#E0E0E0] focus:outline-none focus:border-[#00F0FF] rounded-none font-mono"
                   />
@@ -5040,6 +5442,130 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
                   )}
                 </div>
 
+                {/* Real-time Cache Performance & Ollama Discovery Controls */}
+                <div className="pt-4 border-t border-[#222] space-y-4">
+                  <span className="text-[10px] font-mono text-[#00F0FF] font-black tracking-widest uppercase block">[ LATENCY LAYER & OLLAMA INTEGRATOR ]</span>
+                  
+                  {/* Caching Control Center */}
+                  <div className="p-3 bg-[#050505] border border-[#222] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-gray-400 uppercase font-bold">Compilation Memory Cache</span>
+                      <button
+                        type="button"
+                        onClick={handleClearCache}
+                        className="px-2 py-1 bg-red-950/40 hover:bg-red-900/50 text-red-400 border border-red-900/30 text-[9px] font-bold uppercase tracking-wider font-mono transition-colors"
+                      >
+                        Clear Cache
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-[10px] font-mono uppercase">
+                      <div className="p-2 bg-[#0A0A0A] border border-[#222]">
+                        <span className="text-gray-500 block text-[8px]">CACHE HITS</span>
+                        <span className="text-emerald-400 font-black text-xs">{cacheStats?.hits || 0}</span>
+                      </div>
+                      <div className="p-2 bg-[#0A0A0A] border border-[#222]">
+                        <span className="text-gray-500 block text-[8px]">CACHE MISSES</span>
+                        <span className="text-amber-500 font-black text-xs">{cacheStats?.misses || 0}</span>
+                      </div>
+                      <div className="p-2 bg-[#0A0A0A] border border-[#222]">
+                        <span className="text-gray-500 block text-[8px]">TOTAL ENTRIES</span>
+                        <span className="text-[#00F0FF] font-black text-xs">{cacheStats?.keysCount || 0}</span>
+                      </div>
+                      <div className="p-2 bg-[#0A0A0A] border border-[#222]">
+                        <span className="text-gray-500 block text-[8px]">LATENCY SAVED</span>
+                        <span className="text-[#00F0FF] font-black text-xs">{(cacheStats?.totalLatencySavedMs || 0)}ms</span>
+                      </div>
+                    </div>
+
+                    {cacheStats && (
+                      <div className="flex justify-between items-center bg-[#0C0C0C] border border-[#1A1A1A] p-2 text-[9px] font-mono uppercase">
+                        <span className="text-gray-500">ENGINE: <span className="text-[#00F0FF] font-black">{cacheStats.engine || "MEMORY"}</span></span>
+                        <span className="text-gray-500">REDIS: <span className={cacheStats.redisStatus === "CONNECTED" ? "text-emerald-400 font-black" : cacheStats.redisStatus === "DISABLED" ? "text-gray-600" : "text-amber-500 font-black"}>{cacheStats.redisStatus || "DISABLED"}</span></span>
+                      </div>
+                    )}
+
+                    {cacheStats && cacheStats.items && cacheStats.items.length > 0 && (
+                      <div className="space-y-1">
+                        <span className="text-[8px] font-mono text-gray-500 uppercase block">Active Memory Blueprints:</span>
+                        <div className="max-h-[80px] overflow-y-auto space-y-1 pr-1">
+                          {cacheStats.items.map((item: any, idx: number) => (
+                            <div key={idx} className="flex justify-between items-center text-[9px] font-mono bg-[#0D0D0D] border border-[#222] p-1 truncate">
+                              <span className="text-gray-400 truncate w-24">{item.modelName}</span>
+                              <span className="text-gray-500 text-[8px]">{item.jurisdiction.toUpperCase()}</span>
+                              <span className="text-emerald-400 font-black">+{item.hits} hits</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Ollama Probe Center */}
+                  <div className="p-3 bg-[#050505] border border-[#222] space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-mono text-gray-400 uppercase font-bold">Ollama Fleet Node (167.233.202.195)</span>
+                      <button
+                        type="button"
+                        disabled={isQueryingOllama}
+                        onClick={handleQueryOllama}
+                        className="px-2.5 py-1 bg-[#1E293B] hover:bg-slate-800 text-[#00F0FF] border border-[#2D3748] text-[9px] font-bold uppercase tracking-wider font-mono transition-colors"
+                      >
+                        {isQueryingOllama ? "Probing..." : "Probe Node"}
+                      </button>
+                    </div>
+
+                    {ollamaResult ? (
+                      <div className="text-[10px] font-mono space-y-2">
+                        {ollamaResult.success ? (
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5 text-emerald-400 font-black text-[9px]">
+                              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block animate-pulse"></span>
+                              <span>OLLAMA RUNNING (OK) - {ollamaResult.latencyMs}ms</span>
+                            </div>
+                            {ollamaResult.models && ollamaResult.models.length > 0 ? (
+                              <div className="space-y-1">
+                                <span className="text-gray-500 text-[8px] block uppercase">Available Local Models:</span>
+                                <div className="max-h-[100px] overflow-y-auto space-y-1 pr-1">
+                                  {ollamaResult.models.map((m: any, idx: number) => (
+                                    <div key={idx} className="flex justify-between items-center bg-[#0D0D0D] border border-[#222] p-1 text-[9px]">
+                                      <span className="text-[#00F0FF] font-black">{m.name}</span>
+                                      <span className="text-gray-500 text-[8px]">
+                                        {m.size ? `${(m.size / (1024 * 1024 * 1024)).toFixed(2)} GB` : "L2 weights"}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ) : (
+                              <p className="text-[9px] text-amber-300 leading-normal lowercase normal-case">
+                                Connected, but no downloaded models found. Run <code className="bg-[#111] p-0.5 border border-[#222] text-white">ollama pull llama3</code> in your terminal.
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-1.5 text-amber-500 font-black text-[9px]">
+                              <span className="w-1.5 h-1.5 bg-amber-500 rounded-full inline-block"></span>
+                              <span>OLLAMA OFFLINE (SYSTEM DRIFT DETECTED)</span>
+                            </div>
+                            <p className="text-[9px] text-gray-500 leading-normal font-sans lowercase normal-case">
+                              To hook up local LLMs first class, start your local service:
+                              <code className="block bg-[#111] p-1 mt-1 border border-[#222] text-white font-mono text-[8px]">
+                                OLLAMA_ORIGINS="*" ollama serve
+                              </code>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-[9px] text-gray-500 leading-normal font-sans">
+                        Probe your local Ollama node to fetch running models, active connection speeds, and tag states.
+                      </p>
+                    )}
+                  </div>
+                </div>
+
               </div>
 
               <div className="pt-4 border-t border-[#222] flex gap-3">
@@ -5057,11 +5583,26 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
         )}
       </AnimatePresence>
 
+      {/* Outbound Export Intent Confirmation Dialog */}
+      <ExportConfirmModal
+        isOpen={exportConfirmModal.isOpen}
+        type={exportConfirmModal.type}
+        onClose={() => setExportConfirmModal({ ...exportConfirmModal, isOpen: false })}
+        onConfirm={() => {
+          if (exportConfirmModal.type === "diagnostics") {
+            handleExportDiagnostics(exportConfirmModal.metadata.reportId || "");
+          } else {
+            handleDownloadZip();
+          }
+        }}
+        metadata={exportConfirmModal.metadata}
+      />
+
       {/* Global Footer */}
       <footer className="border-t-2 border-[#222] bg-[#050505] py-8 mt-16 print:hidden">
-        <div className="w-full mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
           <p className="text-xs font-mono uppercase text-[#666] tracking-wider">
-            ApexBlueprint Compiler. Created on high-contrast obsidian dark patterns. Verified for cross-device responsiveness.
+            Apex Blueprint Compiler. Created on high-contrast obsidian dark patterns. Verified for cross-device responsiveness.
           </p>
           <div className="flex justify-center gap-6 text-[10px] font-mono text-[#444] uppercase tracking-widest">
             <span>PLATFORM: CLOUD CONTAINER</span>
@@ -5080,7 +5621,7 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
             <h1 className="text-4xl font-extrabold tracking-tight uppercase">{result.title}</h1>
             <p className="text-lg italic text-gray-700">{result.tagline}</p>
             <div className="text-xs font-mono space-y-1 text-gray-600 pt-4">
-              <p>COMPILED BY: APEXBLUEPRINT HIERARCHICAL REASONING CORE</p>
+              <p>COMPILED BY: APEX BLUEPRINT HIERARCHICAL REASONING CORE</p>
               <p>MINT DATE: {new Date(result.timestamp).toLocaleString()}</p>
               <p>REGISTRANT INTELLECTUAL OWNER: {userEmail}</p>
               <p>CRYPTOGRAPHIC PROOF OF CREATION HASH: {result.hash}</p>
@@ -5145,11 +5686,11 @@ compliance: "Standard X402 microtransaction ledger validation schemas and public
 
           {/* Final Certificate Stamp */}
           <div className="pt-12 text-center border-t-2 border-black space-y-2">
-            <p className="font-bold text-base uppercase">Certificate of Verification & Intellectual Protection</p>
+            <p className="font-bold text-base uppercase">Compile Record</p>
             <p className="text-xs text-gray-600 max-w-lg mx-auto">
-              This system blueprint has been compiled utilizing the elite APEXBLUEPRINT Hierarchical Reasoning Engine. All assets compiled herewith are mathematically backed, academically grounded, and cryptographically signed to protect concept authorship.
+              This blueprint was generated by an AI model from the notes provided. It has not been independently verified; review citations, figures and claims before relying on them. The hash below identifies this exact content; it is not a signature or proof of authorship.
             </p>
-            <p className="font-mono text-xs font-bold pt-4">MINT SEAL AUTHENTICATION: {result.hash.substring(0, 32).toUpperCase()}</p>
+            <p className="font-mono text-xs font-bold pt-4">SHA-256 CONTENT HASH: {result.hash.substring(0, 32).toUpperCase()}</p>
           </div>
 
         </div>

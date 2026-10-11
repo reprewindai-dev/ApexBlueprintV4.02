@@ -200,7 +200,7 @@ export default function BuildExecutionAttestation({ blueprint, userEmail }: Buil
       
       addLog(`⚡ [POLTERGEIST] Watchman event received. Cursor clock: c:17283419-seq-${triggerCount}`);
       addLog(`🔨 [BUILD RUNNER] Automatically triggering deterministic build command...`);
-      addLog(`📁 [WORKSPACE PROBE] Scan of workspace folder '${repoIntel?.projectName || "apex-blueprint"}' started.`);
+      addLog(`📁 [WORKSPACE PROBE] Scan of workspace folder '${repoIntel?.projectName || "abide-blueprint"}' started.`);
       
       if (repoIntel) {
         addLog(`📁 [WORKSPACE PROBE] Real workspace size: ${repoIntel.totalFiles} physical files scanned.`);
@@ -265,7 +265,7 @@ export default function BuildExecutionAttestation({ blueprint, userEmail }: Buil
           addLog(`✅ [COVENANT GATE] Build status: PASSED`);
           addLog(`✅ [COVENANT GATE] Artifact hash matches executable binary.`);
           addLog(`✅ [COVENANT GATE] Backend convergence score: ${syncData.systemState}`);
-          addLog(`✅ [COVENANT GATE] Real-time gateway latency: ${syncData.totalLatencyMs}ms`);
+          addLog(`[COVENANT GATE] Reported latency (simulated sync endpoint): ${syncData.totalLatencyMs}ms`);
           addLog(`👉 [COVENANT GATE] Handing execution to polter wrapper. Issuing execution permit...`);
           
           // Move to anchoring and completed
@@ -283,7 +283,7 @@ export default function BuildExecutionAttestation({ blueprint, userEmail }: Buil
             
             // Construct receipt matching exactly the correct schema
             const receipt = {
-              "receipt_version": "apex.build-execution.v1",
+              "receipt_version": "abide.build-execution.v1",
               "authorization": {
                 "blueprint_id": `bp_${blueprint.hash.substring(0, 8)}`,
                 "blueprint_hash": `sha256:${blueprint.hash}`,
@@ -418,7 +418,7 @@ export default function BuildExecutionAttestation({ blueprint, userEmail }: Buil
           </div>
           <div>
             <span className="text-[9px] text-[#555] block">Linter & Compilers</span>
-            <span className="font-bold text-emerald-400 leading-tight">ONLINE / VERIFIED</span>
+            <span className="font-bold text-amber-400 leading-tight">NOT CHECKED</span>
           </div>
         </div>
       )}
@@ -790,21 +790,32 @@ export default function BuildExecutionAttestation({ blueprint, userEmail }: Buil
             </div>
 
             {/* Render a list of capabilities matching current mapping selection */}
-            {mappings
-              .filter((m, i, self) => self.findIndex(x => x.capabilityId === m.capabilityId) === i) // Unique capabilities
-              .filter(m => {
-                if (mapperFilterTarget === "all") return true;
-                return m.target === mapperFilterTarget;
-              })
-              .map((m) => {
-                const isActive = activeMapping.capabilityId === m.capabilityId;
-                const isHovered = hoveredMappingId && mappings.find(x => x.id === hoveredMappingId)?.capabilityId === m.capabilityId;
-                const realCap = blueprint.capabilities?.find(c => c.id === m.capabilityId);
-                const capName = realCap?.name || m.defaultCapName;
-                const capPurpose = realCap?.purpose || m.purpose;
+            {(() => {
+              // ⚡ Bolt Optimization: Prevent O(N^2) lookups on every render by resolving hovered item and capability maps once
+              const hoveredMapping = hoveredMappingId ? mappings.find(x => x.id === hoveredMappingId) : null;
+              const capabilitiesById = new Map((blueprint.capabilities || []).map(c => [c.id, c]));
+              const seenCapIds = new Set();
 
-                return (
-                  <div
+              return mappings
+                .filter((m) => {
+                  // O(1) deduplication instead of O(N^2) findIndex
+                  if (seenCapIds.has(m.capabilityId)) return false;
+                  seenCapIds.add(m.capabilityId);
+                  return true;
+                })
+                .filter(m => {
+                  if (mapperFilterTarget === "all") return true;
+                  return m.target === mapperFilterTarget;
+                })
+                .map((m) => {
+                  const isActive = activeMapping.capabilityId === m.capabilityId;
+                  const isHovered = hoveredMapping && hoveredMapping.capabilityId === m.capabilityId;
+                  const realCap = capabilitiesById.get(m.capabilityId);
+                  const capName = realCap?.name || m.defaultCapName;
+                  const capPurpose = realCap?.purpose || m.purpose;
+
+                  return (
+                    <div
                     key={m.capabilityId}
                     className={`p-3 border text-left transition-all relative rounded-none ${
                       isActive
@@ -839,8 +850,9 @@ export default function BuildExecutionAttestation({ blueprint, userEmail }: Buil
                       <div className="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500" />
                     )}
                   </div>
-                );
-              })}
+                  );
+                });
+            })()}
           </div>
 
         </div>
