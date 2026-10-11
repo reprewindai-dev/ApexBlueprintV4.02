@@ -557,7 +557,7 @@ export async function callBlueprintModel(opts: BlueprintModelOptions, env: LlmEn
       if (customUrl) {
         openAiBaseUrl = customUrl;
       } else if (selectedProvider === "llama" || selectedProvider === "ollama") {
-        openAiBaseUrl = env.AI_INTEGRATIONS_OLLAMA_BASE_URL || env.OLLAMA_BASE_URL || "http://167.233.202.195:11434/v1";
+        openAiBaseUrl = env.AI_INTEGRATIONS_OLLAMA_BASE_URL || env.OLLAMA_BASE_URL || "http://localhost:11434/v1";
       } else if (selectedProvider === "deepseek") {
         openAiBaseUrl = "https://api.deepseek.com/v1";
       } else if (selectedProvider === "openai") {

@@ -17,11 +17,28 @@ Requires Node.js 22.
 In the app, click **LLM Engine**, pick a provider (Gemini, OpenAI, Anthropic, DeepSeek, Llama/Ollama or a custom
 OpenAI-compatible URL), paste your API key, then paste your notes and click **Compile Production Payload**.
 
+### Use Ollama (free, runs on your own computer)
+
+1. Install Ollama from https://ollama.com and pull a model, e.g. `ollama pull llama3.2`.
+2. In Apex, open **LLM Engine**, choose **Ollama / Local Llama API**. The URL defaults to `http://localhost:11434/v1`
+   and no API key is needed. **Probe Node** lists the models Ollama has installed.
+
+- **Running Apex locally:** nothing else to do; the Apex server talks to Ollama directly.
+- **Using the hosted site (apex.veklom.com) with your own Ollama:** the hosted backend cannot reach your computer, so
+  your browser calls Ollama itself. Allow the site in Ollama, then restart Ollama:
+  `OLLAMA_ORIGINS=https://apex.veklom.com ollama serve` (on macOS: `launchctl setenv OLLAMA_ORIGINS https://apex.veklom.com`).
+  Your browser may ask permission to access devices on your local network; allow it.
+- **Ollama on another server:** enter its public URL (e.g. `https://ollama.example.com/v1`); the request then goes through
+  the Apex backend.
+
+Bigger models give better blueprints; small models (1–3B) often return incomplete JSON, which Apex shows as a partial result.
+
 ### Useful `.env` settings
 
 | Variable | What it does |
 | --- | --- |
 | `GEMINI_API_KEY` | Used for Gemini when no key is entered in LLM Engine |
+| `OLLAMA_BASE_URL` | Ollama server used when none is entered (default `http://localhost:11434/v1`) |
 | `ABIDE_DEFAULT_PROVIDER` | Provider used when the request does not name one |
 | `SEMANTIC_SCHOLAR_API_KEY`, `OPENALEX_API_KEY` | Avoid rate limits in citation checks (both sources work without a key but are often rate-limited) |
 | `CITATION_CONTACT_EMAIL` | Contact email sent to CrossRef/OpenAlex (polite-pool access) |
@@ -38,6 +55,7 @@ The hosted site runs the frontend plus these Cloudflare Pages Functions (`functi
 - `POST /api/academic/search`: live arXiv + CrossRef search (keyword-ranked)
 - `POST /api/academic/verify`: check a citation against arXiv, CrossRef, OpenAlex and Semantic Scholar
 - `POST /api/github/analyze`: read a GitHub repo's file tree and compare it with your notes
+- `POST /api/ollama/models`: list models on a publicly reachable Ollama server
 
 Every other `/api/*` feature (IDE projects, covenant/approval flows, VNP auth, escrow, etc.) needs the full Node
 server and returns a 501 on the hosted site. Run locally to use them. Several of those panels are simulations and are

@@ -122,7 +122,7 @@ const INITIAL_AI_PROVIDERS: AiProviderMetric[] = [
     sekedScore: 9.3,
     uptimeSla: 100.0,
     contextWindow: "128k tokens",
-    region: "EU-Hetzner (167.233.202.195)",
+    region: "EU (example node)",
     status: "OPTIMAL",
     recommendedFor: "Sovereign zero-cost private in-enclave processing",
   },
