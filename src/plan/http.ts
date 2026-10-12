@@ -21,9 +21,21 @@ function readChoice(raw: unknown, env: LlmEnv): ModelChoice {
     selectedProvider: provider,
     apiKey: s("apiKey"),
     modelName: s("modelName"),
-    customUrl: s("customUrl"),
+    customUrl: localOllama(provider, s("customUrl"), env),
     authMode: s("authMode"),
   };
+}
+
+// In a container, "localhost" is the container itself. OLLAMA_LOCAL_URL (set in the Docker
+// image to the host machine) replaces a localhost Ollama address sent by the browser.
+function localOllama(provider: string, url: string | undefined, env: LlmEnv): string | undefined {
+  if (!url || !env.OLLAMA_LOCAL_URL || (provider !== "ollama" && provider !== "llama")) return url;
+  try {
+    const host = new URL(url).hostname;
+    return host === "localhost" || host === "127.0.0.1" ? env.OLLAMA_LOCAL_URL : url;
+  } catch {
+    return url;
+  }
 }
 
 const message = (err: unknown) => friendlyError(err instanceof Error ? err.message : String(err));

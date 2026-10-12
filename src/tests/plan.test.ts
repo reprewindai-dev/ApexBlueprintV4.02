@@ -133,6 +133,13 @@ describe("HTTP handlers", () => {
 
       const check = await handleCheckModel({ model: { selectedProvider: "custom", customUrl: url, modelName: "test-model" } }, {});
       assert.deepStrictEqual(check.body, { ok: true });
+
+      // In Docker, a localhost Ollama address from the browser goes to OLLAMA_LOCAL_URL.
+      const viaDocker = await handleGenerate(
+        { notes: "x", model: { selectedProvider: "ollama", customUrl: "http://localhost:9/v1", modelName: "test-model" } },
+        { OLLAMA_LOCAL_URL: url },
+      );
+      assert.strictEqual(viaDocker.status, 200, JSON.stringify(viaDocker.body));
     } finally {
       server.close();
     }

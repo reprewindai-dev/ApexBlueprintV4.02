@@ -14,6 +14,7 @@ app.use(express.json({ limit: "1mb" }));
 
 const send = (res: express.Response, result: HandlerResult) => res.status(result.status).json(result.body);
 
+app.get("/healthz", (_req, res) => res.json({ ok: true }));
 app.post("/api/generate", async (req, res) => send(res, await handleGenerate(req.body, process.env)));
 app.post("/api/check-model", async (req, res) => send(res, await handleCheckModel(req.body, process.env)));
 app.all("/api/*", (_req, res) => res.status(404).json({ error: "Not found." }));

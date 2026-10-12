@@ -29,14 +29,31 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
+### Docker
+
+```bash
+docker build -t apex .
+docker run -p 3000:3000 --add-host=host.docker.internal:host-gateway apex   # http://localhost:3000
+```
+
+The image reaches an Ollama running on the same machine through `host.docker.internal`.
+
 ### Ollama
 
 1. Install Ollama from https://ollama.com and pull a model: `ollama pull qwen2.5:14b`
-   (7B and up recommended).
+   (7B and up recommended; 14B writes noticeably better plans).
 2. In Apex, choose **Ollama (on your computer)**. The address defaults to `http://localhost:11434/v1`.
-3. Plans are long. Give Ollama room: `OLLAMA_CONTEXT_LENGTH=16384 ollama serve`.
-4. Using the hosted site with your own Ollama: your browser talks to Ollama directly, so allow
-   the site first: `OLLAMA_ORIGINS=https://apex.veklom.com ollama serve`.
+3. Plans are long. Give Ollama room: set `OLLAMA_CONTEXT_LENGTH=16384`.
+4. **Using the hosted site (apex.veklom.com) with your own Ollama:** your browser talks to Ollama
+   directly, so Ollama must allow the site once. Apex shows these steps when it is needed.
+   - Windows: quit Ollama from the tray, run
+     `setx OLLAMA_ORIGINS "https://apex.veklom.com,https://*.apexblueprintv4-02.pages.dev"`
+     in PowerShell, start Ollama again.
+   - Mac: `launchctl setenv OLLAMA_ORIGINS "https://apex.veklom.com,https://*.apexblueprintv4-02.pages.dev"`, restart Ollama.
+   - Linux: start it with `OLLAMA_ORIGINS="https://apex.veklom.com,https://*.apexblueprintv4-02.pages.dev" ollama serve`.
+   - Docker: add `-e OLLAMA_ORIGINS="https://apex.veklom.com,https://*.apexblueprintv4-02.pages.dev"` to the Ollama container.
+
+   Running Apex locally (above) needs none of this.
 
 ### Settings
 
@@ -53,7 +70,8 @@ See `.env.example`. All settings are optional.
 | `src/server/blueprint-core.ts` | Provider routing; streams replies so slow models are not cut off |
 | `src/App.tsx`, `src/ui/`, `src/app/` | The app |
 | `functions/api/` | Cloudflare Pages Functions: `POST /api/generate`, `POST /api/check-model` |
-| `server.ts` | Local server with the same two endpoints |
+| `server.ts` | Local server with the same two endpoints, plus `GET /healthz` |
+| `src/app/ollama.ts`, `src/ui/OllamaHelp.tsx` | Diagnoses a hosted-site-to-Ollama connection and shows the one-time fix |
 
 ## Checks
 
