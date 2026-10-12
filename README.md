@@ -1,65 +1,59 @@
-# Apex Blueprint
+# Apex
 
-Turns messy notes into a structured software blueprint and business plan using the AI model you choose.
-Output is AI-generated and should be reviewed before you rely on it.
+Turns messy notes into a plan you can build: features with acceptance criteria, user flows,
+architecture, data model, API, build milestones, risks, and the questions the owner still
+needs to answer. Plans can be copied, downloaded as Markdown, printed to PDF, or handed to a
+coding agent (Claude Code, Cursor, Codex) as a build brief.
 
 Live site: https://apex.veklom.com (Cloudflare Pages, deployed automatically from `main`).
 
-## Run locally (all features)
+## Using it
+
+1. Paste your notes and press **Write my plan**.
+2. The first time, choose which AI writes your plans: Claude, OpenAI, Gemini, DeepSeek,
+   Ollama on your computer, or any OpenAI-compatible server. Bring your own key.
+3. Read the plan. Start with **Decide these first**: the decisions your notes leave open.
+
+Plans are saved in your browser only. API keys are kept for the browser session unless you
+tick "Remember on this device".
+
+**Plan quality follows the model.** Large models (Claude, GPT-4o class) write the most complete
+plans. Small local models work but leave gaps; Apex lists any section the model left out.
+
+## Run locally
 
 Requires Node.js 22.
 
-1. Install dependencies: `npm install`
-2. Optional: copy `.env.example` to `.env` and fill in what you use (see below).
-3. Start the app: `npm run dev`
-4. Open http://localhost:3000
+```bash
+npm install
+npm run dev        # http://localhost:3000
+```
 
-In the app, click **LLM Engine**, pick a provider (Gemini, OpenAI, Anthropic, DeepSeek, Llama/Ollama or a custom
-OpenAI-compatible URL), paste your API key, then paste your notes and click **Compile Production Payload**.
+### Ollama
 
-### Use Ollama (free, runs on your own computer)
+1. Install Ollama from https://ollama.com and pull a model: `ollama pull qwen2.5:14b`
+   (7B and up recommended).
+2. In Apex, choose **Ollama (on your computer)**. The address defaults to `http://localhost:11434/v1`.
+3. Plans are long. Give Ollama room: `OLLAMA_CONTEXT_LENGTH=16384 ollama serve`.
+4. Using the hosted site with your own Ollama: your browser talks to Ollama directly, so allow
+   the site first: `OLLAMA_ORIGINS=https://apex.veklom.com ollama serve`.
 
-1. Install Ollama from https://ollama.com and pull a model, e.g. `ollama pull llama3.2`.
-2. In Apex, open **LLM Engine**, choose **Ollama / Local Llama API**. The URL defaults to `http://localhost:11434/v1`
-   and no API key is needed. **Probe Node** lists the models Ollama has installed.
+### Settings
 
-- **Running Apex locally:** nothing else to do; the Apex server talks to Ollama directly.
-- **Using the hosted site (apex.veklom.com) with your own Ollama:** the hosted backend cannot reach your computer, so
-  your browser calls Ollama itself. Allow the site in Ollama, then restart Ollama:
-  `OLLAMA_ORIGINS=https://apex.veklom.com ollama serve` (on macOS: `launchctl setenv OLLAMA_ORIGINS https://apex.veklom.com`).
-  Your browser may ask permission to access devices on your local network; allow it.
-- **Ollama on another server:** enter its public URL (e.g. `https://ollama.example.com/v1`); the request then goes through
-  the Apex backend.
+See `.env.example`. All settings are optional.
 
-Bigger models give better blueprints; small models (1–3B) often return incomplete JSON, which Apex shows as a partial result.
+## How it works
 
-### Useful `.env` settings
-
-| Variable | What it does |
+| Path | What |
 | --- | --- |
-| `GEMINI_API_KEY` | Used for Gemini when no key is entered in LLM Engine |
-| `OLLAMA_BASE_URL` | Ollama server used when none is entered (default `http://localhost:11434/v1`) |
-| `ABIDE_DEFAULT_PROVIDER` | Provider used when the request does not name one |
-| `SEMANTIC_SCHOLAR_API_KEY`, `OPENALEX_API_KEY` | Avoid rate limits in citation checks (both sources work without a key but are often rate-limited) |
-| `CITATION_CONTACT_EMAIL` | Contact email sent to CrossRef/OpenAlex (polite-pool access) |
-| `GITHUB_TOKEN` | Lets repository analysis read private repos and avoid GitHub rate limits |
-| `SEKED_HMAC_SECRET`, `CONSTITUTION_SIGNING_KEY`, `APPROVAL_TOKEN_SECRET` | Required (16+ characters each) only when running with `NODE_ENV=production` |
-
-## Hosted site vs. local
-
-The hosted site runs the frontend plus these Cloudflare Pages Functions (`functions/api/`), which share code with `server.ts`:
-
-- `POST /api/generate`: blueprint compile
-- `POST /api/test-connection`: check the LLM Engine settings
-- `POST /api/test-harness/generate`: generate a test file for the compiled blueprint
-- `POST /api/academic/search`: live arXiv + CrossRef search (keyword-ranked)
-- `POST /api/academic/verify`: check a citation against arXiv, CrossRef, OpenAlex and Semantic Scholar
-- `POST /api/github/analyze`: read a GitHub repo's file tree and compare it with your notes
-- `POST /api/ollama/models`: list models on a publicly reachable Ollama server
-
-Every other `/api/*` feature (IDE projects, covenant/approval flows, VNP auth, escrow, etc.) needs the full Node
-server and returns a 501 on the hosted site. Run locally to use them. Several of those panels are simulations and are
-labelled as such in the UI.
+| `src/plan/plan.ts` | The plan format, the prompt, and parsing (missing sections are reported, never filled in) |
+| `src/plan/generate.ts`, `src/plan/http.ts` | One generation path shared by the server, Cloudflare and the browser |
+| `src/plan/export.ts` | Markdown and coding-agent brief |
+| `src/plan/repo.ts` | Reads a public GitHub repo's file list as context |
+| `src/server/blueprint-core.ts` | Provider routing; streams replies so slow models are not cut off |
+| `src/App.tsx`, `src/ui/`, `src/app/` | The app |
+| `functions/api/` | Cloudflare Pages Functions: `POST /api/generate`, `POST /api/check-model` |
+| `server.ts` | Local server with the same two endpoints |
 
 ## Checks
 

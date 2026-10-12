@@ -58,7 +58,7 @@ export function makeMockResult(stepId: string, overrides: Record<string, any> = 
     stepId,
     sequence: 1,
     capability: "mock-capability",
-    status: "SUCCESS",
+    status: "SUCCESS" as const,
     output: { settled: true },
     executedAt: new Date().toISOString(),
     resultHash: "",
