@@ -1,44 +1,22 @@
-FROM node:22-slim AS builder
-
+# Apex: docker build -t apex . && docker run -p 3000:3000 --add-host=host.docker.internal:host-gateway apex
+FROM node:22-slim AS build
 WORKDIR /app
-
-# Install all dependencies including dev tools (Vite, esbuild)
-COPY package*.json ./
-RUN npm ci --include=dev
-
-# Copy source and build
+COPY package.json package-lock.json ./
+RUN npm ci
 COPY . .
-RUN npm run build
+RUN npm run build && npm prune --omit=dev
 
-# Prune dev dependencies for the final image
-RUN npm prune --omit=dev
-
-# Production stage
 FROM node:22-slim
-
 WORKDIR /app
-
-ENV NODE_ENV=production
-ENV PORT=3009
-
-LABEL org.opencontainers.image.source="abide-sovereign-control-plane"
-LABEL org.opencontainers.image.revision="3458a3183d1914799cc16e7e3064cd69f4e27bae"
-
-# Install curl for HEALTHCHECK, avoid installing wget as flagged in PR #9
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy production files and set ownership to non-root 'node' user
-COPY --from=builder --chown=node:node /app/package*.json ./
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --from=builder --chown=node:node /app/dist ./dist
-
-# Use the built-in non-root node user as required by PR #9
+ENV NODE_ENV=production \
+    PORT=3000 \
+    # An Ollama on the machine running Docker (Docker Desktop provides this name).
+    OLLAMA_LOCAL_URL=http://host.docker.internal:11434/v1
+COPY --from=build --chown=node:node /app/package.json ./
+COPY --from=build --chown=node:node /app/node_modules ./node_modules
+COPY --from=build --chown=node:node /app/dist ./dist
 USER node
-
-EXPOSE 3009
-
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 CMD curl -fsS "http://127.0.0.1:${PORT:-3009}/healthz" || exit 1
-
-CMD ["npm", "start"]
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+CMD ["node", "dist/server.cjs"]

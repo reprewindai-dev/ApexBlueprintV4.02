@@ -1,67 +1,144 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-bg: #050505;
+  --color-surface: #0b0c0d;
+  --color-raised: #131517;
+  --color-line: #1f2326;
+  --color-ink: #e6e8ea;
+  --color-muted: #9aa2a9;
+  --color-faint: #5d656c;
+  --color-accent: #00f0ff;
+  --color-accent-ink: #001417;
+  --color-good: #39ff9f;
+  --color-warn: #ffc53d;
+  --color-bad: #ff4d6d;
 }
 
-html, body {
-  background-color: #050505 !important;
-  color: #E0E0E0 !important;
+:root {
+  color-scheme: dark;
 }
 
-/* Custom design classes for Bold Typography Theme */
-.theme-grid-bg {
-  background-image: radial-gradient(#222222 1px, transparent 1px);
-  background-size: 20px 20px;
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
 }
 
-.glow-cyan {
-  text-shadow: 0 0 8px #00F0FF;
+body {
+  background-image: radial-gradient(#1c1f22 1px, transparent 1px);
+  background-size: 22px 22px;
 }
 
-.glow-box-cyan {
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+::selection {
+  background: rgb(0 240 255 / 0.3);
 }
 
-.glow-dot-cyan {
-  box-shadow: 0 0 8px #00F0FF;
-}
-
-@layer utilities {
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+@layer base {
+  textarea,
+  input,
+  select {
+    font: inherit;
   }
+}
 
-  .animate-fadeIn {
-    animation: fadeIn 0.35s ease-out forwards;
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Terminal-style label: [ LIKE THIS ] */
+.tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.glow {
+  text-shadow: 0 0 18px rgb(0 240 255 / 0.55), 0 0 2px rgb(0 240 255 / 0.9);
+}
+
+.glow-box {
+  box-shadow: 0 0 0 1px rgb(0 240 255 / 0.35), 0 0 28px rgb(0 240 255 / 0.12);
+}
+
+.glow-btn {
+  box-shadow: 0 0 24px rgb(0 240 255 / 0.35);
+}
+
+.glow-btn:hover {
+  box-shadow: 0 0 36px rgb(0 240 255 / 0.55);
+}
+
+.dot {
+  box-shadow: 0 0 8px var(--color-accent);
+}
+
+@keyframes apex-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-/* Print-specific layout styling to support save-as-PDF flow */
+.apex-spin {
+  animation: apex-spin 0.9s linear infinite;
+}
+
+@keyframes apex-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.apex-pulse {
+  animation: apex-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes apex-scan {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(400%);
+  }
+}
+
+.apex-scan {
+  animation: apex-scan 1.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apex-spin,
+  .apex-pulse,
+  .apex-scan {
+    animation: none;
+  }
+}
+
 @media print {
+  html,
   body {
-    background-color: white !important;
-    color: black !important;
+    background: #fff !important;
+    color: #111 !important;
   }
-  
-  /* Hide all normal app layout divs during print */
-  header, footer, section, button, select, input, textarea, .print\:hidden {
+  .no-print {
     display: none !important;
   }
-
-  /* Expose and format only the print-only container */
-  .print\:block {
-    display: block !important;
-    visibility: visible !important;
+  .print-plain,
+  .print-plain * {
+    background: transparent !important;
+    color: #111 !important;
+    border-color: #ccc !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+  section {
+    break-inside: avoid-page;
   }
 }
-
