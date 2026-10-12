@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight, ChevronDown, Github, Loader2, Settings2, Trash2, X } from "lucide-react";
+import { ArrowRight, ChevronDown, Github, Settings2, Trash2, X } from "lucide-react";
 import type { PlanRecord } from "./plan/plan";
 import { requestPlan, type PlanRequest } from "./app/api";
 import { deletePlan, loadPlans, savePlan } from "./app/history";
 import { isReady, loadSettings, saveSettings, settingsLabel, type ModelSettings } from "./app/settings";
+import { OllamaConnectionError } from "./app/ollama";
 import { EXAMPLES, PROJECT_TYPES } from "./ui/examples";
+import { OllamaHelp } from "./ui/OllamaHelp";
 import { PlanView } from "./ui/PlanView";
 import { SettingsDialog } from "./ui/SettingsDialog";
 
@@ -29,6 +31,7 @@ export default function App() {
   const [repoUrl, setRepoUrl] = useState("");
   const [showContext, setShowContext] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ollamaBlocked, setOllamaBlocked] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState<{ reason?: string; then?: (s: ModelSettings) => void } | null>(null);
   const [now, setNow] = useState(Date.now());
   const runId = useRef(0);
@@ -75,6 +78,7 @@ export default function App() {
       } catch (err) {
         if (id !== runId.current) return;
         setError((err as Error).message);
+        setOllamaBlocked(err instanceof OllamaConnectionError);
         setView({ kind: "compose" });
       }
     },
@@ -105,34 +109,45 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <header className="no-print sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
+      <header className="no-print sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          <button onClick={goCompose} className="flex items-center gap-2 font-semibold tracking-tight" aria-label="Apex home">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-accent text-sm font-bold text-accent-ink">A</span>
-            Apex
+          <button onClick={goCompose} className="flex items-center gap-3" aria-label="Apex home">
+            <span className="text-[15px] font-black uppercase tracking-tight">
+              Apex<span className="text-accent glow"> Blueprint</span>
+            </span>
+            <span className="tag hidden border border-line px-1.5 py-0.5 text-faint sm:inline">by Veklom</span>
           </button>
           <button
             onClick={() => setSettingsOpen({})}
-            className="inline-flex max-w-[60%] items-center gap-2 rounded-lg border border-line px-3 py-1.5 text-sm text-muted hover:bg-raised hover:text-ink"
+            className="tag inline-flex max-w-[62%] items-center gap-2 border border-line bg-surface px-3 py-2 text-muted hover:border-accent/60 hover:text-ink"
           >
-            <Settings2 size={15} className="shrink-0" />
-            <span className="truncate">{isReady(settings) ? settingsLabel(settings) : "Choose a model"}</span>
+            <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${isReady(settings) ? "dot bg-accent" : "bg-faint"}`} />
+            <span className="hidden sm:inline text-faint">Engine:</span>
+            <span className="truncate">{isReady(settings) ? settingsLabel(settings) : "Not set"}</span>
+            <Settings2 size={13} className="shrink-0" />
           </button>
         </div>
       </header>
 
       {view.kind === "working" && (
-        <main className="mx-auto flex min-h-[70vh] max-w-xl flex-col items-center justify-center px-6 text-center">
-          <Loader2 size={28} className="apex-spin text-accent" />
-          <h1 className="mt-6 text-xl font-semibold">Writing your plan</h1>
-          <p className="mt-2 text-muted">
+        <main className="mx-auto flex min-h-[78vh] max-w-xl flex-col items-center justify-center px-6 text-center">
+          <p className="tag text-accent">
+            <span className="apex-pulse">●</span> Status: compiling
+          </p>
+          <h1 className="mt-5 text-4xl font-black uppercase tracking-tight sm:text-5xl">
+            Writing your <span className="text-accent glow">plan</span>
+          </h1>
+          <p className="mt-4 text-muted">
             {settings ? settingsLabel(settings) : "The model"} is reading your notes and planning features, architecture and build steps.
           </p>
-          <p className="mt-6 font-mono text-2xl tabular-nums">{elapsed(now - view.startedAt)}</p>
-          <p className="mt-2 text-sm text-faint">
-            Usually under two minutes{settings?.provider === "ollama" ? "; local models can take much longer" : ""}.
+          <p className="mt-8 font-mono text-5xl font-semibold tabular-nums text-accent glow">{elapsed(now - view.startedAt)}</p>
+          <div className="relative mt-6 h-px w-64 overflow-hidden bg-line">
+            <div className="apex-scan absolute inset-y-0 w-1/4 bg-accent" />
+          </div>
+          <p className="tag mt-6 text-faint">
+            Usually under two minutes{settings?.provider === "ollama" ? " · local models take longer" : ""}
           </p>
-          <button onClick={cancel} className="mt-8 text-sm text-muted hover:text-ink">
+          <button onClick={cancel} className="tag mt-10 border border-line px-4 py-2 text-muted hover:border-bad/60 hover:text-bad">
             Cancel
           </button>
         </main>
@@ -154,17 +169,24 @@ export default function App() {
       )}
 
       {(view.kind === "compose" || (view.kind === "plan" && !current)) && (
-        <main className="mx-auto max-w-3xl px-4 pb-24 pt-12 sm:px-6 sm:pt-20">
-          <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-5xl">Turn messy notes into a plan you can build.</h1>
-          <p className="mt-4 max-w-2xl text-pretty text-lg text-muted">
-            Paste anything: bullet points, a voice-memo transcript, half an idea. Apex writes the features, architecture and build steps, and tells you what you
-            still need to decide.
+        <main className="mx-auto max-w-4xl px-4 pb-24 pt-14 sm:px-6 sm:pt-20">
+          <p className="tag text-center text-accent">[ Messy notes → build-ready plan ]</p>
+          <h1 className="mt-5 text-center text-[2.6rem] font-black uppercase leading-[0.95] tracking-tight sm:text-7xl">
+            Turn messy notes into
+            <span className="mt-1 block text-accent glow">build-ready plans</span>
+          </h1>
+          <p className="mx-auto mt-6 max-w-2xl text-center text-base text-muted sm:text-lg">
+            Paste anything: bullet points, a voice-memo transcript, half an idea. Get the features, architecture and build steps, plus the decisions you still
+            need to make.
           </p>
 
-          <div className="mt-8 rounded-2xl border border-line bg-surface focus-within:border-faint">
-            <label htmlFor="notes" className="sr-only">
-              Your notes
-            </label>
+          <div className="mt-10 border border-line bg-surface/90 focus-within:border-accent/50 focus-within:glow-box">
+            <div className="flex items-center justify-between border-b border-line px-4 py-2.5">
+              <label htmlFor="notes" className="tag text-ink">
+                [ Your notes ]
+              </label>
+              <span className="tag text-faint">{notes.length.toLocaleString()} chars</span>
+            </div>
             <textarea
               id="notes"
               value={notes}
@@ -176,44 +198,44 @@ export default function App() {
                 if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) generate();
               }}
               placeholder="e.g. app for dog walkers. owners book walks, pay by card, walkers get rated. start in Austin. me + 1 dev, 2 months…"
-              className="block min-h-[260px] w-full resize-y rounded-t-2xl bg-transparent p-5 text-base leading-relaxed text-ink placeholder:text-faint focus:outline-none"
+              className="block min-h-[260px] w-full resize-y bg-transparent p-4 font-mono text-[15px] leading-relaxed text-ink placeholder:text-faint focus:outline-none"
             />
             {showContext && (
-              <div className="grid gap-4 border-t border-line p-5 sm:grid-cols-2">
-                <label className="block text-sm">
-                  <span className="mb-1.5 block font-medium">What are you building?</span>
+              <div className="grid gap-4 border-t border-line p-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className="tag mb-2 block text-muted">What are you building?</span>
                   <select
                     value={projectType}
                     onChange={(e) => setProjectType(e.target.value)}
-                    className="w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm focus:border-accent focus:outline-none"
+                    className="w-full border border-line bg-bg px-3 py-2 text-sm focus:border-accent focus:outline-none"
                   >
                     {PROJECT_TYPES.map((t) => (
                       <option key={t}>{t}</option>
                     ))}
                   </select>
                 </label>
-                <label className="block text-sm">
-                  <span className="mb-1.5 flex items-center gap-1.5 font-medium">
-                    <Github size={14} /> Existing code <span className="font-normal text-muted">(public repo)</span>
+                <label className="block">
+                  <span className="tag mb-2 flex items-center gap-1.5 text-muted">
+                    <Github size={13} /> Existing code (public repo)
                   </span>
                   <input
                     value={repoUrl}
                     onChange={(e) => setRepoUrl(e.target.value)}
                     placeholder="github.com/you/project"
                     spellCheck={false}
-                    className="w-full rounded-lg border border-line bg-bg px-3 py-2 text-sm placeholder:text-faint focus:border-accent focus:outline-none"
+                    className="w-full border border-line bg-bg px-3 py-2 font-mono text-sm placeholder:text-faint focus:border-accent focus:outline-none"
                   />
                 </label>
               </div>
             )}
             <div className="flex flex-col gap-3 border-t border-line p-3 sm:flex-row sm:items-center sm:justify-between">
-              <button onClick={() => setShowContext((v) => !v)} className="inline-flex items-center gap-1.5 px-2 text-sm text-muted hover:text-ink" aria-expanded={showContext}>
-                {showContext ? <X size={14} /> : <ChevronDown size={14} />}
+              <button onClick={() => setShowContext((v) => !v)} className="tag inline-flex items-center gap-1.5 px-2 py-1 text-muted hover:text-ink" aria-expanded={showContext}>
+                {showContext ? <X size={13} /> : <ChevronDown size={13} />}
                 {showContext ? "Hide details" : "Add details (optional)"}
               </button>
               <button
                 onClick={() => generate()}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-5 py-2.5 font-semibold text-accent-ink hover:brightness-110"
+                className="glow-btn inline-flex items-center justify-center gap-2 bg-accent px-6 py-3 font-mono text-sm font-bold uppercase tracking-[0.14em] text-accent-ink transition hover:brightness-110"
               >
                 Write my plan <ArrowRight size={17} />
               </button>
@@ -221,35 +243,50 @@ export default function App() {
           </div>
 
           {error && (
-            <div role="alert" className="mt-4 rounded-xl border border-bad/40 bg-bad/10 p-4 text-sm text-bad">
+            <div role="alert" className="mt-4 border border-bad/50 bg-bad/10 p-4 text-sm text-bad">
+              <p className="tag mb-1">[ Error ]</p>
               <p>{error}</p>
-              <button onClick={() => setSettingsOpen({})} className="mt-2 text-ink underline-offset-2 hover:underline">
-                Check model settings
+              <button onClick={() => setSettingsOpen({})} className="tag mt-3 text-ink underline-offset-4 hover:underline">
+                Check engine settings
               </button>
+              {ollamaBlocked && (
+                <div className="mt-4">
+                  <OllamaHelp />
+                </div>
+              )}
             </div>
           )}
 
           {!notes.trim() && (
-            <div className="mt-5 flex flex-wrap items-center gap-2 text-sm">
-              <span className="text-faint">Try an example:</span>
-              {EXAMPLES.map((ex) => (
-                <button key={ex.label} onClick={() => setNotes(ex.notes)} className="rounded-full border border-line px-3 py-1 text-muted hover:border-faint hover:text-ink">
-                  {ex.label}
-                </button>
-              ))}
+            <div className="mt-10">
+              <p className="tag text-faint">/ Or start from an example</p>
+              <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                {EXAMPLES.map((ex) => (
+                  <button
+                    key={ex.label}
+                    onClick={() => setNotes(ex.notes)}
+                    className="group border border-line bg-surface/80 p-4 text-left transition hover:border-accent/60"
+                  >
+                    <p className="text-sm font-bold uppercase tracking-tight group-hover:text-accent">{ex.label}</p>
+                    <p className="mt-1.5 text-xs leading-relaxed text-muted">{ex.blurb}</p>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
           {plans.length > 0 && (
             <section className="mt-16">
-              <h2 className="text-sm font-semibold text-muted">Your plans</h2>
-              <p className="mt-1 text-xs text-faint">Saved in this browser only.</p>
-              <ul className="mt-4 divide-y divide-line rounded-xl border border-line">
+              <div className="flex items-baseline justify-between">
+                <h2 className="tag text-ink">[ Your plans ]</h2>
+                <p className="tag text-faint">Saved in this browser</p>
+              </div>
+              <ul className="mt-3 divide-y divide-line border border-line bg-surface/80">
                 {plans.map((p) => (
                   <li key={p.id} className="group flex items-center gap-3">
-                    <button onClick={() => openPlan(p.id)} className="min-w-0 flex-1 px-4 py-3 text-left hover:bg-surface">
-                      <p className="truncate font-medium">{p.plan.title || "Untitled plan"}</p>
-                      <p className="truncate text-xs text-faint">
+                    <button onClick={() => openPlan(p.id)} className="min-w-0 flex-1 px-4 py-3 text-left hover:bg-raised">
+                      <p className="truncate font-bold uppercase tracking-tight group-hover:text-accent">{p.plan.title || "Untitled plan"}</p>
+                      <p className="tag mt-1 truncate text-faint">
                         {new Date(p.createdAt).toLocaleDateString(undefined, { dateStyle: "medium" })} · {p.model}
                       </p>
                     </button>
@@ -257,7 +294,7 @@ export default function App() {
                       onClick={() => {
                         if (window.confirm(`Delete "${p.plan.title || "Untitled plan"}"?`)) setPlans(deletePlan(p.id));
                       }}
-                      className="mr-3 rounded-md p-2 text-faint hover:bg-raised hover:text-bad"
+                      className="mr-3 p-2 text-faint hover:text-bad"
                       aria-label={`Delete ${p.plan.title || "plan"}`}
                     >
                       <Trash2 size={15} />

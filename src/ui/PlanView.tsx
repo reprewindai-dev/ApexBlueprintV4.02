@@ -35,18 +35,21 @@ function useCopied(): [string | null, (key: string, text: string) => void] {
   return [copied, copy];
 }
 
-function Section(props: { id: string; title: string; children: ReactNode; hidden?: boolean }) {
+function Section(props: { id: string; title: string; n?: number; children: ReactNode; hidden?: boolean }) {
   if (props.hidden) return null;
   return (
-    <section id={props.id} className="scroll-mt-24 border-t border-line py-8 first:border-t-0 first:pt-0">
-      <h2 className="mb-4 text-lg font-semibold tracking-tight">{props.title}</h2>
+    <section id={props.id} className="scroll-mt-24 border-t border-line py-9 first:border-t-0 first:pt-0">
+      <h2 className="mb-5 flex items-baseline gap-3">
+        {props.n !== undefined && <span className="tag text-accent">{String(props.n).padStart(2, "0")} /</span>}
+        <span className="text-xl font-black uppercase tracking-tight">{props.title}</span>
+      </h2>
       {props.children}
     </section>
   );
 }
 
 const Chip = ({ children, cls }: { children: ReactNode; cls: string }) => (
-  <span className={`inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[11px] font-medium ${cls}`}>{children}</span>
+  <span className={`tag inline-flex shrink-0 items-center border px-2 py-0.5 !text-[10px] ${cls}`}>{children}</span>
 );
 
 function sections(p: Plan) {
@@ -72,6 +75,7 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
   const nav = sections(p);
   const [active, setActive] = useState(nav[0]?.id);
   const slug = fileSlug(p);
+  const num = (id: string) => nav.findIndex((x) => x.id === id) + 1;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -88,35 +92,45 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
     return () => observer.disconnect();
   }, [record.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const btn = "inline-flex items-center gap-2 rounded-lg border border-line px-3 py-2 text-sm text-ink hover:bg-raised";
+  const btn = "tag inline-flex items-center gap-2 border border-line bg-surface/80 px-3 py-2.5 text-ink hover:border-accent/60 hover:text-accent";
   const must = p.features.filter((f) => f.priority === "must").length;
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-24 pt-8 sm:px-6">
       <header className="print-plain">
-        <p className="no-print text-xs text-faint">
-          Written by {record.model} · {new Date(record.createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
+        <p className="tag no-print text-faint">
+          [ Plan ] · Engine: {record.model} · {new Date(record.createdAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}
         </p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">{p.title || "Untitled plan"}</h1>
-        {p.oneLiner && <p className="mt-3 max-w-3xl text-lg text-muted">{p.oneLiner}</p>}
+        <h1 className="mt-3 text-4xl font-black uppercase leading-[0.95] tracking-tight sm:text-6xl">{p.title || "Untitled plan"}</h1>
+        {p.oneLiner && <p className="mt-4 max-w-3xl text-lg text-muted">{p.oneLiner}</p>}
         {p.features.length > 0 && (
-          <p className="mt-4 text-sm text-faint">
-            {p.features.length} features ({must} for the first version) · {p.milestones.length} milestones · {p.openQuestions.length} open questions
-          </p>
+          <div className="mt-6 grid max-w-2xl grid-cols-2 border border-line sm:grid-cols-4">
+            {[
+              ["Features", p.features.length],
+              ["First version", must],
+              ["Milestones", p.milestones.length],
+              ["Open questions", p.openQuestions.length],
+            ].map(([k, v]) => (
+              <div key={k as string} className="border-line p-3 [&:not(:last-child)]:border-r">
+                <p className="font-mono text-2xl font-semibold text-accent glow">{v}</p>
+                <p className="tag mt-1 !text-[10px] text-faint">{k}</p>
+              </div>
+            ))}
+          </div>
         )}
 
         <div className="no-print mt-6 flex flex-wrap gap-2">
           <div className="relative">
-            <button className={`${btn} border-accent/50 bg-accent/10`} onClick={() => setBriefOpen((v) => !v)} aria-expanded={briefOpen}>
+            <button className="glow-btn tag inline-flex items-center gap-2 bg-accent px-3 py-2.5 !font-bold text-accent-ink hover:brightness-110" onClick={() => setBriefOpen((v) => !v)} aria-expanded={briefOpen}>
               <Bot size={16} /> Hand to a coding agent <ChevronDown size={14} />
             </button>
             {briefOpen && (
-              <div className="absolute left-0 z-20 mt-2 w-72 rounded-xl border border-line bg-surface p-2 shadow-xl">
+              <div className="absolute left-0 z-20 mt-2 w-72  border border-line bg-surface/80 p-2 shadow-xl">
                 <p className="px-2 pb-2 pt-1 text-xs text-muted">A brief for Claude Code, Cursor or Codex: build milestone 1, with tests for every acceptance criterion.</p>
-                <button className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-raised" onClick={() => copy("brief", planToAgentBrief(record))}>
+                <button className="flex w-full items-center gap-2  px-2 py-2 text-sm hover:bg-raised" onClick={() => copy("brief", planToAgentBrief(record))}>
                   {copied === "brief" ? <Check size={15} className="text-good" /> : <Copy size={15} />} {copied === "brief" ? "Copied" : "Copy brief"}
                 </button>
-                <button className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-raised" onClick={() => download(`${slug}-agent-brief.md`, planToAgentBrief(record))}>
+                <button className="flex w-full items-center gap-2  px-2 py-2 text-sm hover:bg-raised" onClick={() => download(`${slug}-agent-brief.md`, planToAgentBrief(record))}>
                   <Download size={15} /> Download brief (.md)
                 </button>
               </div>
@@ -138,7 +152,7 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
       </header>
 
       {record.missing.length > 0 && (
-        <div className="no-print mt-6 flex flex-col gap-3 rounded-xl border border-warn/40 bg-warn/5 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
+        <div className="no-print mt-6 flex flex-col gap-3  border border-warn/40 bg-warn/5 p-4 text-sm sm:flex-row sm:items-center sm:justify-between">
           <p className="text-warn">
             The model left out: {record.missing.join(", ")}. Try again, or choose a stronger model.
           </p>
@@ -149,13 +163,14 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
       )}
 
       {p.openQuestions.length > 0 && (
-        <div className="print-plain mt-8 rounded-2xl border border-accent/30 bg-accent/[0.06] p-5 sm:p-6">
-          <h2 className="text-base font-semibold">Decide these first</h2>
+        <div className="print-plain glow-box mt-10 border border-accent/40 bg-accent/[0.05] p-5 sm:p-6">
+          <p className="tag text-accent">[ Action required ]</p>
+          <h2 className="mt-2 text-2xl font-black uppercase tracking-tight">Decide these first</h2>
           <p className="mt-1 text-sm text-muted">Your notes don't settle these, and each one changes the plan.</p>
           <ol className="mt-4 space-y-3">
             {p.openQuestions.map((q, i) => (
               <li key={i} className="flex gap-3">
-                <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent/15 text-xs font-semibold text-accent">{i + 1}</span>
+                <span className="tag mt-1 shrink-0 text-accent">Q{i + 1}</span>
                 <div>
                   <p className="font-medium">{q.question}</p>
                   {q.whyItMatters && <p className="mt-0.5 text-sm text-muted">{q.whyItMatters}</p>}
@@ -177,9 +192,9 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
                     e.preventDefault();
                     document.getElementById(s.id)?.scrollIntoView({ behavior: "smooth" });
                   }}
-                  className={`block rounded-md px-3 py-1.5 ${active === s.id ? "bg-raised text-ink" : "text-muted hover:text-ink"}`}
+                  className={`tag block border-l-2 px-3 py-2 ${active === s.id ? "border-accent text-accent" : "border-line text-faint hover:text-ink"}`}
                 >
-                  {s.title}
+                  {String(nav.indexOf(s) + 1).padStart(2, "0")} {s.title}
                 </a>
               </li>
             ))}
@@ -187,13 +202,13 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
         </nav>
 
         <div className="print-plain min-w-0 max-w-3xl">
-          <Section id="overview" title="Overview" hidden={!nav.some((s) => s.id === "overview")}>
+          <Section id="overview" n={num("overview")} title="Overview" hidden={!nav.some((s) => s.id === "overview")}>
             <dl className="space-y-4">
               {[["The problem", p.summary.problem], ["The product", p.summary.solution], ["Who it's for", p.summary.audience]].map(
                 ([k, v]) =>
                   v && (
                     <div key={k}>
-                      <dt className="text-xs font-medium uppercase tracking-wide text-faint">{k}</dt>
+                      <dt className="tag text-faint">{k}</dt>
                       <dd className="mt-1 leading-relaxed">{v}</dd>
                     </div>
                   ),
@@ -202,7 +217,7 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             {p.users.length > 0 && (
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 {p.users.map((u, i) => (
-                  <div key={i} className="rounded-xl border border-line bg-surface p-4">
+                  <div key={i} className=" border border-line bg-surface/80 p-4">
                     <p className="font-medium">{u.name}</p>
                     {u.goal && <p className="mt-2 text-sm"><span className="text-faint">Wants: </span>{u.goal}</p>}
                     {u.pain && <p className="mt-1 text-sm"><span className="text-faint">Today: </span>{u.pain}</p>}
@@ -212,13 +227,13 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             )}
           </Section>
 
-          <Section id="features" title="Features" hidden={!p.features.length}>
+          <Section id="features" n={num("features")} title="Features" hidden={!p.features.length}>
             <div className="space-y-3">
               {(["must", "should", "later"] as const).flatMap((prio) =>
                 p.features
                   .filter((f) => f.priority === prio)
                   .map((f, i) => (
-                    <details key={`${prio}-${i}`} className="group rounded-xl border border-line bg-surface" open={prio === "must"}>
+                    <details key={`${prio}-${i}`} className="group  border border-line bg-surface/80" open={prio === "must"}>
                       <summary className="flex cursor-pointer list-none items-start justify-between gap-3 p-4">
                         <div>
                           <p className="font-medium">{f.name}</p>
@@ -228,7 +243,7 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
                       </summary>
                       {f.acceptanceCriteria.length > 0 && (
                         <div className="border-t border-line px-4 pb-4 pt-3">
-                          <p className="text-xs font-medium uppercase tracking-wide text-faint">Done when</p>
+                          <p className="tag text-faint">Done when</p>
                           <ul className="mt-2 space-y-1.5 text-sm">
                             {f.acceptanceCriteria.map((c, j) => (
                               <li key={j} className="flex gap-2">
@@ -245,10 +260,10 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             </div>
           </Section>
 
-          <Section id="flows" title="User flows" hidden={!p.userFlows.length}>
+          <Section id="flows" n={num("flows")} title="User flows" hidden={!p.userFlows.length}>
             <div className="grid gap-4 sm:grid-cols-2">
               {p.userFlows.map((f, i) => (
-                <div key={i} className="rounded-xl border border-line bg-surface p-4">
+                <div key={i} className=" border border-line bg-surface/80 p-4">
                   <p className="font-medium">{f.name}</p>
                   <ol className="mt-3 space-y-2 text-sm">
                     {f.steps.map((s, j) => (
@@ -263,10 +278,10 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             </div>
           </Section>
 
-          <Section id="architecture" title="Architecture" hidden={!nav.some((s) => s.id === "architecture")}>
+          <Section id="architecture" n={num("architecture")} title="Architecture" hidden={!nav.some((s) => s.id === "architecture")}>
             {p.architecture.overview && <p className="leading-relaxed">{p.architecture.overview}</p>}
             {p.architecture.components.length > 0 && (
-              <div className="mt-5 divide-y divide-line rounded-xl border border-line bg-surface">
+              <div className="mt-5 divide-y divide-line  border border-line bg-surface/80">
                 {p.architecture.components.map((c, i) => (
                   <div key={i} className="grid gap-1 p-4 sm:grid-cols-[1fr_auto] sm:gap-4">
                     <div>
@@ -292,10 +307,10 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             )}
           </Section>
 
-          <Section id="data" title="Data model" hidden={!p.dataModel.length}>
+          <Section id="data" n={num("data")} title="Data model" hidden={!p.dataModel.length}>
             <div className="grid gap-3 sm:grid-cols-2">
               {p.dataModel.map((d, i) => (
-                <div key={i} className="rounded-xl border border-line bg-surface p-4">
+                <div key={i} className=" border border-line bg-surface/80 p-4">
                   <p className="font-medium">{d.entity}</p>
                   <ul className="mt-2 space-y-0.5 font-mono text-xs text-muted">
                     {d.fields.map((f, j) => (
@@ -308,8 +323,8 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             </div>
           </Section>
 
-          <Section id="api" title="API" hidden={!p.api.length}>
-            <div className="overflow-x-auto rounded-xl border border-line">
+          <Section id="api" n={num("api")} title="API" hidden={!p.api.length}>
+            <div className="overflow-x-auto  border border-line">
               <table className="w-full text-left text-sm">
                 <tbody className="divide-y divide-line">
                   {p.api.map((a, i) => (
@@ -324,12 +339,12 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             </div>
           </Section>
 
-          <Section id="build" title="Build plan" hidden={!p.milestones.length}>
+          <Section id="build" n={num("build")} title="Build plan" hidden={!p.milestones.length}>
             <ol className="relative space-y-6 border-l border-line pl-6">
               {p.milestones.map((m, i) => (
                 <li key={i} className="relative">
-                  <span className="absolute -left-[33px] flex h-4 w-4 items-center justify-center rounded-full border border-accent bg-bg">
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  <span className="absolute -left-[33px] flex h-4 w-4 items-center justify-center  border border-accent bg-bg">
+                    <span className="h-1.5 w-1.5  bg-accent" />
                   </span>
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
                     <p className="font-medium">
@@ -350,10 +365,10 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             </ol>
           </Section>
 
-          <Section id="risks" title="Risks" hidden={!p.risks.length}>
+          <Section id="risks" n={num("risks")} title="Risks" hidden={!p.risks.length}>
             <div className="space-y-3">
               {p.risks.map((r, i) => (
-                <div key={i} className="rounded-xl border border-line bg-surface p-4">
+                <div key={i} className=" border border-line bg-surface/80 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <p className="font-medium">{r.risk}</p>
                     <Chip cls={IMPACT[r.impact]}>{r.impact} impact</Chip>
@@ -364,13 +379,13 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             </div>
           </Section>
 
-          <Section id="business" title="Business" hidden={!nav.some((s) => s.id === "business")}>
+          <Section id="business" n={num("business")} title="Business" hidden={!nav.some((s) => s.id === "business")}>
             <dl className="space-y-4">
               {[["Pricing", p.business.pricing], ["Getting the first customers", p.business.goToMarket]].map(
                 ([k, v]) =>
                   v && (
                     <div key={k}>
-                      <dt className="text-xs font-medium uppercase tracking-wide text-faint">{k}</dt>
+                      <dt className="tag text-faint">{k}</dt>
                       <dd className="mt-1 leading-relaxed">{v}</dd>
                     </div>
                   ),
@@ -388,7 +403,7 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             )}
           </Section>
 
-          <Section id="assumptions" title="Assumptions" hidden={!p.assumptions.length}>
+          <Section id="assumptions" n={num("assumptions")} title="Assumptions" hidden={!p.assumptions.length}>
             <p className="mb-3 text-sm text-muted">Apex decided these because your notes didn't say. Change any that are wrong and regenerate.</p>
             <ul className="list-disc space-y-1.5 pl-5 text-sm">
               {p.assumptions.map((a, i) => (
@@ -397,7 +412,7 @@ export function PlanView(props: { record: PlanRecord; onEdit: () => void; onRege
             </ul>
           </Section>
 
-          <details className="no-print mt-4 rounded-xl border border-line">
+          <details className="no-print mt-4  border border-line">
             <summary className="cursor-pointer px-4 py-3 text-sm text-muted">Your notes</summary>
             <pre className="whitespace-pre-wrap border-t border-line px-4 py-3 font-sans text-sm text-muted">{record.notes}</pre>
           </details>

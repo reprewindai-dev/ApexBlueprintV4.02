@@ -5,6 +5,7 @@ import type { ModelChoice } from "../plan/generate";
 import { shouldUseBrowserOllama } from "../core/ollama-url";
 import { friendlyError } from "../plan/errors";
 import type { ModelSettings } from "./settings";
+import { diagnoseOllama, OllamaConnectionError } from "./ollama";
 
 export interface PlanRequest {
   notes: string;
@@ -22,11 +23,10 @@ export function toModelChoice(s: ModelSettings): ModelChoice {
   };
 }
 
-function browserOllamaError(url: string, err: unknown): Error {
-  return new Error(
-    `Could not reach Ollama at ${url} from this page (${(err as Error)?.message || err}). ` +
-      `Start Ollama with OLLAMA_ORIGINS=${window.location.origin} so this site may use it, then try again.`,
-  );
+async function ollamaError(baseUrl: string): Promise<Error> {
+  const state = await diagnoseOllama(baseUrl);
+  if (state === "ok") return new Error("Ollama is reachable, but the request failed. Try again.");
+  return new OllamaConnectionError(state, baseUrl);
 }
 
 export async function requestPlan(req: PlanRequest, settings: ModelSettings): Promise<PlanRecord> {
@@ -38,7 +38,7 @@ export async function requestPlan(req: PlanRequest, settings: ModelSettings): Pr
     try {
       return await generatePlan({ notes: req.notes, projectType: req.projectType, codebaseContext }, choice, {});
     } catch (err) {
-      if (err instanceof TypeError) throw browserOllamaError(settings.baseUrl, err);
+      if (err instanceof TypeError) throw await ollamaError(settings.baseUrl);
       throw new Error(friendlyError((err as Error).message));
     }
   }
@@ -53,12 +53,12 @@ export async function requestPlan(req: PlanRequest, settings: ModelSettings): Pr
   return body as PlanRecord;
 }
 
-export async function checkModel(settings: ModelSettings): Promise<{ ok: boolean; message: string }> {
+export async function checkModel(settings: ModelSettings): Promise<{ ok: boolean; message: string; error?: Error }> {
   try {
     await requestCheck(settings);
     return { ok: true, message: "Connected." };
   } catch (err) {
-    return { ok: false, message: (err as Error).message };
+    return { ok: false, message: (err as Error).message, error: err as Error };
   }
 }
 
@@ -69,8 +69,8 @@ async function requestCheck(settings: ModelSettings) {
     let resp: Response;
     try {
       resp = await fetch(`${base}/api/tags`);
-    } catch (err) {
-      throw browserOllamaError(settings.baseUrl, err);
+    } catch {
+      throw await ollamaError(settings.baseUrl);
     }
     if (!resp.ok) throw new Error(`Ollama answered with HTTP ${resp.status}.`);
     const tags = (await resp.json()) as { models?: { name: string }[] };

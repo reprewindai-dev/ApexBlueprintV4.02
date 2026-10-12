@@ -1,7 +1,8 @@
 // Sample notes, written the way people actually jot ideas down.
-export const EXAMPLES: { label: string; notes: string }[] = [
+export const EXAMPLES: { label: string; blurb: string; notes: string }[] = [
   {
     label: "Trainer client app",
+    blurb: "Session packs, bookings and renewal nudges for personal trainers.",
     notes: `personal trainers + small gyms keep losing clients and nobody notices until they're gone. everyone runs on whatsapp + a google sheet. trainer sells packs like 10 sessions for $400, client books a slot, then ghosts.
 
 want: trainer sets up packages, clients book slots from trainer's calendar, reminders the day before. when a pack gets low (2 left) nudge client to renew + pay - stripe. trainer dashboard shows who is slipping (missed 2 in a row / no booking in 10 days).
@@ -12,6 +13,7 @@ me + 1 dev, want trainers using it in ~2 months. charge trainers monthly, free f
   },
   {
     label: "Freelancer invoice chaser",
+    blurb: "Polite, escalating payment reminders that sound like you.",
     notes: `freelancers hate chasing late invoices. i have like 6 clients, 2 always pay late and i feel awkward emailing them.
 tool: connect my invoices (stripe invoices? or just upload pdf + amount + due date), it sends polite reminders on a schedule I choose - 3 days before, on due date, 7 days after, firmer tone each time. stops when paid. shows me who owes what.
 must sound like me not a robot. maybe ai writes the reminder in my voice from a sample email.
@@ -19,6 +21,7 @@ solo dev (me). want to sell it for like $9/mo. start with freelance designers - 
   },
   {
     label: "Neighborhood tool library",
+    blurb: "Lend and borrow tools across 150 households, even by text.",
     notes: `our street has 40 houses and everyone owns a ladder, drill, pressure washer they use twice a year. idea: tool sharing for a neighbourhood. list your tools, others request to borrow, you approve, agree pickup time. track who has what. deposit? reviews so people return stuff.
 start with my street + the 2 next to it, maybe 150 households. mostly older folks so must be dead simple, maybe works by text message too.
 no money at first. later maybe a small fee per borrow or city council grant`,
