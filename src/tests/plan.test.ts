@@ -5,6 +5,7 @@ import type { AddressInfo } from "node:net";
 import { buildPlanPrompts, extractJson, normalizePlan, parsePlanText, SYSTEM_PROMPT, type PlanRecord } from "../plan/plan";
 import { planToAgentBrief, planToMarkdown, fileSlug } from "../plan/export";
 import { handleGenerate, handleCheckModel } from "../plan/http";
+import { friendlyError } from "../plan/errors";
 
 const SAMPLE = {
   title: "Pack Tracker",
@@ -94,7 +95,7 @@ describe("HTTP handlers", () => {
     assert.strictEqual((await handleGenerate({ notes: "  " }, {})).status, 400);
     assert.strictEqual((await handleGenerate({ notes: "x".repeat(60_001) }, {})).status, 413);
     const noProvider = await handleGenerate({ notes: "idea", model: {} }, {});
-    assert.strictEqual(noProvider.status, 502);
+    assert.strictEqual(noProvider.status, 400);
     assert.match((noProvider.body as { error: string }).error, /Choose a model provider/);
   });
 
@@ -135,5 +136,14 @@ describe("HTTP handlers", () => {
     } finally {
       server.close();
     }
+  });
+});
+
+describe("provider errors", () => {
+  it("explains common provider failures and passes unknown ones through", () => {
+    assert.match(friendlyError('Anthropic API failed: {"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"}}'), /rejected your API key/);
+    assert.match(friendlyError("OPENAI API failed: You exceeded your current quota"), /out of credit/);
+    assert.match(friendlyError('OLLAMA API failed: {"error":"model \'llama9\' not found"}'), /model name was not found/);
+    assert.strictEqual(friendlyError("something new"), "something new");
   });
 });

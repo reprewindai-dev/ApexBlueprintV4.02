@@ -1,6 +1,7 @@
 // Request handlers shared by the Cloudflare Pages Functions and the Express server.
 import { callBlueprintModel, type LlmEnv } from "../server/blueprint-core";
 import { generatePlan, type ModelChoice } from "./generate";
+import { friendlyError } from "./errors";
 import { readRepoContext } from "./repo";
 
 export interface HandlerResult {
@@ -25,15 +26,20 @@ function readChoice(raw: unknown, env: LlmEnv): ModelChoice {
   };
 }
 
-const message = (err: unknown) => (err instanceof Error ? err.message : String(err));
+const message = (err: unknown) => friendlyError(err instanceof Error ? err.message : String(err));
 
 export async function handleGenerate(body: unknown, env: LlmEnv): Promise<HandlerResult> {
   const b = (body && typeof body === "object" ? body : {}) as Record<string, unknown>;
   const notes = typeof b.notes === "string" ? b.notes : "";
   if (!notes.trim()) return { status: 400, body: { error: "Add some notes first." } };
   if (notes.length > MAX_NOTES) return { status: 413, body: { error: `Notes are too long (limit ${MAX_NOTES.toLocaleString()} characters).` } };
+  let choice: ModelChoice;
   try {
-    const choice = readChoice(b.model, env);
+    choice = readChoice(b.model, env);
+  } catch (err) {
+    return { status: 400, body: { error: message(err) } };
+  }
+  try {
     const repoUrl = typeof b.repoUrl === "string" ? b.repoUrl.trim() : "";
     const codebaseContext = repoUrl ? await readRepoContext(repoUrl, env.GITHUB_TOKEN) : undefined;
     const projectType = typeof b.projectType === "string" ? b.projectType : undefined;

@@ -3,6 +3,7 @@
 import type { PlanRecord } from "../plan/plan";
 import type { ModelChoice } from "../plan/generate";
 import { shouldUseBrowserOllama } from "../core/ollama-url";
+import { friendlyError } from "../plan/errors";
 import type { ModelSettings } from "./settings";
 
 export interface PlanRequest {
@@ -38,7 +39,7 @@ export async function requestPlan(req: PlanRequest, settings: ModelSettings): Pr
       return await generatePlan({ notes: req.notes, projectType: req.projectType, codebaseContext }, choice, {});
     } catch (err) {
       if (err instanceof TypeError) throw browserOllamaError(settings.baseUrl, err);
-      throw err;
+      throw new Error(friendlyError((err as Error).message));
     }
   }
 
