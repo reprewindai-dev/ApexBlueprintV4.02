@@ -1,6 +1,7 @@
 // Request handlers shared by the Cloudflare Pages Functions and the Express server.
 import { callBlueprintModel, type LlmEnv } from "../server/blueprint-core";
 import { generatePlan, type ModelChoice } from "./generate";
+import { MAX_NOTES } from "./plan";
 import { friendlyError } from "./errors";
 import { readRepoContext } from "./repo";
 
@@ -10,7 +11,6 @@ export interface HandlerResult {
 }
 
 const PROVIDERS = new Set(["anthropic", "openai", "gemini", "deepseek", "ollama", "llama", "custom"]);
-const MAX_NOTES = 60_000;
 
 function readChoice(raw: unknown, env: LlmEnv): ModelChoice {
   const m = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;

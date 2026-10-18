@@ -2,7 +2,8 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 import http from "node:http";
 import type { AddressInfo } from "node:net";
-import { buildPlanPrompts, extractJson, normalizePlan, parsePlanText, SYSTEM_PROMPT, type PlanRecord } from "../plan/plan";
+import { buildPlanPrompts, estimateTokens, extractJson, MAX_NOTES, normalizePlan, parsePlanText, SYSTEM_PROMPT, type PlanRecord } from "../plan/plan";
+import { ollamaContextSize } from "../server/blueprint-core";
 import { planToAgentBrief, planToMarkdown, fileSlug } from "../plan/export";
 import { handleGenerate, handleCheckModel } from "../plan/http";
 import { friendlyError } from "../plan/errors";
@@ -93,7 +94,7 @@ describe("exports", () => {
 describe("HTTP handlers", () => {
   it("validates input before calling any model", async () => {
     assert.strictEqual((await handleGenerate({ notes: "  " }, {})).status, 400);
-    assert.strictEqual((await handleGenerate({ notes: "x".repeat(60_001) }, {})).status, 413);
+    assert.strictEqual((await handleGenerate({ notes: "x".repeat(MAX_NOTES + 1) }, {})).status, 413);
     const noProvider = await handleGenerate({ notes: "idea", model: {} }, {});
     assert.strictEqual(noProvider.status, 400);
     assert.match((noProvider.body as { error: string }).error, /Choose a model provider/);
@@ -133,21 +134,132 @@ describe("HTTP handlers", () => {
 
       const check = await handleCheckModel({ model: { selectedProvider: "custom", customUrl: url, modelName: "test-model" } }, {});
       assert.deepStrictEqual(check.body, { ok: true });
-
-      // In Docker, a localhost Ollama address from the browser goes to OLLAMA_LOCAL_URL.
-      const viaDocker = await handleGenerate(
-        { notes: "x", model: { selectedProvider: "ollama", customUrl: "http://localhost:9/v1", modelName: "test-model" } },
-        { OLLAMA_LOCAL_URL: url },
-      );
-      assert.strictEqual(viaDocker.status, 200, JSON.stringify(viaDocker.body));
     } finally {
       server.close();
     }
+  });
+
+  it("asks Ollama for room for a full plan and holds the reply to the plan schema", async () => {
+    const reply = JSON.stringify(SAMPLE);
+    const fake = await fakeServer((body, res) => {
+      res.writeHead(200, { "Content-Type": "application/x-ndjson" });
+      if (body.messages[1].content.includes("too long")) {
+        res.end(JSON.stringify({ message: { content: reply.slice(0, 50) }, done: true, done_reason: "length" }) + "\n");
+        return;
+      }
+      for (const part of [reply.slice(0, 41), reply.slice(41)]) res.write(JSON.stringify({ message: { content: part }, done: false }) + "\n");
+      res.end(JSON.stringify({ message: { content: "" }, done: true, done_reason: "stop", prompt_eval_count: 1200, eval_count: 900 }) + "\n");
+    });
+    try {
+      // In Docker, a localhost Ollama address from the browser goes to OLLAMA_LOCAL_URL.
+      const result = await handleGenerate(
+        { notes: "trainer app idea", model: { selectedProvider: "ollama", customUrl: "http://localhost:9/v1", modelName: "llama3.2" } },
+        { OLLAMA_LOCAL_URL: `${fake.url}/v1` },
+      );
+      assert.strictEqual(result.status, 200, JSON.stringify(result.body));
+      const rec = result.body as PlanRecord;
+      assert.strictEqual(rec.plan.title, "Pack Tracker");
+      assert.deepStrictEqual(rec.usage, { inputTokens: 1200, outputTokens: 900 });
+      const seen = fake.requests[0];
+      assert.strictEqual(seen.path, "/api/chat");
+      assert.strictEqual(seen.headers["ngrok-skip-browser-warning"], "1");
+      // Apex sets the window itself (never leaves it to Ollama's own setting), sized to the prompt.
+      const prompt = seen.body.messages.map((m: { content: string }) => m.content).join("");
+      assert.strictEqual(seen.body.options.num_ctx, ollamaContextSize(estimateTokens(prompt)));
+      assert.ok(seen.body.options.num_ctx <= 12288, `num_ctx ${seen.body.options.num_ctx}`);
+      assert.deepStrictEqual(seen.body.format.required, Object.keys(SAMPLE));
+
+      const cut = await handleGenerate({ notes: "too long", model: { selectedProvider: "ollama", customUrl: fake.url } }, {});
+      assert.strictEqual(cut.status, 502);
+      assert.match((cut.body as { error: string }).error, /cut off/);
+    } finally {
+      fake.close();
+    }
+  });
+
+  it("asks Claude for a schema-bound plan with room to think, and reports a cut-off reply", async () => {
+    const reply = JSON.stringify(SAMPLE);
+    const sse = (event: unknown) => `data: ${JSON.stringify(event)}\n\n`;
+    const fake = await fakeServer((body, res) => {
+      res.writeHead(200, { "Content-Type": "text/event-stream" });
+      res.write(sse({ type: "message_start", message: { usage: { input_tokens: 2100, output_tokens: 1 } } }));
+      res.write(sse({ type: "content_block_delta", index: 0, delta: { type: "thinking_delta", thinking: "" } }));
+      for (const part of [reply.slice(0, 33), reply.slice(33)]) {
+        res.write(sse({ type: "content_block_delta", index: 1, delta: { type: "text_delta", text: part } }));
+      }
+      const stop = body.messages[0].content.includes("too long") ? "max_tokens" : "end_turn";
+      res.end(sse({ type: "message_delta", delta: { stop_reason: stop }, usage: { output_tokens: 7000 } }));
+    });
+    try {
+      const model = { selectedProvider: "anthropic", apiKey: "test-key", customUrl: fake.url, modelName: "claude-opus-5-5" };
+      const result = await handleGenerate({ notes: "trainer app idea", model }, {});
+      assert.strictEqual(result.status, 200, JSON.stringify(result.body));
+      const rec = result.body as PlanRecord;
+      assert.strictEqual(rec.plan.title, "Pack Tracker");
+      assert.deepStrictEqual(rec.usage, { inputTokens: 2100, outputTokens: 7000 });
+      const seen = fake.requests[0];
+      assert.strictEqual(seen.headers["x-api-key"], "test-key");
+      assert.strictEqual(seen.body.max_tokens, 64000);
+      assert.strictEqual(seen.body.output_config.effort, "high");
+      assert.strictEqual(seen.body.output_config.format.type, "json_schema");
+      assert.deepStrictEqual(seen.body.output_config.format.schema.required, Object.keys(SAMPLE));
+
+      // Older Claude models do not take output_config.
+      await handleGenerate({ notes: "x", model: { ...model, modelName: "claude-3-5-haiku-latest" } }, {});
+      assert.strictEqual(fake.requests[1].body.output_config, undefined);
+
+      const cut = await handleGenerate({ notes: "too long", model }, {});
+      assert.strictEqual(cut.status, 502);
+      assert.match((cut.body as { error: string }).error, /cut off/);
+    } finally {
+      fake.close();
+    }
+  });
+});
+
+// A local stand-in for a model server: records each request and lets the test answer it.
+async function fakeServer(answer: (body: any, res: http.ServerResponse) => void) {
+  const requests: { path: string; headers: http.IncomingHttpHeaders; body: any }[] = [];
+  const server = http.createServer((req, res) => {
+    let raw = "";
+    req.on("data", (c) => (raw += c));
+    req.on("end", () => {
+      const body = JSON.parse(raw);
+      requests.push({ path: req.url || "", headers: req.headers, body });
+      answer(body, res);
+    });
+  });
+  await new Promise<void>((r) => server.listen(0, "127.0.0.1", r));
+  return { url: `http://127.0.0.1:${(server.address() as AddressInfo).port}`, requests, close: () => server.close() };
+}
+
+describe("Ollama context budget", () => {
+  it("asks for enough room for the notes and refuses notes a local model cannot read", () => {
+    assert.strictEqual(ollamaContextSize(0), 8192);
+    assert.strictEqual(ollamaContextSize(1_900), 10240);
+    assert.strictEqual(ollamaContextSize(12_000), 20480);
+    assert.strictEqual(ollamaContextSize(24_000), 32768);
+    assert.throws(() => ollamaContextSize(62_000), /too long for a model running on your computer/);
+    // The limit quoted is room for the notes, after Apex's own instructions: notes just over it
+    // are refused, and the message never quotes a limit the refused notes are under.
+    const instructions = 1_269;
+    const notesChars = 81_788;
+    assert.throws(
+      () => ollamaContextSize(instructions + Math.ceil(notesChars / 3.5), instructions),
+      (err: Error) => {
+        const quoted = Number(/about ([\d,]+) characters/.exec(err.message)![1].replace(/,/g, ""));
+        return quoted < notesChars;
+      },
+    );
   });
 });
 
 describe("provider errors", () => {
   it("explains common provider failures and passes unknown ones through", () => {
+    assert.match(
+      friendlyError('OLLAMA API failed: {"error":{"message":"llama-server process has terminated: error loading model: unable to allocate CPU_REPACK buffer"}}'),
+      /ran out of memory/,
+    );
     assert.match(friendlyError('Anthropic API failed: {"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"}}'), /rejected your API key/);
     assert.match(friendlyError("OPENAI API failed: You exceeded your current quota"), /out of credit/);
     assert.match(friendlyError('OLLAMA API failed: {"error":"model \'llama9\' not found"}'), /model name was not found/);

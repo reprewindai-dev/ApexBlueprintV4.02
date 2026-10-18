@@ -43,14 +43,23 @@ export interface OsSteps {
 
 export function ollamaSetupSteps(): OsSteps[] {
   const origins = originsValue();
+  const site = typeof window !== "undefined" && window.location.origin.startsWith("https://") ? window.location.origin : "https://apex.veklom.com";
+  // Prints 200 once Ollama allows this site, 403 while it does not.
+  const check = (curl: string, nul: string) =>
+    `${curl} -s -o ${nul} -w "%{http_code}" -H "Origin: ${site}" http://localhost:11434/api/version`;
   return [
     {
       id: "windows",
       label: "Windows",
       steps: [
-        { text: "Quit Ollama: right-click the llama icon by the clock, then Quit." },
-        { text: "Open PowerShell and run:", command: `setx OLLAMA_ORIGINS "${origins}"` },
-        { text: "Start Ollama again from the Start menu, then press Test connection." },
+        { text: "Open PowerShell and save the setting:", command: `setx OLLAMA_ORIGINS "${origins}"` },
+        {
+          text: "Stop every running copy of Ollama (quitting from the tray can leave one running):",
+          command: "Get-Process *ollama* | Stop-Process -Force",
+        },
+        { text: "Start Ollama again from the Start menu." },
+        { text: "Check it: this should print 200 (403 means Ollama still has the old setting).", command: check("curl.exe", "NUL") },
+        { text: "Press Test connection." },
       ],
     },
     {
@@ -58,7 +67,9 @@ export function ollamaSetupSteps(): OsSteps[] {
       label: "Mac",
       steps: [
         { text: "In Terminal, run:", command: `launchctl setenv OLLAMA_ORIGINS "${origins}"` },
-        { text: "Quit Ollama from the menu bar and open it again, then press Test connection." },
+        { text: "Quit Ollama from the menu bar and open it again." },
+        { text: "Check it: this should print 200.", command: check("curl", "/dev/null") },
+        { text: "Press Test connection." },
       ],
     },
     {
@@ -66,6 +77,7 @@ export function ollamaSetupSteps(): OsSteps[] {
       label: "Linux",
       steps: [
         { text: "Stop the Ollama service, then start it with:", command: `OLLAMA_ORIGINS="${origins}" ollama serve` },
+        { text: "In another terminal, check it: this should print 200.", command: check("curl", "/dev/null") },
       ],
     },
     {

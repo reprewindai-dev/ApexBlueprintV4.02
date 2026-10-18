@@ -9,6 +9,8 @@ const RULES: [RegExp, string][] = [
     "The provider is busy or rate-limiting your account. Wait a minute and try again."],
   [/model.{0,40}(not found|does not exist|not_found)|unknown model|no such model|model_not_found/i,
     "That model name was not found at the provider. Check the model in settings."],
+  [/unable to allocate|failed to allocate|bad_alloc|out of memory|requires more system memory|insufficient memory/i,
+    "Your computer ran out of memory loading the model. Close other programs, stop other Ollama models (`ollama ps`, then `ollama stop <name>`), or choose a smaller model."],
   [/ECONNREFUSED|fetch failed|ENOTFOUND|getaddrinfo/i,
     "Could not reach the model server. Check the address in model settings and that the server is running."],
 ];
