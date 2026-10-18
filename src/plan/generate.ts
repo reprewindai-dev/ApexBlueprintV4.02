@@ -1,7 +1,7 @@
 // One plan generation path for every surface: the Express server, the Cloudflare Pages
 // Function and the browser (for an Ollama running on the visitor's own machine).
 import { callBlueprintModel, type BlueprintModelOptions, type LlmEnv } from "../server/blueprint-core";
-import { buildPlanPrompts, parsePlanText, type PlanInput, type PlanRecord } from "./plan";
+import { buildPlanPrompts, parsePlanText, PLAN_SCHEMA, type PlanInput, type PlanRecord, type TokenUsage } from "./plan";
 
 export type ModelChoice = Pick<
   BlueprintModelOptions,
@@ -13,8 +13,8 @@ const DEFAULT_MODELS: Record<string, string> = {
   openai: "gpt-4o",
   gemini: "gemini-3.5-flash",
   deepseek: "deepseek-chat",
-  ollama: "llama3.2",
-  llama: "llama3.2",
+  ollama: "qwen2.5:14b",
+  llama: "qwen2.5:14b",
 };
 
 export function modelLabel(choice: ModelChoice): string {
@@ -29,7 +29,11 @@ function newId(): string {
 export async function generatePlan(input: PlanInput, choice: ModelChoice, env: LlmEnv): Promise<PlanRecord> {
   if (!input.notes?.trim()) throw new Error("Add some notes first.");
   const { systemPrompt, userPrompt } = buildPlanPrompts(input);
-  const text = await callBlueprintModel({ ...choice, systemPrompt, userPrompt, responseFormat: "json" }, env);
+  let usage: TokenUsage | undefined;
+  const text = await callBlueprintModel(
+    { ...choice, systemPrompt, userPrompt, responseFormat: "json", jsonSchema: PLAN_SCHEMA, onUsage: (u) => (usage = u) },
+    env,
+  );
   const { plan, missing } = parsePlanText(text);
   return {
     id: newId(),
@@ -38,5 +42,6 @@ export async function generatePlan(input: PlanInput, choice: ModelChoice, env: L
     model: modelLabel(choice),
     plan,
     missing,
+    ...(usage ? { usage } : {}),
   };
 }
