@@ -32,13 +32,16 @@ export const OLLAMA_CONTEXT_TOKENS = 8192;
 export const OLLAMA_MAX_CONTEXT = 32768;
 const OLLAMA_REPLY_TOKENS = 8192;
 
-export function ollamaContextSize(promptTokens: number): number {
+// promptTokens is the whole prompt; instructionTokens is the part Apex itself adds, so the
+// limit quoted to the user is the room left for their notes.
+export function ollamaContextSize(promptTokens: number, instructionTokens = 0): number {
   const needed = promptTokens + OLLAMA_REPLY_TOKENS;
   if (needed > OLLAMA_MAX_CONTEXT) {
-    const fits = Math.floor(((OLLAMA_MAX_CONTEXT - OLLAMA_REPLY_TOKENS) * 3.5) / 1000) * 1000;
+    const notes = (promptTokens - instructionTokens).toLocaleString();
+    const fits = Math.floor(((OLLAMA_MAX_CONTEXT - OLLAMA_REPLY_TOKENS - instructionTokens) * 3.5) / 1000) * 1000;
     throw new Error(
-      `These notes are too long for a model running on your computer (about ${promptTokens.toLocaleString()} tokens; ` +
-        `it can read about ${fits.toLocaleString()} characters at once). Shorten them, or choose a hosted model such as Claude.`,
+      `These notes are too long for a model running on your computer (about ${notes} tokens; ` +
+        `it can read about ${fits.toLocaleString()} characters of notes at once). Shorten them, or choose a hosted model such as Claude.`,
     );
   }
   return Math.max(OLLAMA_CONTEXT_TOKENS, Math.ceil(needed / 1024) * 1024);
@@ -64,7 +67,10 @@ async function callOllama(opts: BlueprintModelOptions, baseUrl: string, wantJson
       ],
       stream: true,
       ...(wantJson ? { format: opts.jsonSchema || "json" } : {}),
-      options: { num_ctx: ollamaContextSize(estimateTokens(opts.systemPrompt + opts.userPrompt)), temperature: 0.2 },
+      options: {
+        num_ctx: ollamaContextSize(estimateTokens(opts.systemPrompt + opts.userPrompt), estimateTokens(opts.systemPrompt)),
+        temperature: 0.2,
+      },
     }),
   });
   if (!response.ok) throw new Error(`OLLAMA API failed: ${await response.text()}`);

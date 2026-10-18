@@ -239,6 +239,17 @@ describe("Ollama context budget", () => {
     assert.strictEqual(ollamaContextSize(12_000), 20480);
     assert.strictEqual(ollamaContextSize(24_000), 32768);
     assert.throws(() => ollamaContextSize(62_000), /too long for a model running on your computer/);
+    // The limit quoted is room for the notes, after Apex's own instructions: notes just over it
+    // are refused, and the message never quotes a limit the refused notes are under.
+    const instructions = 1_269;
+    const notesChars = 81_788;
+    assert.throws(
+      () => ollamaContextSize(instructions + Math.ceil(notesChars / 3.5), instructions),
+      (err: Error) => {
+        const quoted = Number(/about ([\d,]+) characters/.exec(err.message)![1].replace(/,/g, ""));
+        return quoted < notesChars;
+      },
+    );
   });
 });
 
