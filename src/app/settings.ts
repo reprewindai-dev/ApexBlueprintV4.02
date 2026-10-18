@@ -28,10 +28,10 @@ export const PROVIDERS: ProviderInfo[] = [
   {
     id: "ollama",
     name: "Ollama (on your computer)",
-    defaultModel: "llama3.2",
+    defaultModel: "qwen2.5:14b",
     needsKey: false,
     defaultBaseUrl: "http://localhost:11434/v1",
-    note: "Free and private. Bigger models write better plans; 7B+ recommended.",
+    note: "Free and private. Bigger models write better plans: qwen2.5:14b is recommended; use qwen2.5:7b on a slower computer.",
   },
   { id: "custom", name: "Other (OpenAI-compatible)", defaultModel: "", needsKey: false, defaultBaseUrl: "https://" },
 ];
