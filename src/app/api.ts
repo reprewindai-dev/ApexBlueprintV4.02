@@ -75,7 +75,7 @@ async function requestCheck(settings: ModelSettings) {
     if (!resp.ok) throw new Error(`Ollama answered with HTTP ${resp.status}.`);
     const tags = (await resp.json()) as { models?: { name: string }[] };
     const names = (tags.models || []).map((m) => m.name);
-    const wanted = settings.model.trim() || "qwen2.5:14b";
+    const wanted = settings.model.trim() || "llama3.2";
     if (!names.some((n) => n === wanted || n.split(":")[0] === wanted)) {
       throw new Error(`Ollama is running but does not have "${wanted}". Run: ollama pull ${wanted}`);
     }

@@ -23,11 +23,12 @@ export interface BlueprintModelOptions {
   onUsage?: (usage: { inputTokens: number; outputTokens: number }) => void;
 }
 
-// Ollama gives a model a small context window unless asked for more; a full plan
-// (prompt plus several thousand tokens of reply) does not fit in it and comes back cut off.
-// Apex asks for enough room for the notes plus the reply, between these bounds. A larger
-// window needs more memory, so it is only used when the notes need it.
-export const OLLAMA_CONTEXT_TOKENS = 16384;
+// Apex always tells Ollama how big a context window to use instead of relying on Ollama's
+// own setting: its default (4096 on a computer without a GPU) cuts a full plan off, and a
+// raised OLLAMA_CONTEXT_LENGTH can ask for more memory than a laptop has (llama3.2 at its
+// 131,072-token maximum wants 14 GB). The window is sized to the notes plus the reply,
+// between these bounds; each extra 1,024 tokens costs llama3.2 about 112 MB.
+export const OLLAMA_CONTEXT_TOKENS = 8192;
 export const OLLAMA_MAX_CONTEXT = 32768;
 const OLLAMA_REPLY_TOKENS = 8192;
 
@@ -40,7 +41,7 @@ export function ollamaContextSize(promptTokens: number): number {
         `it can read about ${fits.toLocaleString()} characters at once). Shorten them, or choose a hosted model such as Claude.`,
     );
   }
-  return Math.max(OLLAMA_CONTEXT_TOKENS, Math.ceil(needed / 4096) * 4096);
+  return Math.max(OLLAMA_CONTEXT_TOKENS, Math.ceil(needed / 1024) * 1024);
 }
 
 // Claude models that take output_config (effort and a JSON Schema reply format).
@@ -56,7 +57,7 @@ async function callOllama(opts: BlueprintModelOptions, baseUrl: string, wantJson
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: opts.modelName || "qwen2.5:14b",
+      model: opts.modelName || "llama3.2",
       messages: [
         { role: "system", content: opts.systemPrompt },
         { role: "user", content: opts.userPrompt },

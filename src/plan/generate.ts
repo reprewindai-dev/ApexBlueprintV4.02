@@ -13,8 +13,8 @@ const DEFAULT_MODELS: Record<string, string> = {
   openai: "gpt-4o",
   gemini: "gemini-3.5-flash",
   deepseek: "deepseek-chat",
-  ollama: "qwen2.5:14b",
-  llama: "qwen2.5:14b",
+  ollama: "llama3.2",
+  llama: "llama3.2",
 };
 
 export function modelLabel(choice: ModelChoice): string {

@@ -28,10 +28,10 @@ export const PROVIDERS: ProviderInfo[] = [
   {
     id: "ollama",
     name: "Ollama (on your computer)",
-    defaultModel: "qwen2.5:14b",
+    defaultModel: "llama3.2",
     needsKey: false,
     defaultBaseUrl: "http://localhost:11434/v1",
-    note: "Free and private. Bigger models write better plans: qwen2.5:14b is recommended; use qwen2.5:7b on a slower computer.",
+    note: "Free and private. llama3.2 runs on most laptops (about 3 GB of memory). On a computer with more memory, qwen2.5:7b or qwen2.5:14b write better plans.",
   },
   { id: "custom", name: "Other (OpenAI-compatible)", defaultModel: "", needsKey: false, defaultBaseUrl: "https://" },
 ];

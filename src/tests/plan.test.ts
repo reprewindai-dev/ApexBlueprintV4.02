@@ -2,7 +2,7 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 import http from "node:http";
 import type { AddressInfo } from "node:net";
-import { buildPlanPrompts, extractJson, MAX_NOTES, normalizePlan, parsePlanText, SYSTEM_PROMPT, type PlanRecord } from "../plan/plan";
+import { buildPlanPrompts, estimateTokens, extractJson, MAX_NOTES, normalizePlan, parsePlanText, SYSTEM_PROMPT, type PlanRecord } from "../plan/plan";
 import { ollamaContextSize } from "../server/blueprint-core";
 import { planToAgentBrief, planToMarkdown, fileSlug } from "../plan/export";
 import { handleGenerate, handleCheckModel } from "../plan/http";
@@ -153,7 +153,7 @@ describe("HTTP handlers", () => {
     try {
       // In Docker, a localhost Ollama address from the browser goes to OLLAMA_LOCAL_URL.
       const result = await handleGenerate(
-        { notes: "trainer app idea", model: { selectedProvider: "ollama", customUrl: "http://localhost:9/v1", modelName: "qwen2.5:14b" } },
+        { notes: "trainer app idea", model: { selectedProvider: "ollama", customUrl: "http://localhost:9/v1", modelName: "llama3.2" } },
         { OLLAMA_LOCAL_URL: `${fake.url}/v1` },
       );
       assert.strictEqual(result.status, 200, JSON.stringify(result.body));
@@ -162,7 +162,10 @@ describe("HTTP handlers", () => {
       assert.deepStrictEqual(rec.usage, { inputTokens: 1200, outputTokens: 900 });
       const seen = fake.requests[0];
       assert.strictEqual(seen.path, "/api/chat");
-      assert.strictEqual(seen.body.options.num_ctx, 16384);
+      // Apex sets the window itself (never leaves it to Ollama's own setting), sized to the prompt.
+      const prompt = seen.body.messages.map((m: { content: string }) => m.content).join("");
+      assert.strictEqual(seen.body.options.num_ctx, ollamaContextSize(estimateTokens(prompt)));
+      assert.ok(seen.body.options.num_ctx <= 12288, `num_ctx ${seen.body.options.num_ctx}`);
       assert.deepStrictEqual(seen.body.format.required, Object.keys(SAMPLE));
 
       const cut = await handleGenerate({ notes: "too long", model: { selectedProvider: "ollama", customUrl: fake.url } }, {});
@@ -231,7 +234,8 @@ async function fakeServer(answer: (body: any, res: http.ServerResponse) => void)
 
 describe("Ollama context budget", () => {
   it("asks for enough room for the notes and refuses notes a local model cannot read", () => {
-    assert.strictEqual(ollamaContextSize(1_300), 16384);
+    assert.strictEqual(ollamaContextSize(0), 8192);
+    assert.strictEqual(ollamaContextSize(1_900), 10240);
     assert.strictEqual(ollamaContextSize(12_000), 20480);
     assert.strictEqual(ollamaContextSize(24_000), 32768);
     assert.throws(() => ollamaContextSize(62_000), /too long for a model running on your computer/);

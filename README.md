@@ -40,11 +40,12 @@ The image reaches an Ollama running on the same machine through `host.docker.int
 
 ### Ollama
 
-1. Install Ollama from https://ollama.com and pull a model: `ollama pull qwen2.5:14b`
-   (the default; use `qwen2.5:7b` on a slower computer).
+1. Install Ollama from https://ollama.com and pull a model: `ollama pull llama3.2`
+   (the default; it needs about 3 GB of memory. With more memory, `qwen2.5:7b` or `qwen2.5:14b` write better plans).
 2. In Apex, choose **Ollama (on your computer)**. The address defaults to `http://localhost:11434/v1`.
-3. Apex uses Ollama's own chat API: it asks for a 16K-token context (a full plan does not fit in
-   Ollama's default) and holds the reply to the plan's JSON Schema.
+3. Apex uses Ollama's own chat API. It sets the context size on every request (the notes plus room
+   for a full reply, at least 8K tokens), so neither Ollama's small default nor a large
+   `OLLAMA_CONTEXT_LENGTH` applies, and it holds the reply to the plan's JSON Schema.
 4. **Using the hosted site (apex.veklom.com) with your own Ollama:** your browser talks to Ollama
    directly, so Ollama must allow the site once. Apex shows these steps when it is needed.
    - Windows: quit Ollama from the tray, run
