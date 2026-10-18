@@ -162,6 +162,7 @@ describe("HTTP handlers", () => {
       assert.deepStrictEqual(rec.usage, { inputTokens: 1200, outputTokens: 900 });
       const seen = fake.requests[0];
       assert.strictEqual(seen.path, "/api/chat");
+      assert.strictEqual(seen.headers["ngrok-skip-browser-warning"], "1");
       // Apex sets the window itself (never leaves it to Ollama's own setting), sized to the prompt.
       const prompt = seen.body.messages.map((m: { content: string }) => m.content).join("");
       assert.strictEqual(seen.body.options.num_ctx, ollamaContextSize(estimateTokens(prompt)));

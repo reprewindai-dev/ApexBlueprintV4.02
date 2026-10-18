@@ -58,7 +58,9 @@ async function callOllama(opts: BlueprintModelOptions, baseUrl: string, wantJson
   const root = baseUrl.replace(/\/+$/, "").replace(/\/chat\/completions$/, "").replace(/\/v1$/, "");
   const response = await fetch(`${root}/api/chat`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    // An Ollama shared through a free ngrok link (e.g. one running on Colab) otherwise
+    // answers with ngrok's browser warning page instead of passing the request on.
+    headers: { "Content-Type": "application/json", "ngrok-skip-browser-warning": "1" },
     body: JSON.stringify({
       model: opts.modelName || "llama3.2",
       messages: [
