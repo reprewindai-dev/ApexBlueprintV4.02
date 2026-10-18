@@ -2,7 +2,8 @@ import { describe, it } from "node:test";
 import assert from "node:assert";
 import http from "node:http";
 import type { AddressInfo } from "node:net";
-import { buildPlanPrompts, extractJson, normalizePlan, parsePlanText, SYSTEM_PROMPT, type PlanRecord } from "../plan/plan";
+import { buildPlanPrompts, extractJson, MAX_NOTES, normalizePlan, parsePlanText, SYSTEM_PROMPT, type PlanRecord } from "../plan/plan";
+import { ollamaContextSize } from "../server/blueprint-core";
 import { planToAgentBrief, planToMarkdown, fileSlug } from "../plan/export";
 import { handleGenerate, handleCheckModel } from "../plan/http";
 import { friendlyError } from "../plan/errors";
@@ -93,7 +94,7 @@ describe("exports", () => {
 describe("HTTP handlers", () => {
   it("validates input before calling any model", async () => {
     assert.strictEqual((await handleGenerate({ notes: "  " }, {})).status, 400);
-    assert.strictEqual((await handleGenerate({ notes: "x".repeat(60_001) }, {})).status, 413);
+    assert.strictEqual((await handleGenerate({ notes: "x".repeat(MAX_NOTES + 1) }, {})).status, 413);
     const noProvider = await handleGenerate({ notes: "idea", model: {} }, {});
     assert.strictEqual(noProvider.status, 400);
     assert.match((noProvider.body as { error: string }).error, /Choose a model provider/);
@@ -228,8 +229,21 @@ async function fakeServer(answer: (body: any, res: http.ServerResponse) => void)
   return { url: `http://127.0.0.1:${(server.address() as AddressInfo).port}`, requests, close: () => server.close() };
 }
 
+describe("Ollama context budget", () => {
+  it("asks for enough room for the notes and refuses notes a local model cannot read", () => {
+    assert.strictEqual(ollamaContextSize(1_300), 16384);
+    assert.strictEqual(ollamaContextSize(12_000), 20480);
+    assert.strictEqual(ollamaContextSize(24_000), 32768);
+    assert.throws(() => ollamaContextSize(62_000), /too long for a model running on your computer/);
+  });
+});
+
 describe("provider errors", () => {
   it("explains common provider failures and passes unknown ones through", () => {
+    assert.match(
+      friendlyError('OLLAMA API failed: {"error":{"message":"llama-server process has terminated: error loading model: unable to allocate CPU_REPACK buffer"}}'),
+      /ran out of memory/,
+    );
     assert.match(friendlyError('Anthropic API failed: {"type":"error","error":{"type":"authentication_error","message":"invalid x-api-key"}}'), /rejected your API key/);
     assert.match(friendlyError("OPENAI API failed: You exceeded your current quota"), /out of credit/);
     assert.match(friendlyError('OLLAMA API failed: {"error":"model \'llama9\' not found"}'), /model name was not found/);

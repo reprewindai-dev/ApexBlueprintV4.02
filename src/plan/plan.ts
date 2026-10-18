@@ -43,6 +43,13 @@ export interface TokenUsage {
   outputTokens: number;
 }
 
+// The longest notes Apex accepts. Hosted models read this comfortably; a local model may not
+// (see OLLAMA_MAX_CONTEXT in blueprint-core).
+export const MAX_NOTES = 300_000;
+
+// Rough token count for budgeting a model's context (about 3.5 characters per token; errs high).
+export const estimateTokens = (text: string) => Math.ceil(text.length / 3.5);
+
 export interface PlanInput {
   notes: string;
   projectType?: string;

@@ -2,6 +2,7 @@
 // returns the reply text. Shared by the server, the Cloudflare Pages Functions and the
 // browser, so it must not import Node-only modules.
 import { GoogleGenAI } from "@google/genai";
+import { estimateTokens } from "../plan/plan";
 
 export type LlmEnv = Record<string, string | undefined>;
 
@@ -24,7 +25,23 @@ export interface BlueprintModelOptions {
 
 // Ollama gives a model a small context window unless asked for more; a full plan
 // (prompt plus several thousand tokens of reply) does not fit in it and comes back cut off.
+// Apex asks for enough room for the notes plus the reply, between these bounds. A larger
+// window needs more memory, so it is only used when the notes need it.
 export const OLLAMA_CONTEXT_TOKENS = 16384;
+export const OLLAMA_MAX_CONTEXT = 32768;
+const OLLAMA_REPLY_TOKENS = 8192;
+
+export function ollamaContextSize(promptTokens: number): number {
+  const needed = promptTokens + OLLAMA_REPLY_TOKENS;
+  if (needed > OLLAMA_MAX_CONTEXT) {
+    const fits = Math.floor(((OLLAMA_MAX_CONTEXT - OLLAMA_REPLY_TOKENS) * 3.5) / 1000) * 1000;
+    throw new Error(
+      `These notes are too long for a model running on your computer (about ${promptTokens.toLocaleString()} tokens; ` +
+        `it can read about ${fits.toLocaleString()} characters at once). Shorten them, or choose a hosted model such as Claude.`,
+    );
+  }
+  return Math.max(OLLAMA_CONTEXT_TOKENS, Math.ceil(needed / 4096) * 4096);
+}
 
 // Claude models that take output_config (effort and a JSON Schema reply format).
 const CLAUDE_STRUCTURED = /^claude-(fable-|mythos-|opus-5|opus-4-8|sonnet-5|haiku-5)/;
@@ -46,7 +63,7 @@ async function callOllama(opts: BlueprintModelOptions, baseUrl: string, wantJson
       ],
       stream: true,
       ...(wantJson ? { format: opts.jsonSchema || "json" } : {}),
-      options: { num_ctx: OLLAMA_CONTEXT_TOKENS, temperature: 0.2 },
+      options: { num_ctx: ollamaContextSize(estimateTokens(opts.systemPrompt + opts.userPrompt)), temperature: 0.2 },
     }),
   });
   if (!response.ok) throw new Error(`OLLAMA API failed: ${await response.text()}`);
